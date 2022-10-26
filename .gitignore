@@ -5,3 +5,8 @@
 build
 
 bin
+
+# JDTLS configuration
+.settings/
+.classpath
+.project
