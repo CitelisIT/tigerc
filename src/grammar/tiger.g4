@@ -1,56 +1,89 @@
 grammar tiger;
 
-program : exp EOF;
+program: exp EOF;
 
-exp : lvalue | seqexp | neg | callExp | infixExp | arrCreate | recCreate | assign | ifThenElse | ifThen | whileExp | forExp | letExp | 'break' | 'nil' | INT | STRING; //Problème avec les règles assign/subscipt/fieldExp/
+exp:
+	lvalue
+	| seqexp
+	| neg
+	| callExp
+	| infixExp
+	| arrCreate
+	| recCreate
+	| assign
+	| ifThen
+	| whileExp
+	| forExp
+	| letExp
+	| 'break'
+	| 'nil'
+	| INT
+	| STRING; // Problème avec les règles assign/subscipt/fieldExp/
 
-lvalue : ID | subscript | fieldExp; // Problème avec les règles callExp/fieldCreate/fieldDec
+lvalue:
+	ID
+	| subscript
+	| fieldExp; // Problème avec les règles callExp/fieldCreate/fieldDec
 
-seqexp : '(' (exp (';' exp)*)? ')'; 
+seqexp: '(' (exp (';' exp)*)? ')';
 
-neg : '-' exp;
+neg: '-' exp;
 
-callExp : ID '(' (exp (';' exp)*)? ')'; // Problème avec les règles fieldCreate/fieldDec/lvalue
+callExp:
+	ID '(' (exp (';' exp)*)? ')'; // Problème avec les règles fieldCreate/fieldDec/lvalue
 
-infixExp : exp INFIXOP exp; // Diviser cette règle pour chaque INFIXOP ? + problème avec la règle program
+infixExp:
+	exp INFIXOP exp; // Diviser cette règle pour chaque INFIXOP ? + problème avec la règle program
 
-arrCreate : TYPEID '[' exp ']' 'of' exp; // Problème avec les règles recCreate/type
+arrCreate:
+	TYPEID '[' exp ']' 'of' exp; // Problème avec les règles recCreate/type
 
-recCreate : TYPEID '{' (fieldCreate (';' fieldCreate)*) '}'; // Problème avec les règles arrCreate/type
+recCreate:
+	TYPEID '{' (fieldCreate (';' fieldCreate)*) '}'; // Problème avec les règles arrCreate/type
 
-assign : lvalue ':=' exp; // Problème avec les règles exp/subscript/fieldExp
+assign:
+	lvalue ':=' exp; // Problème avec les règles exp/subscript/fieldExp
 
-ifThenElse : 'if' exp 'then' exp 'else' exp;
+ifThen: 'if' exp 'then' exp Else;
 
-ifThen : 'if' exp 'then' exp; // Factorisation évidente avec la règle IfThenElse
+Else:
+	'else' exp
+	| '^'; //attention : if a then if b then c else d
 
-whileExp : 'while' exp 'do' exp; 
+whileExp: 'while' exp 'do' exp;
 
-forExp : 'for' ID ':=' exp 'to' exp 'do' exp;
+forExp: 'for' ID ':=' exp 'to' exp 'do' exp;
 
-letExp : 'let' (dec)+ 'in' (exp (';' exp)*)? 'end';
+letExp: 'let' (dec)+ 'in' (exp (';' exp)*)? 'end';
 
-subscript : lvalue '[' exp ']'; // Problème avec les règles fieldExp/exp
+subscript:
+	lvalue '[' exp ']'; // Problème avec les règles fieldExp/exp
 
-fieldExp : lvalue '.' ID; // Problème avec les règles subscript/exp
+fieldExp:
+	lvalue '.' ID; // Problème avec les règles subscript/exp
 
-fieldCreate : ID '=' exp; // Problème avec les règles callExp/fieldDec/lvalue
+fieldCreate:
+	ID '=' exp; // Problème avec les règles callExp/fieldDec/lvalue
 
-dec : typeDec | varDec | funDec;
+dec: typeDec | varDec | funDec;
 
-typeDec : 'type' ID '=' type;
+typeDec: 'type' ID '=' type;
 
-varDec : 'var' ID ':=' exp | 'var' ID ':' TYPEID ':=' exp; // A factoriser
+varDec: 'var' ID varDecFact;
 
-funDec : 'function' ID '(' (fieldDec (',' fieldDec)*)? '=' exp |  'function' ID '(' (fieldDec (',' fieldDec)*)? ':' TYPEID'=' exp; //A factoriser
+varDecFact: ':=' exp | ':' TYPEID ':=' exp;
 
-type : TYPEID | arrType | recType;
+funDec:
+	'function' ID '(' (fieldDec (',' fieldDec)*)? '=' exp
+	| 'function' ID '(' (fieldDec (',' fieldDec)*)? ':' TYPEID '=' exp; // A factoriser
 
-fieldDec : ID ':' TYPEID; // Problème avec les règles lvalue/callExp/fieldCreate
+type: TYPEID | arrType | recType;
 
-arrType : 'array of' TYPEID;
+fieldDec:
+	ID ':' TYPEID; // Problème avec les règles lvalue/callExp/fieldCreate
 
-recType : '{' ( fieldDec (',' fieldDec)*)? '}';
+arrType: 'array of' TYPEID;
 
-WS : [ \t\r\n]+ -> skip;
+recType: '{' (fieldDec (',' fieldDec)*)? '}';
 
+WS: [ \t\r\n]+ -> skip;
