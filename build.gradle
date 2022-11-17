@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'antlr'
 }
 
 repositories {
@@ -22,5 +23,17 @@ sourceSets {
 }
 
 application {
-    mainClass = "main.java.Main"
+    mainClass = "main.Main"
+}
+
+generateGrammarSource {
+    outputDirectory = file("src/main/java/parser")
+}
+
+application {
+    mainClass = "main.Main"
+}
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.9.2'
 }
