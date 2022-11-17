@@ -48,7 +48,7 @@ ifThen: 'if' exp 'then' exp elseRule;
 
 elseRule:
 	'else' exp
-	| '^'; //attention : if a then if b then c else d
+	|; //attention : if a then if b then c else d
 
 whileExp: 'while' exp 'do' exp;
 
