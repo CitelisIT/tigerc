@@ -8,16 +8,16 @@ program: exp EOF;
 
 exp: orExp ( ':=' orExp)?;
 
-orExp: andExp ( '|' orExp)?;
+orExp: andExp ( '|' orExp)*;
 
 andExp:
-	eqExp ('&' andExp)?; // On doit pouvoir mieux gérer les priorités ici
+	eqExp ('&' andExp)*; // On doit pouvoir mieux gérer les priorités ici
 
-eqExp: addExp ( ('=' | '<>' | '>' | '<' | '>=' | '>=') addExp)?;
+eqExp: addExp ( ('=' | '<>' | '>' | '<' | '>=' | '>=') addExp)*;
 
-addExp: multExp ( ('+' | '-') multExp)?;
+addExp: multExp ( ('+' | '-') multExp)*;
 
-multExp: simpleExp ( ('*' | '/') simpleExp)?;
+multExp: simpleExp ( ('*' | '/') simpleExp)*;
 
 simpleExp:
 	seqexp
