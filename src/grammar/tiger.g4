@@ -2,47 +2,43 @@ grammar tiger;
 
 program: exp EOF;
 
-exp:
-	lvalue
-	| seqexp
+exp: orExp ( ':=' orExp)?;
+
+orExp: andExp ( '|' orExp)?;
+
+andExp:
+	eqExp ('&' andExp)?; // On doit pouvoir mieux gérer les priorités ici
+
+eqExp: addExp ( ('=' | '<>' | '>' | '<' | '>=' | '>=') addExp)?;
+
+addExp: multExp ( ('+' | '-') multExp)?;
+
+multExp: simpleExp ( ('*' | '/') simpleExp)?;
+
+simpleExp:
+	seqexp
 	| neg
-	| callExp
-	| infixExp
-	| arrCreate
-	| recCreate
-	| assign
+	| idExp
 	| ifThen
 	| whileExp
 	| forExp
 	| letExp
-	| 'break'
-	| 'nil'
 	| INT
-	| STRING; // Problème avec les règles assign/subscipt/fieldExp/
+	| STRING
+	| 'nil'
+	| 'break';
 
-lvalue:
-	ID
-	| subscript
-	| fieldExp; // Problème avec les règles callExp/fieldCreate/fieldDec
+idExp:
+	ID (
+		'(' ( exp ( ',' exp)*)? ')'
+		| '[' exp ']' ( ( '[' exp ']' | '.' ID)* | 'of' exp)
+		| '.' ID ( '[' exp ']' | '.' ID)*
+		| '{' ( ID '=' exp ( ',' ID '=' exp)*)? '}'
+	)?;
 
 seqexp: '(' (exp (';' exp)*)? ')';
 
 neg: '-' exp;
-
-callExp:
-	ID '(' (exp (';' exp)*)? ')'; // Problème avec les règles fieldCreate/fieldDec/lvalue
-
-infixExp:
-	exp INFIXOP exp; // Diviser cette règle pour chaque INFIXOP ? + problème avec la règle program
-
-arrCreate:
-	TYPEID '[' exp ']' 'of' exp; // Problème avec les règles recCreate/type
-
-recCreate:
-	TYPEID '{' (fieldCreate (';' fieldCreate)*) '}'; // Problème avec les règles arrCreate/type
-
-assign:
-	lvalue ':=' exp; // Problème avec les règles exp/subscript/fieldExp
 
 ifThen: 'if' exp 'then' exp Else;
 
@@ -55,12 +51,6 @@ whileExp: 'while' exp 'do' exp;
 forExp: 'for' ID ':=' exp 'to' exp 'do' exp;
 
 letExp: 'let' (dec)+ 'in' (exp (';' exp)*)? 'end';
-
-subscript:
-	lvalue '[' exp ']'; // Problème avec les règles fieldExp/exp
-
-fieldExp:
-	lvalue '.' ID; // Problème avec les règles subscript/exp
 
 fieldCreate:
 	ID '=' exp; // Problème avec les règles callExp/fieldDec/lvalue
