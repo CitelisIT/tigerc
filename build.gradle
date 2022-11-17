@@ -28,6 +28,7 @@ application {
 
 generateGrammarSource {
     outputDirectory = file("src/main/java/parser")
+    arguments += ["-no-listener", "-visitor"]
 }
 
 application {
