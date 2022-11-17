@@ -8,10 +8,9 @@ program: exp EOF;
 
 exp: orExp ( ':=' orExp)?;
 
-orExp: andExp ( '|' orExp)*;
+orExp: andExp ( '|' andExp ('|' andExp)*)?;
 
-andExp:
-	eqExp ('&' andExp)*; // On doit pouvoir mieux gérer les priorités ici
+andExp: eqExp ('&' eqExp ('&' eqExp)*)?;
 
 eqExp: addExp ( ('=' | '<>' | '>' | '<' | '>=' | '>=') addExp)*;
 
@@ -35,24 +34,20 @@ simpleExp:
 idExp:
 	ID (
 		'(' ( exp ( ',' exp)*)? ')'
-		| '[' exp ']' ( ( '[' exp ']' | '.' ID)* | 'of' exp)
+		| '[' exp ']' (( '[' exp ']' | '.' ID)* | 'of' simpleExp)
 		| '.' ID ( '[' exp ']' | '.' ID)*
 		| '{' ( ID '=' exp ( ',' ID '=' exp)*)? '}'
 	)?;
 
 seqexp: '(' (exp (';' exp)*)? ')';
 
-neg: '-' exp;
+neg: '-' simpleExp;
 
-ifThen: 'if' exp 'then' exp elseRule;
+ifThen: 'if' exp 'then' simpleExp ('else' simpleExp)?;
 
-elseRule:
-	'else' exp
-	|; //attention : if a then if b then c else d
+whileExp: 'while' exp 'do' simpleExp;
 
-whileExp: 'while' exp 'do' exp;
-
-forExp: 'for' ID ':=' exp 'to' exp 'do' exp;
+forExp: 'for' ID ':=' exp 'to' exp 'do' simpleExp;
 
 letExp: 'let' (dec)+ 'in' (exp (';' exp)*)? 'end';
 
@@ -68,8 +63,9 @@ varDec: 'var' ID varDecFact;
 varDecFact: ':=' exp | ':' ID ':=' exp;
 
 funDec:
-	'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? ')' '=' exp
-	| 'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? ')' ':' ID '=' exp; // A factoriser
+	'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? ')' endDec;
+
+endDec: '=' exp | ':' ID '=' exp;
 
 type: ID | arrType | recType;
 
@@ -102,6 +98,6 @@ INT: [0-9]+;
 
 STRING: '"' [a-zA-Z0-9!?\-_.:;, ]* '"';
 
-COMMENT: '/*' [[a-zA-Z0-9!?\-_.:;, ]* '*/' -> skip;
+COMMENT: '/*' [a-zA-Z0-9!?\-_.:;, ]* '*/' -> skip;
 
 WS: [ \t\r\n]+ -> skip;
