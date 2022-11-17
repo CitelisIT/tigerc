@@ -40,9 +40,9 @@ seqexp: '(' (exp (';' exp)*)? ')';
 
 neg: '-' exp;
 
-ifThen: 'if' exp 'then' exp Else;
+ifThen: 'if' exp 'then' exp else;
 
-Else:
+else:
 	'else' exp
 	| '^'; //attention : if a then if b then c else d
 
@@ -53,7 +53,7 @@ forExp: 'for' ID ':=' exp 'to' exp 'do' exp;
 letExp: 'let' (dec)+ 'in' (exp (';' exp)*)? 'end';
 
 fieldCreate:
-	ID '=' exp; // Problème avec les règles callExp/fieldDec/lvalue
+	ID '=' exp; // Problème avec les règles callExp/ID ':' ID /lvalue
 
 dec: typeDec | varDec | funDec;
 
@@ -61,19 +61,41 @@ typeDec: 'type' ID '=' type;
 
 varDec: 'var' ID varDecFact;
 
-varDecFact: ':=' exp | ':' TYPEID ':=' exp;
+varDecFact: ':=' exp | ':' ID ':=' exp;
 
 funDec:
-	'function' ID '(' (fieldDec (',' fieldDec)*)? '=' exp
-	| 'function' ID '(' (fieldDec (',' fieldDec)*)? ':' TYPEID '=' exp; // A factoriser
+	'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? '=' exp
+	| 'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? ':' ID '=' exp; // A factoriser
 
-type: TYPEID | arrType | recType;
+type: ID | arrType | recType;
 
-fieldDec:
-	ID ':' TYPEID; // Problème avec les règles lvalue/callExp/fieldCreate
+arrType: 'array of' ID;
 
-arrType: 'array of' TYPEID;
+recType: '{' (ID ':' ID (',' ID ':' ID)*)? '}';
 
-recType: '{' (fieldDec (',' fieldDec)*)? '}';
+KEYWORD:
+	'array'
+	| 'break'
+	| 'do'
+	| 'else'
+	| 'end'
+	| 'for'
+	| 'function'
+	| 'if'
+	| 'in'
+	| 'let'
+	| 'nil'
+	| 'of'
+	| 'then'
+	| 'to'
+	| 'type'
+	| 'var'
+	| 'while';
+
+ID: [a-zA-Z][a-zA-Z0-9_]*;
+
+INT: [0-9]+;
+
+STRING: '"' [a-zA-Z0-9!?\.!?-_.:;,]* '"';
 
 WS: [ \t\r\n]+ -> skip;
