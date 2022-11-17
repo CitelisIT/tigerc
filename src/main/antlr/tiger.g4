@@ -1,5 +1,9 @@
 grammar tiger;
 
+@header {
+	package main.java.parser;
+}
+
 program: exp EOF;
 
 exp: orExp ( ':=' orExp)?;
@@ -40,9 +44,9 @@ seqexp: '(' (exp (';' exp)*)? ')';
 
 neg: '-' exp;
 
-ifThen: 'if' exp 'then' exp else;
+ifThen: 'if' exp 'then' exp elseRule;
 
-else:
+elseRule:
 	'else' exp
 	| '^'; //attention : if a then if b then c else d
 
@@ -64,8 +68,8 @@ varDec: 'var' ID varDecFact;
 varDecFact: ':=' exp | ':' ID ':=' exp;
 
 funDec:
-	'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? '=' exp
-	| 'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? ':' ID '=' exp; // A factoriser
+	'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? ')' '=' exp
+	| 'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? ')' ':' ID '=' exp; // A factoriser
 
 type: ID | arrType | recType;
 
@@ -96,6 +100,6 @@ ID: [a-zA-Z][a-zA-Z0-9_]*;
 
 INT: [0-9]+;
 
-STRING: '"' [a-zA-Z0-9!?\.!?-_.:;,]* '"';
+STRING: '"' [a-zA-Z0-9!?\-_.:;,]* '"';
 
 WS: [ \t\r\n]+ -> skip;
