@@ -96,8 +96,8 @@ ID: [a-zA-Z][a-zA-Z0-9_]*;
 
 INT: [0-9]+;
 
-STRING: '"' [a-zA-Z0-9!?\-_.:;, ]* '"';
+STRING: '"' [a-zA-Z0-9!?\-_.:;,/ ]* '"';
 
-COMMENT: '/*' [a-zA-Z0-9!?\-_.:;, ]* '*/' -> skip;
+COMMENT: '/*' [a-zA-Z0-9!?\-_.:;,/ ]* '*/' -> skip;
 
 WS: [ \t\r\n]+ -> skip;
