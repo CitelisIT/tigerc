@@ -19,7 +19,7 @@ addExp: multExp ( ('+' | '-') multExp)*;
 multExp: simpleExp ( ('*' | '/') simpleExp)*;
 
 simpleExp:
-	seqexp
+	seqExp
 	| neg
 	| idExp
 	| ifThen
@@ -39,7 +39,7 @@ idExp:
 		| '{' ( ID '=' exp ( ',' ID '=' exp)*)? '}'
 	)?;
 
-seqexp: '(' (exp (';' exp)*)? ')';
+seqExp: '(' (exp (';' exp)*)? ')';
 
 neg: '-' simpleExp;
 
