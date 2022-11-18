@@ -4,6 +4,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import main.java.ast.AstVisitor;
 
+import main.java.ast.*;
+
 public class GraphVizVisitor implements AstVisitor<String> {
 
     private int state;
@@ -40,6 +42,106 @@ public class GraphVizVisitor implements AstVisitor<String> {
 
     private void addNode(String node, String label) {
         this.nodeBuffer += String.format("\t%s [label=\"%s\", shape=\"box\"];\n", node, label);
+    }
+
+    public String visit(Program program) {
+        return "";
+    }
+
+    public String visit(Exp exp) {
+        return "";
+    }
+
+    public String visit(OrExp orExp) {
+        return "";
+    }
+
+    public String visit(AndExp andExp) {
+        return "";
+    }
+
+    public String visit(EqExp eqExp) {
+        return "";
+    }
+
+    public String visit(AddExp addExp) {
+        return "";
+    }
+
+    public String visit(MultExp multExp) {
+        return "";
+    }
+
+    public String visit(SimpleExp simpleExp) {
+        return "";
+    }
+
+    public String visit(IdExp idExp) {
+        return "";
+    }
+
+    public String visit(SeqExp seqExp) {
+        return "";
+    }
+
+    public String visit(Neg neg) {
+        return "";
+    }
+
+    public String visit(IfThen ifThen) {
+        return "";
+    }
+
+    public String visit(WhileExp whileExp) {
+        return "";
+    }
+
+    public String visit(ForExp forExp) {
+        return "";
+    }
+
+    public String visit(LetExp letExp) {
+        return "";
+    }
+
+    public String visit(FieldCreate fieldCreate) {
+        return "";
+    }
+
+    public String visit(Dec dec) {
+        return "";
+    }
+
+    public String visit(TypeDec typeDec) {
+        return "";
+    }
+
+    public String visit(VarDec varDec) {
+        return "";
+    }
+
+    public String visit(VarDecFact varDecFact) {
+        return "";
+    }
+
+    public String visit(FunDec funDec) {
+        return "";
+    }
+
+    public String visit(EndDec endDec) {
+        return "";
+    }
+
+    public String visit(Type type) {
+        return "";
+    }
+
+    public String visit(ArrType arrType) {
+        return "";
+    }
+
+    public String visit(RecType recType) {
+        return "";
     }
 
 }
