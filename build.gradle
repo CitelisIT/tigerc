@@ -31,10 +31,6 @@ generateGrammarSource {
     arguments += ["-no-listener", "-visitor"]
 }
 
-application {
-    mainClass = "main.Main"
-}
-
 dependencies {
     antlr 'org.antlr:antlr4:4.9.2'
 }
