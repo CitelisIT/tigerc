@@ -12,7 +12,7 @@ orExp: andExp ( '|' andExp ('|' andExp)*)?;
 
 andExp: eqExp ('&' eqExp ('&' eqExp)*)?;
 
-eqExp: addExp ( ('=' | '<>' | '>' | '<' | '>=' | '>=') addExp)*;
+eqExp: addExp ( ('=' | '<>' | '>' | '<' | '>=' | '>=') addExp)?;
 
 addExp: multExp ( ('+' | '-') multExp)*;
 
