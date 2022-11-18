@@ -96,7 +96,7 @@ ID: [a-zA-Z][a-zA-Z0-9_]*;
 
 INT: [0-9]+;
 
-fragment TEXT: [a-zA-Z0-9!?\-_.:;,/@#$%^&()={}[\]<>' ]*;
+fragment TEXT: [a-zA-Z0-9!?\-_.:;,/@#$%^&()={}[\]<>'| ]*;
 
 STRING: '"' TEXT '"';
 
