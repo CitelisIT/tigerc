@@ -28,14 +28,14 @@ public class tigerParser extends Parser {
 	public static final int
 		RULE_program = 0, RULE_exp = 1, RULE_orExp = 2, RULE_andExp = 3, RULE_eqExp = 4, 
 		RULE_addExp = 5, RULE_multExp = 6, RULE_simpleExp = 7, RULE_idExp = 8, 
-		RULE_seqexp = 9, RULE_neg = 10, RULE_ifThen = 11, RULE_whileExp = 12, 
+		RULE_seqExp = 9, RULE_neg = 10, RULE_ifThen = 11, RULE_whileExp = 12, 
 		RULE_forExp = 13, RULE_letExp = 14, RULE_fieldCreate = 15, RULE_dec = 16, 
 		RULE_typeDec = 17, RULE_varDec = 18, RULE_varDecFact = 19, RULE_funDec = 20, 
 		RULE_endDec = 21, RULE_type = 22, RULE_arrType = 23, RULE_recType = 24;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"program", "exp", "orExp", "andExp", "eqExp", "addExp", "multExp", "simpleExp", 
-			"idExp", "seqexp", "neg", "ifThen", "whileExp", "forExp", "letExp", "fieldCreate", 
+			"idExp", "seqExp", "neg", "ifThen", "whileExp", "forExp", "letExp", "fieldCreate", 
 			"dec", "typeDec", "varDec", "varDecFact", "funDec", "endDec", "type", 
 			"arrType", "recType"
 		};
@@ -528,8 +528,8 @@ public class tigerParser extends Parser {
 	}
 
 	public static class SimpleExpContext extends ParserRuleContext {
-		public SeqexpContext seqexp() {
-			return getRuleContext(SeqexpContext.class,0);
+		public SeqExpContext seqExp() {
+			return getRuleContext(SeqExpContext.class,0);
 		}
 		public NegContext neg() {
 			return getRuleContext(NegContext.class,0);
@@ -573,7 +573,7 @@ public class tigerParser extends Parser {
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(103);
-				seqexp();
+				seqExp();
 				}
 				break;
 			case T__9:
@@ -950,27 +950,27 @@ public class tigerParser extends Parser {
 		return _localctx;
 	}
 
-	public static class SeqexpContext extends ParserRuleContext {
+	public static class SeqExpContext extends ParserRuleContext {
 		public List<ExpContext> exp() {
 			return getRuleContexts(ExpContext.class);
 		}
 		public ExpContext exp(int i) {
 			return getRuleContext(ExpContext.class,i);
 		}
-		public SeqexpContext(ParserRuleContext parent, int invokingState) {
+		public SeqExpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_seqexp; }
+		@Override public int getRuleIndex() { return RULE_seqExp; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof tigerVisitor ) return ((tigerVisitor<? extends T>)visitor).visitSeqexp(this);
+			if ( visitor instanceof tigerVisitor ) return ((tigerVisitor<? extends T>)visitor).visitSeqExp(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final SeqexpContext seqexp() throws RecognitionException {
-		SeqexpContext _localctx = new SeqexpContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_seqexp);
+	public final SeqExpContext seqExp() throws RecognitionException {
+		SeqExpContext _localctx = new SeqExpContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_seqExp);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);

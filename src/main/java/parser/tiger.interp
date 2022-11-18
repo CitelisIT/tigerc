@@ -104,7 +104,7 @@ addExp
 multExp
 simpleExp
 idExp
-seqexp
+seqExp
 neg
 ifThen
 whileExp

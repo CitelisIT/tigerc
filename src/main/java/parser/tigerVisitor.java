@@ -67,11 +67,11 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdExp(tigerParser.IdExpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link tigerParser#seqexp}.
+	 * Visit a parse tree produced by {@link tigerParser#seqExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSeqexp(tigerParser.SeqexpContext ctx);
+	T visitSeqExp(tigerParser.SeqExpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link tigerParser#neg}.
 	 * @param ctx the parse tree
