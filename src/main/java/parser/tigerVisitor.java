@@ -85,12 +85,6 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIfThen(tigerParser.IfThenContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link tigerParser#elseRule}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitElseRule(tigerParser.ElseRuleContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link tigerParser#whileExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -144,6 +138,12 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitFunDec(tigerParser.FunDecContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link tigerParser#endDec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEndDec(tigerParser.EndDecContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link tigerParser#type}.
 	 * @param ctx the parse tree
