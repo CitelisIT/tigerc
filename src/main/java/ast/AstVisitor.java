@@ -51,4 +51,12 @@ public interface AstVisitor<T> {
     public T visit(ArrType arrType);
 
     public T visit(RecType recType);
+
+    public T visit(IntLitteral intLitteral);
+
+    public T visit(StringLitteral stringLitteral);
+
+    public T visit(NilLitteral nilLitteral);
+
+    public T visit(BreakLitteral breakLitteral);
 }

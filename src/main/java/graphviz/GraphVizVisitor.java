@@ -144,4 +144,20 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return "";
     }
 
+    public String visit(IntLitteral intLitteral) {
+        return "";
+    }
+
+    public String visit(StringLitteral stringLitteral) {
+        return "";
+    }
+
+    public String visit(NilLitteral nilLitteral) {
+        return "";
+    }
+
+    public String visit(BreakLitteral breakLitteral) {
+        return "";
+    }
+
 }
