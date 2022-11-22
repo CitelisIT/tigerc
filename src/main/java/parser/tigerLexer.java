@@ -1,6 +1,6 @@
 // Generated from tiger.g4 by ANTLR 4.9.2
 
-	package main.java.parser;
+package parser;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

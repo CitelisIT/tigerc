@@ -1,6 +1,6 @@
 // Generated from tiger.g4 by ANTLR 4.9.2
 
-	package main.java.parser;
+package parser;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -60,6 +60,34 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitSimpleExp(tigerParser.SimpleExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code IntLitteral}
+	 * labeled alternative in {@link tigerParser#litteralExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIntLitteral(tigerParser.IntLitteralContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code StringLitteral}
+	 * labeled alternative in {@link tigerParser#litteralExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStringLitteral(tigerParser.StringLitteralContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NilLitteral}
+	 * labeled alternative in {@link tigerParser#litteralExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNilLitteral(tigerParser.NilLitteralContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code BreakLitteral}
+	 * labeled alternative in {@link tigerParser#litteralExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBreakLitteral(tigerParser.BreakLitteralContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link tigerParser#idExp}.
 	 * @param ctx the parse tree

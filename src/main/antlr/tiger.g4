@@ -1,7 +1,7 @@
 grammar tiger;
 
 @header {
-	package main.java.parser;
+package parser;
 }
 
 program: exp EOF;

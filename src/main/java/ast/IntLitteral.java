@@ -1,4 +1,4 @@
-package main.java.ast;
+package ast;
 
 public class IntLitteral implements Ast {
 

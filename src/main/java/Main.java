@@ -1,8 +1,6 @@
-package main;
-
-import main.java.parser.tigerLexer;
-import main.java.parser.tigerParser;
-import main.java.parser.tigerParser.ProgramContext;
+import parser.tigerLexer;
+import parser.tigerParser;
+import parser.tigerParser.ProgramContext;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -42,8 +40,7 @@ public class Main {
       // code d'affichage de l'arbre syntaxique
       JFrame frame = new JFrame("Antlr AST");
       JPanel panel = new JPanel();
-      TreeViewer viewer = new TreeViewer(Arrays.asList(
-          parser.getRuleNames()), program);
+      TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), program);
       viewer.setScale(1.5); // Scale a little
       panel.add(viewer);
       frame.add(panel);

@@ -1,4 +1,4 @@
-package main.java.ast;
+package ast;
 
 public class Type implements Ast {
 

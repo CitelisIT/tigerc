@@ -11,7 +11,7 @@ repositories {
 sourceSets {
     main {
         java {
-            srcDirs = ['src']
+            srcDirs = ['src/main/java']
         }
     }
     test {
@@ -23,7 +23,7 @@ sourceSets {
 }
 
 application {
-    mainClass = "main.java.Main"
+    mainClass = "Main"
 }
 
 generateGrammarSource {

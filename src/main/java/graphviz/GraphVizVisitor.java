@@ -1,10 +1,10 @@
-package main.java.graphviz;
+package graphviz;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import main.java.ast.AstVisitor;
+import ast.AstVisitor;
 
-import main.java.ast.*;
+import ast.*;
 
 public class GraphVizVisitor implements AstVisitor<String> {
 
