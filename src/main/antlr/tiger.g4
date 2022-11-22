@@ -26,10 +26,14 @@ simpleExp:
 	| whileExp
 	| forExp
 	| letExp
-	| INT
-	| STRING
-	| 'nil'
-	| 'break';
+	| litteralExp;
+
+litteralExp: 
+	INT 			#IntLitteral
+	| STRING 		#StringLitteral
+	| 'nil'			#NilLitteral
+	| 'break'		#BreakLitteral
+;
 
 idExp:
 	ID (
