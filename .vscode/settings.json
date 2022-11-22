@@ -3,7 +3,7 @@
     "editor.defaultFormatter": "redhat.java",
     "java.format.settings.url": "https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml",
     "java.format.settings.profile": "GoogleStyle",
-    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.configuration.updateBuildConfiguration": "automatic",
     "antlr4.generation": {
         "mode": "none",
     }
