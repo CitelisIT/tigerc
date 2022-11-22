@@ -23,7 +23,7 @@ sourceSets {
 }
 
 application {
-    mainClass = "main.Main"
+    mainClass = "main.java.Main"
 }
 
 generateGrammarSource {
