@@ -16,44 +16,46 @@ import org.antlr.v4.runtime.RecognitionException;
 
 public class Main {
 
-  public static void main(String[] args) {
+    public static void main(String[] args) {
 
-    if (args.length < 1) {
-      System.out.println("Error : Expected 1 argument filepath, found 0");
-      return;
+        if (args.length < 2) {
+            System.out.println("Error : Expecting 'inFile' and 'mode' arguments.");
+            System.exit(1);
+        }
+
+        String inFile = args[0];
+        String mode = args[1];
+        try {
+            // chargement du fichier et construction du parser
+            CharStream input = CharStreams.fromFileName(inFile);
+            tigerLexer lexer = new tigerLexer(input);
+            CommonTokenStream stream = new CommonTokenStream(lexer);
+            tigerParser parser = new tigerParser(stream);
+
+            // Récupération du noeud program (le noeud à la racine)
+            ProgramContext program = parser.program();
+
+            switch (mode) {
+                case "--parse-tree":
+                    // code d'affichage de l'arbre syntaxique
+                    JFrame frame = new JFrame("Antlr AST");
+                    JPanel panel = new JPanel();
+                    TreeViewer viewer =
+                            new TreeViewer(Arrays.asList(parser.getRuleNames()), program);
+                    viewer.setScale(1);
+                    panel.add(viewer);
+                    frame.add(panel);
+                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    frame.pack();
+                    frame.setVisible(true);
+                    break;
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (RecognitionException e) {
+            e.printStackTrace();
+        }
     }
-
-    String testFile = args[0];
-
-    try {
-
-      // chargement du fichier et construction du parser
-
-      CharStream input = CharStreams.fromFileName(testFile);
-      tigerLexer lexer = new tigerLexer(input);
-      CommonTokenStream stream = new CommonTokenStream(lexer);
-      tigerParser parser = new tigerParser(stream);
-
-      // Récupération du noeud program (le noeud à la racine)
-      ProgramContext program = parser.program();
-
-      // code d'affichage de l'arbre syntaxique
-      JFrame frame = new JFrame("Antlr AST");
-      JPanel panel = new JPanel();
-      TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), program);
-      viewer.setScale(1.5); // Scale a little
-      panel.add(viewer);
-      frame.add(panel);
-      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      frame.pack();
-      frame.setVisible(true);
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (RecognitionException e) {
-      e.printStackTrace();
-    }
-
-  }
 
 }
