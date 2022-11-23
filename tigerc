@@ -47,6 +47,7 @@ while [[ "$#" -gt 0 ]]; do
     --color) COLOR=1 ;;
     --no-color) COLOR=0 ;;
     --log-level=*) LOG_LEVEL="--${1#*=}" ;;
+    --log-level) error "Option '--log-level' must have a value" ;;
     *) error "Unknown option '$1'" ;;
     esac
     shift
