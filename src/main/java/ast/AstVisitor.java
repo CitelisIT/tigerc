@@ -16,8 +16,6 @@ public interface AstVisitor<T> {
 
     public T visit(MultExp multExp);
 
-    public T visit(SimpleExp simpleExp);
-
     public T visit(IdExp idExp);
 
     public T visit(SeqExp seqExp);
@@ -33,8 +31,6 @@ public interface AstVisitor<T> {
     public T visit(LetExp letExp);
 
     public T visit(FieldCreate fieldCreate);
-
-    public T visit(Dec dec);
 
     public T visit(TypeDec typeDec);
 

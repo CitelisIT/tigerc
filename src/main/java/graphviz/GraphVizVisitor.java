@@ -72,10 +72,6 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return "";
     }
 
-    public String visit(SimpleExp simpleExp) {
-        return "";
-    }
-
     public String visit(IdExp idExp) {
         return "";
     }
@@ -105,10 +101,6 @@ public class GraphVizVisitor implements AstVisitor<String> {
     }
 
     public String visit(FieldCreate fieldCreate) {
-        return "";
-    }
-
-    public String visit(Dec dec) {
         return "";
     }
 
