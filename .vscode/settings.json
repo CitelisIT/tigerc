@@ -6,5 +6,8 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "antlr4.generation": {
         "mode": "none",
+    },
+    "[shellscript]": {
+        "editor.defaultFormatter": "foxundermoon.shell-format"
     }
 }
