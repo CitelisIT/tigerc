@@ -44,5 +44,5 @@ fi
 
 case $MODE in
     tree) ./gradlew -q --console plain --init-script init.gradle tree -PinFile=$TARGET -Pcolor=$COLOR ;;
-    *) ./gradlew -q --console plain --init-script init.gradle run
+    *) ./gradlew -q --console plain --init-script init.gradle run -Pcolor=$COLOR;;
 esac
