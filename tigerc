@@ -1,0 +1,40 @@
+#!/bin/sh
+
+read -r -d '' USAGE << EOM
+Usage:
+    tigerc <file> <options> [argument]
+
+Options:
+    --parse-tree        Generates a dot representation of the input program's AST
+EOM
+
+error() {
+    MESSAGE=$1;
+    echo -e "\x1b[1m\x1b[31m[ERROR]\x1b[0m $MESSAGE";
+    exit 1;
+}
+
+if [[ "$#" -lt 1 ]]; then
+    echo "$USAGE";
+    exit 0;
+else
+    TARGET=$1;
+    shift;
+fi
+
+if [[ ! -f $TARGET ]]; then
+    error "The file $TARGET does not exist.";
+fi
+
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --parse-tree) MODE="tree";;
+        *) error "Unknown option '$1'" ;;
+    esac
+    shift
+done
+
+case $MODE in
+    tree) ./gradlew -q --console plain --init-script init.gradle tree -PinFile=$TARGET ;;
+    *) ./gradlew -q --console plain --init-script init.gradle run
+esac
