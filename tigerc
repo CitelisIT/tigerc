@@ -5,7 +5,7 @@ Usage:
     tigerc <file> <options> [argument]
 
 Options:
-    --parse-tree        Generates a dot representation of the input program's AST
+    --parse-tree        Generates a representation of the input program's parse tree
 EOM
 
 COLOR=1;
