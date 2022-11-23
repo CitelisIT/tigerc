@@ -95,6 +95,64 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdExp(tigerParser.IdExpContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link tigerParser#idEndExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIdEndExp(tigerParser.IdEndExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link tigerParser#callExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCallExp(tigerParser.CallExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link tigerParser#bracketExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBracketExp(tigerParser.BracketExpContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code BracketExpAccess}
+	 * labeled alternative in {@link tigerParser#bracketExpEnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBracketExpAccess(tigerParser.BracketExpAccessContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ArrCreateEnd}
+	 * labeled alternative in {@link tigerParser#bracketExpEnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrCreateEnd(tigerParser.ArrCreateEndContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ArrayAccess}
+	 * labeled alternative in {@link tigerParser#access}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayAccess(tigerParser.ArrayAccessContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code RecordAccess}
+	 * labeled alternative in {@link tigerParser#access}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRecordAccess(tigerParser.RecordAccessContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link tigerParser#recAccessExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRecAccessExp(tigerParser.RecAccessExpContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link tigerParser#recCreateExp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRecCreateExp(tigerParser.RecCreateExpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link tigerParser#seqExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -155,11 +213,19 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitVarDec(tigerParser.VarDecContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link tigerParser#varDecFact}.
+	 * Visit a parse tree produced by the {@code VarDecNoType}
+	 * labeled alternative in {@link tigerParser#varDecEnd}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVarDecFact(tigerParser.VarDecFactContext ctx);
+	T visitVarDecNoType(tigerParser.VarDecNoTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code VarDecWithType}
+	 * labeled alternative in {@link tigerParser#varDecEnd}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitVarDecWithType(tigerParser.VarDecWithTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link tigerParser#funDec}.
 	 * @param ctx the parse tree
@@ -167,17 +233,40 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunDec(tigerParser.FunDecContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link tigerParser#endDec}.
+	 * Visit a parse tree produced by the {@code FunDecNoType}
+	 * labeled alternative in {@link tigerParser#funEndDec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEndDec(tigerParser.EndDecContext ctx);
+	T visitFunDecNoType(tigerParser.FunDecNoTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link tigerParser#type}.
+	 * Visit a parse tree produced by the {@code FunDecWithType}
+	 * labeled alternative in {@link tigerParser#funEndDec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitType(tigerParser.TypeContext ctx);
+	T visitFunDecWithType(tigerParser.FunDecWithTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TypeIdDec}
+	 * labeled alternative in {@link tigerParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeIdDec(tigerParser.TypeIdDecContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TypeArrDec}
+	 * labeled alternative in {@link tigerParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeArrDec(tigerParser.TypeArrDecContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code TypeRecDec}
+	 * labeled alternative in {@link tigerParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeRecDec(tigerParser.TypeRecDecContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link tigerParser#arrType}.
 	 * @param ctx the parse tree
