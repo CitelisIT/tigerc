@@ -25,11 +25,13 @@ error() {
     exit 1
 }
 
-if [[ "$#" -lt 1 ]]; then
+if [[ "$#" -lt 2 ]]; then
     echo "$USAGE"
     exit 0
 else
     TARGET=$1
+    TASK=$2
+    shift
     shift
 fi
 
@@ -41,7 +43,6 @@ while [[ "$#" -gt 0 ]]; do
         ;;
     --color) COLOR=1 ;;
     --no-color) COLOR=0 ;;
-    --parse-tree) MODE="tree" ;;
     *) error "Unknown option '$1'" ;;
     esac
     shift
@@ -51,7 +52,7 @@ if [[ ! -f $TARGET ]]; then
     error "The file $TARGET does not exist."
 fi
 
-case $MODE in
-tree) ./gradlew -q --console plain --init-script init.gradle tree -PinFile=$TARGET -Pcolor=$COLOR ;;
+case $TASK in
+--parse-tree) ./gradlew -q --console plain --init-script init.gradle tree -PinFile=$TARGET -Pcolor=$COLOR ;;
 *) ./gradlew -q --console plain --init-script init.gradle run -Pcolor=$COLOR ;;
 esac
