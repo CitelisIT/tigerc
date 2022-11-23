@@ -5,15 +5,17 @@ Usage:
     tigerc <file> <task> [argument] [options...]
 
 Tasks:
-    --parse-tree        Generates a representation of the input program's parse tree
+    --parse-tree            Generates a representation of the input program's parse tree
 
 Options:
-    -h, --help          Show this message
-    --color             Turns on colored output (default=true)
-    --no-color          Turns off colored output
+    -h, --help              Show this message
+    --color                 Turns on colored output (default=true)
+    --no-color              Turns off colored output
+    --log-level=<value>     Sets gradle's log level to the specified value of (quiet, warn, info, debug). Default: quiet
 EOM
 
 COLOR=1
+LOG_LEVEL="--quiet"
 
 error() {
     MESSAGE=$1
@@ -35,6 +37,7 @@ else
     shift
 fi
 
+# Parse optional options
 while [[ "$#" -gt 0 ]]; do
     case $1 in
     -h | --help)
@@ -43,16 +46,24 @@ while [[ "$#" -gt 0 ]]; do
         ;;
     --color) COLOR=1 ;;
     --no-color) COLOR=0 ;;
+    --log-level=*) LOG_LEVEL="--${1#*=}" ;;
     *) error "Unknown option '$1'" ;;
     esac
     shift
 done
 
+# Input file validation
 if [[ ! -f $TARGET ]]; then
     error "The file $TARGET does not exist."
 fi
 
+# Log level validation
+case $LOG_LEVEL in
+--quiet | --warn | --info | --debug) ;;
+*) error "Invalid log level ${LOG_LEVEL:2}" ;;
+esac
+
 case $TASK in
---parse-tree) ./gradlew -q --console plain --init-script init.gradle tree -PinFile=$TARGET -Pcolor=$COLOR ;;
-*) ./gradlew -q --console plain --init-script init.gradle run -Pcolor=$COLOR ;;
+--parse-tree) ./gradlew $LOG_LEVEL --console plain --init-script init.gradle tree -PinFile=$TARGET -Pcolor=$COLOR ;;
+*) error "Invalid task $TASK" ;;
 esac
