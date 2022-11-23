@@ -6,17 +6,17 @@ package parser;
 
 program: exp EOF;
 
-exp: orExp ( ':=' orExp)?;
+exp: first=orExp ( ':=' right+=orExp)?;
 
-orExp: andExp ( '|' andExp ('|' andExp)*)?;
+orExp: first=andExp ( '|' right+=andExp ('|' right+=andExp)*)?;
 
-andExp: eqExp ('&' eqExp ('&' eqExp)*)?;
+andExp: first=eqExp ('&' right+=eqExp ('&' right+=eqExp)*)?;
 
-eqExp: addExp ( ('=' | '<>' | '>' | '<' | '>=' | '>=') addExp)?;
+eqExp: first=addExp ( ops+=('=' | '<>' | '>' | '<' | '>=' | '>=') right+=addExp)?;
 
-addExp: multExp ( ('+' | '-') multExp)*;
+addExp: first=multExp ( ops+=('+' | '-') right+=multExp)*;
 
-multExp: simpleExp ( ('*' | '/') simpleExp)*;
+multExp: first=simpleExp ( ops+=('*' | '/') right+=simpleExp)*;
 
 simpleExp:
 	seqExp
@@ -36,46 +36,79 @@ litteralExp:
 ;
 
 idExp:
-	ID (
-		'(' ( exp ( ',' exp)*)? ')'
-		| '[' exp ']' (( '[' exp ']' | '.' ID)* | 'of' simpleExp)
-		| '.' ID ( '[' exp ']' | '.' ID)*
-		| '{' ( ID '=' exp ( ',' ID '=' exp)*)? '}'
-	)?;
+	idName=ID ( exprEnd=idEndExp )?;
 
-seqExp: '(' (exp (';' exp)*)? ')';
+idEndExp: 
+	callExp
+	| bracketExp
+	| recAccessExp
+	| recCreateExp 
+	;
 
-neg: '-' simpleExp;
+callExp: '(' ( args+=exp ( ',' args+=exp)*)? ')' ;
 
-ifThen: 'if' exp 'then' simpleExp ('else' simpleExp)?;
+bracketExp:
+	'[' accessExpr=exp ']' ( exprEnd=bracketExpEnd)*;
 
-whileExp: 'while' exp 'do' simpleExp;
+bracketExpEnd:
+	access							#BracketExpAccess
+	| 'of' arrTypeExp=simpleExp 	#ArrCreateEnd
+	;
 
-forExp: 'for' ID ':=' exp 'to' exp 'do' simpleExp;
+access:
+	'[' accessExpr=exp ']'	#ArrayAccess
+	| '.' accessId=ID		#RecordAccess
+	;
 
-letExp: 'let' (dec)+ 'in' (exp (';' exp)*)? 'end';
+recAccessExp: '.' accessId=ID ( succAccess=access )*;
+
+recCreateExp: '{' ( fieldIds+=ID '=' fieldValues+=exp ( ',' fieldIds+=ID '=' fieldValues+=exp)*)? '}';	
+
+seqExp: '(' (exprs+=exp (';' exprs+=exp)*)? ')';
+
+neg: '-' expr=simpleExp;
+
+ifThen: 'if' condition=exp 'then' thenExpr=simpleExp ('else' elseExpr=simpleExp)?;
+
+whileExp: 'while' condition=exp 'do' doExpr=simpleExp;
+
+forExp: 'for' forId=ID ':=' startValue=exp 'to' endValue=exp 'do' doExp=simpleExp;
+
+letExp: 'let' (decls+=dec)+ 'in' (inExprs+=exp (';' inExprs+=exp)*)? 'end';
 
 fieldCreate:
-	ID '=' exp; // Problème avec les règles callExp/ID ':' ID /lvalue
+	fieldId=ID '=' fieldExpr=exp; 
 
 dec: typeDec | varDec | funDec;
 
-typeDec: 'type' ID '=' type;
+typeDec: 'type' typeId=ID '=' typeValue=type;
 
-varDec: 'var' ID varDecFact;
+varDec: 'var' varId=ID varValue=varDecEnd;
 
-varDecFact: ':=' exp | ':' ID ':=' exp;
+varDecEnd:
+	':=' expr=exp 					#VarDecNoType
+	| ':' typeId=ID ':=' expr=exp	#VarDecWithType
+	;
 
 funDec:
-	'function' ID '(' (ID ':' ID (',' ID ':' ID)*)? ')' endDec;
+	'function'
+	functionId=ID '(' (argNames+=ID ':' argTypes+=ID (',' argNames+=ID ':' argTypes+=ID)*)? ')'
+	functionBody=funEndDec;
 
-endDec: '=' exp | ':' ID '=' exp;
+funEndDec:
+	'=' expr=exp					#FunDecNoType
+	| ':' typeId=ID '=' expr=exp	#FunDecWithType
+	;
 
-type: ID | arrType | recType;
+type:
+	ID 			#TypeIdDec
+	| arrType	#TypeArrDec
+	| recType	#TypeRecDec
+	;
 
-arrType: 'array of' ID;
+arrType: 'array of' typeId=ID;
 
-recType: '{' (ID ':' ID (',' ID ':' ID)*)? '}';
+recType: '{' (fieldIds+=ID ':' filedTypes+=ID (',' fieldIds+=ID ':' fieldTypes+=ID)*)? '}';
 
 KEYWORD:
 	'array'
