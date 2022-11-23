@@ -14,6 +14,8 @@ Options:
     --log-level=<value>     Sets gradle's log level to the specified value of (quiet, warn, info, debug). Default: quiet
 EOM
 
+GRADLE_OPTS=("--console" "plain" "--init-script" "init.gradle")
+
 COLOR=1
 LOG_LEVEL="--quiet"
 
@@ -65,6 +67,6 @@ case $LOG_LEVEL in
 esac
 
 case $TASK in
---parse-tree) ./gradlew $LOG_LEVEL --console plain --init-script init.gradle tree -PinFile=$TARGET -Pcolor=$COLOR ;;
+--parse-tree) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL tree -PinFile=$TARGET -Pcolor=$COLOR ;;
 *) error "Invalid task $TASK" ;;
 esac
