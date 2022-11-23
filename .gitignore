@@ -13,3 +13,7 @@ bin
 
 # .antlr cache folder
 .antlr/
+
+
+# shitty files from macOS
+**/.DS_Store
