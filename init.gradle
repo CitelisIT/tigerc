@@ -1,11 +1,21 @@
 allprojects {
-    ext.ansiBold = "${(char)27}[1m"
-    ext.ansiReset = "${(char)27}[0m"
-    ext.ansiRed = "${(char)27}[31m"
-    ext.ansiGreen = "${(char)27}[32m"
-    ext.ansiYellow = "${(char)27}[33m"
-    ext.ansiBlue = "${(char)27}[34m"
-    ext.ansiMagenta = "${(char)27}[35m"
+    if (project.hasProperty("color") && color) {
+        ext.ansiBold = "${(char)27}[1m"
+        ext.ansiReset = "${(char)27}[0m"
+        ext.ansiRed = "${(char)27}[31m"
+        ext.ansiGreen = "${(char)27}[32m"
+        ext.ansiYellow = "${(char)27}[33m"
+        ext.ansiBlue = "${(char)27}[34m"
+        ext.ansiMagenta = "${(char)27}[35m"
+    } else {
+        ext.ansiBold = ""
+        ext.ansiReset = ""
+        ext.ansiRed = ""
+        ext.ansiGreen = ""
+        ext.ansiYellow = ""
+        ext.ansiBlue = ""
+        ext.ansiMagenta = ""
+    }
 
     ext.logTask = {message ->
         println ""
