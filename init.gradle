@@ -1,0 +1,34 @@
+allprojects {
+    ext.ansiBold = "${(char)27}[1m"
+    ext.ansiReset = "${(char)27}[0m"
+    ext.ansiRed = "${(char)27}[31m"
+    ext.ansiGreen = "${(char)27}[32m"
+    ext.ansiYellow = "${(char)27}[33m"
+    ext.ansiBlue = "${(char)27}[34m"
+    ext.ansiMagenta = "${(char)27}[35m"
+
+    ext.logTask = {message ->
+        println ""
+        println "${ansiBold}> Task - ${message}${ansiReset}"
+    }
+
+    ext.logInfo = {message ->
+        println "${ansiBold}${ansiGreen}[INFO]${ansiReset} ${message}"
+    }
+
+    ext.logWarn = {message ->
+        println "${ansiBold}${ansiYellow}[WARN]${ansiReset} ${message}"
+    }
+
+    ext.logError = {message ->
+        println "${ansiBold}${ansiRed}[ERROR]${ansiReset} ${message}"
+    }
+
+    ext.logCmd = {message ->
+        println "${ansiBold}${ansiBlue}[CMD]${ansiReset} ${message}"
+    }
+
+    ext.logOutput = {message ->
+        println "${ansiBold}${ansiMagenta}[OUT]${ansiReset} ${message}"
+    }
+}
