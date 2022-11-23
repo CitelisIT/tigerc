@@ -1,5 +1,5 @@
 allprojects {
-    if (project.hasProperty("color") && color) {
+    if (project.hasProperty("color") && color == "1") {
         ext.ansiBold = "${(char)27}[1m"
         ext.ansiReset = "${(char)27}[0m"
         ext.ansiRed = "${(char)27}[31m"
