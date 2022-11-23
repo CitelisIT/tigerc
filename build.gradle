@@ -34,3 +34,32 @@ generateGrammarSource {
 dependencies {
     antlr 'org.antlr:antlr4:4.9.2'
 }
+
+import java.util.concurrent.TimeUnit
+
+tasks.register("tree") {
+    dependsOn "clean"
+    dependsOn "build"
+    tasks.findByName("build").mustRunAfter "clean"
+    doLast {
+        if (project.hasProperty("inFile")) {
+            def startTime = System.nanoTime()
+            logTask "Generating parse tree vizualisation from file ${inFile}"
+            logCmd "java -cp build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar Main ${inFile} --parse-tree"
+            def cmdError = new ByteArrayOutputStream()
+            exec {
+                commandLine "java", "-cp", "build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar", "Main", inFile, "--parse-tree",
+                errorOutput = cmdError
+                ignoreExitValue = true
+            }
+            if (cmdError.size() != 0) {
+                logError(cmdError.toString())
+                throw new GradleException("Error creating parse tree")
+            }
+            logInfo "Parse tree vizualisation generated"
+
+            def totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+            println "\n${project.ext.ansiBold}${project.ext.ansiGreen}TASK SUCCESSFUL${project.ext.ansiReset} in ${totalTime}ms"
+        }
+    } 
+}
