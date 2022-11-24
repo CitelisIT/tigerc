@@ -54,7 +54,7 @@ tasks.register("tree") {
             }
             if (cmdError.size() != 0) {
                 logError(cmdError.toString())
-                throw new GradleException("Error creating parse tree")
+                return
             }
             logInfo "Parse tree vizualisation generated"
 
