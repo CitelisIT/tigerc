@@ -44,6 +44,7 @@ tasks.register("tree") {
     doLast {
         if (project.hasProperty("inFile")) {
             def startTime = System.nanoTime()
+            def totalTime
             logTask "Generating parse tree vizualisation from file ${inFile}"
             logCmd "java -cp build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar Main ${inFile} --parse-tree"
             def cmdError = new ByteArrayOutputStream()
@@ -54,11 +55,13 @@ tasks.register("tree") {
             }
             if (cmdError.size() != 0) {
                 logError(cmdError.toString())
+                totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+                println "${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
                 return
             }
             logInfo "Parse tree vizualisation generated"
 
-            def totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+            totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
             println "\n${project.ext.ansiBold}${project.ext.ansiGreen}TASK SUCCESSFUL${project.ext.ansiReset} in ${totalTime}ms"
         }
     } 
