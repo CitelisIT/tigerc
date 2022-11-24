@@ -2192,44 +2192,20 @@ public class tigerParser extends Parser {
 	}
 
 	public static class TypeContext extends ParserRuleContext {
+		public TerminalNode ID() { return getToken(tigerParser.ID, 0); }
+		public ArrTypeContext arrType() {
+			return getRuleContext(ArrTypeContext.class,0);
+		}
+		public RecTypeContext recType() {
+			return getRuleContext(RecTypeContext.class,0);
+		}
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
-	 
-		public TypeContext() { }
-		public void copyFrom(TypeContext ctx) {
-			super.copyFrom(ctx);
-		}
-	}
-	public static class TypeIdDecContext extends TypeContext {
-		public TerminalNode ID() { return getToken(tigerParser.ID, 0); }
-		public TypeIdDecContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof tigerVisitor ) return ((tigerVisitor<? extends T>)visitor).visitTypeIdDec(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class TypeRecDecContext extends TypeContext {
-		public RecTypeContext recType() {
-			return getRuleContext(RecTypeContext.class,0);
-		}
-		public TypeRecDecContext(TypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof tigerVisitor ) return ((tigerVisitor<? extends T>)visitor).visitTypeRecDec(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class TypeArrDecContext extends TypeContext {
-		public ArrTypeContext arrType() {
-			return getRuleContext(ArrTypeContext.class,0);
-		}
-		public TypeArrDecContext(TypeContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof tigerVisitor ) return ((tigerVisitor<? extends T>)visitor).visitTypeArrDec(this);
+			if ( visitor instanceof tigerVisitor ) return ((tigerVisitor<? extends T>)visitor).visitType(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2242,7 +2218,6 @@ public class tigerParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case ID:
-				_localctx = new TypeIdDecContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(316);
@@ -2250,7 +2225,6 @@ public class tigerParser extends Parser {
 				}
 				break;
 			case T__38:
-				_localctx = new TypeArrDecContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(317);
@@ -2258,7 +2232,6 @@ public class tigerParser extends Parser {
 				}
 				break;
 			case T__21:
-				_localctx = new TypeRecDecContext(_localctx);
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(318);

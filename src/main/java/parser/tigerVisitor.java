@@ -247,26 +247,11 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunDecWithType(tigerParser.FunDecWithTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code TypeIdDec}
-	 * labeled alternative in {@link tigerParser#type}.
+	 * Visit a parse tree produced by {@link tigerParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeIdDec(tigerParser.TypeIdDecContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code TypeArrDec}
-	 * labeled alternative in {@link tigerParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeArrDec(tigerParser.TypeArrDecContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code TypeRecDec}
-	 * labeled alternative in {@link tigerParser#type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitTypeRecDec(tigerParser.TypeRecDecContext ctx);
+	T visitType(tigerParser.TypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link tigerParser#arrType}.
 	 * @param ctx the parse tree

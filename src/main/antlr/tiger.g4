@@ -101,9 +101,9 @@ funEndDec:
 	;
 
 type:
-	ID 			#TypeIdDec
-	| arrType	#TypeArrDec
-	| recType	#TypeRecDec
+	ID 			
+	| arrType	
+	| recType	
 	;
 
 arrType: 'array of' typeId=ID;
