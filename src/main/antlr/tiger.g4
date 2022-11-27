@@ -6,7 +6,7 @@ package parser;
 
 program: exp EOF;
 
-exp: first=orExp ( ':=' right+=orExp)?;
+exp: first=orExp ( ':=' right=orExp)?;
 
 orExp: first=andExp ( '|' right+=andExp ('|' right+=andExp)*)?;
 

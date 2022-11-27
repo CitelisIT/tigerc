@@ -156,8 +156,7 @@ public class tigerParser extends Parser {
 
 	public static class ExpContext extends ParserRuleContext {
 		public OrExpContext first;
-		public OrExpContext orExp;
-		public List<OrExpContext> right = new ArrayList<OrExpContext>();
+		public OrExpContext right;
 		public List<OrExpContext> orExp() {
 			return getRuleContexts(OrExpContext.class);
 		}
@@ -192,8 +191,7 @@ public class tigerParser extends Parser {
 				setState(70);
 				match(T__0);
 				setState(71);
-				((ExpContext)_localctx).orExp = orExp();
-				((ExpContext)_localctx).right.add(((ExpContext)_localctx).orExp);
+				((ExpContext)_localctx).right = orExp();
 				}
 			}
 
