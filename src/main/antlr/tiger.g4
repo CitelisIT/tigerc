@@ -12,7 +12,7 @@ orExp: first=andExp ( '|' right+=andExp ('|' right+=andExp)*)?;
 
 andExp: first=eqExp ('&' right+=eqExp ('&' right+=eqExp)*)?;
 
-eqExp: first=addExp ( ops+=('=' | '<>' | '>' | '<' | '>=' | '>=') right+=addExp)?;
+eqExp: first=addExp ( ops+=('=' | '<>' | '>' | '<' | '>=' | '<=') right+=addExp)?;
 
 addExp: first=multExp ( ops+=('+' | '-') right+=multExp)*;
 
