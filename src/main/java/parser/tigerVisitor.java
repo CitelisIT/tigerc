@@ -189,12 +189,6 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLetExp(tigerParser.LetExpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link tigerParser#fieldCreate}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitFieldCreate(tigerParser.FieldCreateContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link tigerParser#dec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
