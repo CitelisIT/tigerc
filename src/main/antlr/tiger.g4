@@ -76,9 +76,6 @@ forExp: 'for' forId=ID ':=' startValue=exp 'to' endValue=exp 'do' doExp=simpleEx
 
 letExp: 'let' (decls+=dec)+ 'in' (inExprs+=exp (';' inExprs+=exp)*)? 'end';
 
-fieldCreate:
-	fieldId=ID '=' fieldExpr=exp; 
-
 dec: typeDec | varDec | funDec;
 
 typeDec: 'type' typeId=ID '=' typeValue=type;
