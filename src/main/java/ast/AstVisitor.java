@@ -4,17 +4,31 @@ public interface AstVisitor<T> {
 
     public T visit(Program program);
 
-    public T visit(Exp exp);
+    public T visit(Assign assign);
 
-    public T visit(OrExp orExp);
+    public T visit(Or or);
 
-    public T visit(AndExp andExp);
+    public T visit(And and);
 
-    public T visit(EqExp eqExp);
+    public T visit(Eq eq);
 
-    public T visit(AddExp addExp);
+    public T visit(NotEq notEq);
 
-    public T visit(MultExp multExp);
+    public T visit(InfEq infEq);
+
+    public T visit(Inf inf);
+
+    public T visit(SupEq supEq);
+
+    public T visit(Sup sup);
+
+    public T visit(Add add);
+
+    public T visit(Sub sub);
+
+    public T visit(Mult mult);
+
+    public T visit(Div div);
 
     public T visit(IdExp idExp);
 
@@ -23,6 +37,8 @@ public interface AstVisitor<T> {
     public T visit(Neg neg);
 
     public T visit(IfThen ifThen);
+
+    public T visit(IfThenElse ifThenElse);
 
     public T visit(WhileExp whileExp);
 
@@ -36,23 +52,19 @@ public interface AstVisitor<T> {
 
     public T visit(VarDec varDec);
 
-    public T visit(VarDecFact varDecFact);
-
     public T visit(FunDec funDec);
 
     public T visit(EndDec endDec);
-
-    public T visit(Type type);
 
     public T visit(ArrType arrType);
 
     public T visit(RecType recType);
 
-    public T visit(IntLitteral intLitteral);
+    public T visit(IntLiteral intLitteral);
 
-    public T visit(StringLitteral stringLitteral);
+    public T visit(StringLiteral stringLiteral);
 
-    public T visit(NilLitteral nilLitteral);
+    public T visit(NilLiteral nilLitteral);
 
     public T visit(BreakLitteral breakLitteral);
 }

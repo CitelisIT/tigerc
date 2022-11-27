@@ -6,4 +6,13 @@ public class TypeDec implements Ast {
         return visitor.visit(this);
     }
 
+    public Ast typeId;
+    public Ast typeValue;
+
+    public TypeDec(Ast typeId, Ast typeValue) {
+        this.typeId = typeId;
+        this.typeValue = typeValue;
+    }
+
+
 }

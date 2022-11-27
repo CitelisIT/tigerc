@@ -6,4 +6,6 @@ public class BreakLitteral implements Ast {
         return visitor.visit(this);
     }
 
+    public String value = "break";
+
 }

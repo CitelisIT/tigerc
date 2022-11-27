@@ -6,4 +6,9 @@ public class Neg implements Ast {
         return visitor.visit(this);
     }
 
+    public Ast expr;
+
+    public Neg(Ast expr) {
+        this.expr = expr;
+    }
 }

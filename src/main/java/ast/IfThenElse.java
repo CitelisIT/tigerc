@@ -1,6 +1,6 @@
 package ast;
 
-public class IfThen implements Ast {
+public class IfThenElse implements Ast {
 
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
@@ -8,11 +8,11 @@ public class IfThen implements Ast {
 
     public Ast condition;
     public Ast thenExpr;
+    public Ast elseExpr;
 
-    public IfThen(Ast condition, Ast thenExpr) {
+    public IfThenElse(Ast condition, Ast thenExpr, Ast elseExpr) {
         this.condition = condition;
         this.thenExpr = thenExpr;
+        this.elseExpr = elseExpr;
     }
-
-
 }

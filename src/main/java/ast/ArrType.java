@@ -6,4 +6,9 @@ public class ArrType implements Ast {
         return visitor.visit(this);
     }
 
+    public Ast typeId;
+
+    public ArrType(Ast typeId) {
+        this.typeId = typeId;
+    }
 }

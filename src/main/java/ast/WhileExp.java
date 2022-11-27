@@ -6,4 +6,12 @@ public class WhileExp implements Ast {
         return visitor.visit(this);
     }
 
+    public Ast condition;
+    public Ast doExpr;
+
+    public WhileExp(Ast condition, Ast doExpr) {
+        this.condition = condition;
+        this.doExpr = doExpr;
+    }
+
 }

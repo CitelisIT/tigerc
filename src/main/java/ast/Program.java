@@ -6,4 +6,9 @@ public class Program implements Ast {
         return visitor.visit(this);
     }
 
+    public Ast exp;
+
+    public Program(Ast exp) {
+        this.exp = exp;
+    }
 }
