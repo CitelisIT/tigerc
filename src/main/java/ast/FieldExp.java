@@ -1,17 +1,16 @@
 package ast;
 
-public class Assign implements Ast {
+public class FieldExp implements Ast {
 
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
     }
 
     public Ast lValue;
-    public Ast expr;
+    public Id id;
 
-    public Assign(Ast lValue, Ast expr) {
+    public FieldExp(Ast lValue, Id id) {
         this.lValue = lValue;
-        this.expr = expr;
+        this.id = id;
     }
-
 }

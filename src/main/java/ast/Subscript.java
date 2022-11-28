@@ -1,6 +1,6 @@
 package ast;
 
-public class Assign implements Ast {
+public class Subscript implements Ast {
 
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
@@ -9,7 +9,7 @@ public class Assign implements Ast {
     public Ast lValue;
     public Ast expr;
 
-    public Assign(Ast lValue, Ast expr) {
+    public Subscript(Ast lValue, Ast expr) {
         this.lValue = lValue;
         this.expr = expr;
     }

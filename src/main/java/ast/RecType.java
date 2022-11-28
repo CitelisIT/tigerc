@@ -1,19 +1,17 @@
 package ast;
 
-import java.util.ArrayList;
+import java.util.Hashtable;
 
-public class RecType implements Ast {
+public class RecType extends Type {
 
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
     }
 
-    public ArrayList<Ast> fieldIds = new ArrayList<Ast>();
-    public ArrayList<Ast> fieldTypes = new ArrayList<Ast>();
+    public Hashtable<Id, Type> fields;
 
-    public RecType(ArrayList<Ast> fieldIds, ArrayList<Ast> fieldTypes) {
-        this.fieldIds = fieldIds;
-        this.fieldTypes = fieldTypes;
+    public RecType(Hashtable<Id, Type> fields) {
+        this.fields = fields;
     }
 
 }

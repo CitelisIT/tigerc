@@ -44,21 +44,47 @@ public interface AstVisitor<T> {
 
     public T visit(ForExp forExp);
 
+    public T visit(LetDecls letDecls);
+
+    public T visit(LetScope letScope);
+
     public T visit(LetExp letExp);
 
-    public T visit(FieldCreate fieldCreate);
+    public T visit(CallExpArgs callExpArgs);
+
+    public T visit(CallExp callExp);
+
+    public T visit(FieldDec fieldDec);
 
     public T visit(TypeDec typeDec);
 
-    public T visit(VarDec varDec);
+    public T visit(VarDecType varDecType);
+
+    public T visit(VarDecNoType varDecNoType);
+
+    public T visit(FunArgs funArgs);
 
     public T visit(FunDec funDec);
 
-    public T visit(EndDec endDec);
+    public T visit(Id id);
+
+    public T visit(TypeId typeId);
 
     public T visit(ArrType arrType);
 
     public T visit(RecType recType);
+
+    public T visit(Subscript subscript);
+
+    public T visit(FieldExp fieldExp);
+
+    public T visit(ArrCreate arrCreate);
+
+    public T visit(FieldCreate fieldCreate);
+
+    public T visit(RecCreateFields recCreateFields);
+
+    public T visit(RecCreate recCreate);
 
     public T visit(IntLiteral intLitteral);
 
@@ -66,5 +92,5 @@ public interface AstVisitor<T> {
 
     public T visit(NilLiteral nilLitteral);
 
-    public T visit(BreakLitteral breakLitteral);
+    public T visit(BreakLiteral breakLitteral);
 }

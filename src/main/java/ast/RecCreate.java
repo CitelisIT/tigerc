@@ -1,18 +1,17 @@
 package ast;
 
-public class TypeDec implements Ast {
+public class RecCreate implements Ast {
 
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
     }
 
     public TypeId typeId;
-    public Type typeValue;
+    public RecCreateFields fields;
 
-    public TypeDec(TypeId typeId, Type typeValue) {
+    public RecCreate(TypeId typeId, RecCreateFields fields) {
         this.typeId = typeId;
-        this.typeValue = typeValue;
+        this.fields = fields;
     }
-
 
 }

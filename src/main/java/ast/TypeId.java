@@ -1,14 +1,15 @@
 package ast;
 
-public class ArrType extends Type {
+public class TypeId extends Type {
 
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
     }
 
-    public TypeId name;
+    public String name;
 
-    public ArrType(TypeId name) {
+    public TypeId(String name) {
         this.name = name;
     }
+
 }
