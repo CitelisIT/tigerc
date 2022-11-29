@@ -3,7 +3,6 @@ package graphviz;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import ast.AstVisitor;
-
 import ast.*;
 
 public class GraphVizVisitor implements AstVisitor<String> {
@@ -45,187 +44,612 @@ public class GraphVizVisitor implements AstVisitor<String> {
     }
 
     public String visit(Program program) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String expIdentifier = program.exp.accept(this);
+
+        this.addNode(nodeIdentifier, "Program");
+        this.addTransition(nodeIdentifier, expIdentifier);
+
+        return nodeIdentifier;
     }
 
     public String visit(Assign assign) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String lValueId = assign.lValue.accept(this);
+        String expId = assign.expr.accept(this);
+
+        this.addNode(nodeIdentifier, "Assign");
+        this.addTransition(nodeIdentifier, lValueId);
+        this.addTransition(nodeIdentifier, expId);
+
+        return nodeIdentifier;
+
     }
 
     public String visit(Or or) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = or.left.accept(this);
+        String rightId = or.right.accept(this);
+
+        this.addNode(nodeIdentifier, "|");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(And and) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = and.left.accept(this);
+        String rightId = and.right.accept(this);
+
+        this.addNode(nodeIdentifier, "&");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(Eq eq) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = eq.left.accept(this);
+        String rightId = eq.right.accept(this);
+
+        this.addNode(nodeIdentifier, "=");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(NotEq notEq) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = notEq.left.accept(this);
+        String rightId = notEq.right.accept(this);
+
+        this.addNode(nodeIdentifier, "<>");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(InfEq infEq) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = infEq.left.accept(this);
+        String rightId = infEq.right.accept(this);
+
+        this.addNode(nodeIdentifier, "<=");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(Inf inf) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = inf.left.accept(this);
+        String rightId = inf.right.accept(this);
+
+        this.addNode(nodeIdentifier, "<");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(SupEq supEq) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = supEq.left.accept(this);
+        String rightId = supEq.right.accept(this);
+
+        this.addNode(nodeIdentifier, ">=");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(Sup sup) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = sup.left.accept(this);
+        String rightId = sup.right.accept(this);
+
+        this.addNode(nodeIdentifier, ">");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(Add add) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = add.left.accept(this);
+        String rightId = add.right.accept(this);
+
+        this.addNode(nodeIdentifier, "+");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(Sub sub) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = sub.left.accept(this);
+        String rightId = sub.right.accept(this);
+
+        this.addNode(nodeIdentifier, "-");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(Mult mult) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String leftId = mult.left.accept(this);
+        String rightId = mult.right.accept(this);
+
+        this.addNode(nodeIdentifier, "*");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(Div div) {
-        return "";
-    }
 
-    public String visit(IdExp idExp) {
-        return "";
+        String nodeIdentifier = this.nextState();
+
+        String leftId = div.left.accept(this);
+        String rightId = div.right.accept(this);
+
+        this.addNode(nodeIdentifier, "/");
+        this.addTransition(nodeIdentifier, leftId);
+        this.addTransition(nodeIdentifier, rightId);
+
+        return nodeIdentifier;
     }
 
     public String visit(SeqExp seqExp) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "SeqExp");
+        for (Ast exp : seqExp.exprs) {
+            String expId = exp.accept(this);
+            this.addTransition(nodeIdentifier, expId);
+        }
+
+        return nodeIdentifier;
     }
 
     public String visit(Neg neg) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String expId = neg.expr.accept(this);
+
+        this.addNode(nodeIdentifier, "-");
+        this.addTransition(nodeIdentifier, expId);
+
+        return nodeIdentifier;
     }
 
     public String visit(IfThen ifThen) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String condId = ifThen.condition.accept(this);
+        String thenId = ifThen.thenExpr.accept(this);
+
+        this.addNode(nodeIdentifier, "If Then");
+        this.addTransition(nodeIdentifier, condId);
+        this.addTransition(nodeIdentifier, thenId);
+
+        return nodeIdentifier;
     }
 
     public String visit(IfThenElse ifThenElse) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String condId = ifThenElse.condition.accept(this);
+        String thenId = ifThenElse.thenExpr.accept(this);
+        String elseId = ifThenElse.thenExpr.accept(this);
+
+        this.addNode(nodeIdentifier, "If Then Else");
+        this.addTransition(nodeIdentifier, condId);
+        this.addTransition(nodeIdentifier, thenId);
+        this.addTransition(nodeIdentifier, elseId);
+
+        return nodeIdentifier;
     }
 
     public String visit(WhileExp whileExp) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String condId = whileExp.condition.accept(this);
+        String expId = whileExp.doExpr.accept(this);
+
+        this.addNode(nodeIdentifier, "While");
+        this.addTransition(nodeIdentifier, condId);
+        this.addTransition(nodeIdentifier, expId);
+
+        return nodeIdentifier;
     }
 
     public String visit(ForExp forExp) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String varId = forExp.forId.accept(this);
+        String startValueId = forExp.startValue.accept(this);
+        String endValueId = forExp.endValue.accept(this);
+        String expId = forExp.doExpr.accept(this);
+
+        this.addNode(nodeIdentifier, "For");
+        this.addTransition(nodeIdentifier, varId);
+        this.addTransition(nodeIdentifier, startValueId);
+        this.addTransition(nodeIdentifier, endValueId);
+        this.addTransition(nodeIdentifier, expId);
+
+        return nodeIdentifier;
     }
 
     public String visit(LetDecls letDecls) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Declarations");
+        for (Ast exp : letDecls.decls) {
+            String declId = exp.accept(this);
+            this.addTransition(nodeIdentifier, declId);
+        }
+
+        return nodeIdentifier;
     }
 
     public String visit(LetScope letScope) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Expressions");
+        for (Ast exp : letScope.exprs) {
+            String declId = exp.accept(this);
+            this.addTransition(nodeIdentifier, declId);
+        }
+
+        return nodeIdentifier;
     }
 
     public String visit(LetExp letExp) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Let In");
+
+        for (Ast decl : letExp.decls) {
+            String declId = decl.accept(this);
+            this.addTransition(nodeIdentifier, declId);
+        }
+
+        for (Ast exp : letExp.inExprs) {
+            String declId = exp.accept(this);
+            this.addTransition(nodeIdentifier, declId);
+        }
+
+        return nodeIdentifier;
     }
 
     public String visit(CallExpArgs callExpArgs) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Call Arguments");
+
+        for (Ast arg : callExpArgs.args) {
+            String argId = arg.accept(this);
+            this.addTransition(nodeIdentifier, argId);
+        }
+
+        return nodeIdentifier;
     }
 
     public String visit(CallExp callExp) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String callId = callExp.id.accept(this);
+        String argsId = callExp.args.accept(this);
+
+        this.addNode(nodeIdentifier, "Call");
+        this.addTransition(nodeIdentifier, callId);
+        this.addTransition(nodeIdentifier, argsId);
+
+        return nodeIdentifier;
     }
 
     public String visit(FieldDec fieldDec) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String idfId = fieldDec.id.accept(this);
+        String typeId = fieldDec.typeId.accept(this);
+
+        this.addNode(nodeIdentifier, "Field");
+        this.addTransition(nodeIdentifier, idfId);
+        this.addTransition(nodeIdentifier, typeId);
+
+        return nodeIdentifier;
     }
 
     public String visit(TypeDec typeDec) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String idfId = typeDec.typeId.accept(this);
+        String typeValueId = typeDec.typeValue.accept(this);
+
+        this.addNode(nodeIdentifier, "Type Declaration");
+        this.addTransition(nodeIdentifier, idfId);
+        this.addTransition(nodeIdentifier, typeValueId);
+
+        return nodeIdentifier;
     }
 
     public String visit(VarDecType varDecType) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String idfId = varDecType.varId.accept(this);
+        String typeId = varDecType.varTypeId.accept(this);
+        String valueId = varDecType.varValue.accept(this);
+
+        this.addNode(nodeIdentifier, "Variable Declaration");
+        this.addTransition(nodeIdentifier, idfId);
+        this.addTransition(nodeIdentifier, typeId);
+        this.addTransition(nodeIdentifier, valueId);
+
+        return nodeIdentifier;
     }
 
     public String visit(VarDecNoType varDecNoType) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String idfId = varDecNoType.varId.accept(this);
+        String valueId = varDecNoType.varValue.accept(this);
+
+        this.addNode(nodeIdentifier, "Variable Declaration");
+        this.addTransition(nodeIdentifier, idfId);
+        this.addTransition(nodeIdentifier, valueId);
+
+        return nodeIdentifier;
     }
 
     public String visit(FunArgs funArgs) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Arguments");
+
+        for (FieldDec arg : funArgs.args) {
+            String argId = arg.accept(this);
+            this.addTransition(nodeIdentifier, argId);
+        }
+
+        return nodeIdentifier;
     }
 
     public String visit(FunDec funDec) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String funId = funDec.id.accept(this);
+        String argsId = funDec.args.accept(this);
+        String typeId = funDec.returnTypeId.accept(this);
+        String bodyId = funDec.body.accept(this);
+
+        this.addNode(nodeIdentifier, "Function");
+        this.addTransition(nodeIdentifier, funId);
+        this.addTransition(nodeIdentifier, argsId);
+        this.addTransition(nodeIdentifier, typeId);
+        this.addTransition(nodeIdentifier, bodyId);
+
+        return nodeIdentifier;
     }
 
     public String visit(Id id) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Id: " + id.name);
+
+        return nodeIdentifier;
     }
 
     public String visit(TypeId typeId) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+
+        this.addNode(nodeIdentifier, "Type Id: " + typeId.name);
+
+        return nodeIdentifier;
     }
 
     public String visit(ArrType arrType) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Array of " + arrType.name);
+
+        return nodeIdentifier;
     }
 
     public String visit(RecType recType) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Record Type");
+
+        for (FieldDec field : recType.fields) {
+            String fieldId = field.accept(this);
+            this.addTransition(nodeIdentifier, fieldId);
+        }
+
+        return nodeIdentifier;
     }
 
     public String visit(Subscript subscript) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String lValueId = subscript.lValue.accept(this);
+        String expId = subscript.expr.accept(this);
+
+        this.addNode(nodeIdentifier, "Array Access");
+        this.addTransition(nodeIdentifier, lValueId);
+        this.addTransition(nodeIdentifier, expId);
+
+        return nodeIdentifier;
     }
 
     public String visit(FieldExp fieldExp) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String lValueId = fieldExp.lValue.accept(this);
+        String idfId = fieldExp.id.accept(this);
+
+        this.addNode(nodeIdentifier, "Field Access");
+        this.addTransition(nodeIdentifier, lValueId);
+        this.addTransition(nodeIdentifier, idfId);
+
+        return nodeIdentifier;
     }
 
     public String visit(ArrCreate arrCreate) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String typeId = arrCreate.typeId.accept(this);
+        String indexId = arrCreate.index.accept(this);
+        String ofId = arrCreate.of.accept(this);
+
+        this.addNode(nodeIdentifier, "Array Creation");
+        this.addTransition(nodeIdentifier, typeId);
+        this.addTransition(nodeIdentifier, indexId);
+        this.addTransition(nodeIdentifier, ofId);
+
+        return nodeIdentifier;
     }
 
     public String visit(FieldCreate fieldCreate) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String idfId = fieldCreate.id.accept(this);
+        String expId = fieldCreate.expr.accept(this);
+
+        this.addNode(nodeIdentifier, "Field Creation");
+        this.addTransition(nodeIdentifier, idfId);
+        this.addTransition(nodeIdentifier, expId);
+
+        return nodeIdentifier;
     }
 
     public String visit(RecCreateFields recCreateFields) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Record Fields");
+
+        for (FieldCreate field : recCreateFields.fields) {
+            String fieldId = field.accept(this);
+            this.addTransition(nodeIdentifier, fieldId);
+        }
+
+        return nodeIdentifier;
     }
 
     public String visit(RecCreate recCreate) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        String typeId = recCreate.typeId.accept(this);
+        String fieldsId = recCreate.fields.accept(this);
+
+        this.addNode(nodeIdentifier, "Record Creation");
+        this.addTransition(nodeIdentifier, typeId);
+        this.addTransition(nodeIdentifier, fieldsId);
+
+        return nodeIdentifier;
     }
 
     public String visit(IntLiteral intLitteral) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, String.valueOf(intLitteral.value));
+
+        return nodeIdentifier;
     }
 
     public String visit(StringLiteral stringLiteral) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, stringLiteral.value);
+
+        return nodeIdentifier;
     }
 
     public String visit(NilLiteral nilLitteral) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "nil");
+
+        return nodeIdentifier;
     }
 
     public String visit(BreakLiteral breakLitteral) {
-        return "";
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "break");
+
+        return nodeIdentifier;
     }
 
 }
