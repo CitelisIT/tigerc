@@ -48,27 +48,55 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return "";
     }
 
-    public String visit(Exp exp) {
+    public String visit(Assign assign) {
         return "";
     }
 
-    public String visit(OrExp orExp) {
+    public String visit(Or or) {
         return "";
     }
 
-    public String visit(AndExp andExp) {
+    public String visit(And and) {
         return "";
     }
 
-    public String visit(EqExp eqExp) {
+    public String visit(Eq eq) {
         return "";
     }
 
-    public String visit(AddExp addExp) {
+    public String visit(NotEq notEq) {
         return "";
     }
 
-    public String visit(MultExp multExp) {
+    public String visit(InfEq infEq) {
+        return "";
+    }
+
+    public String visit(Inf inf) {
+        return "";
+    }
+
+    public String visit(SupEq supEq) {
+        return "";
+    }
+
+    public String visit(Sup sup) {
+        return "";
+    }
+
+    public String visit(Add add) {
+        return "";
+    }
+
+    public String visit(Sub sub) {
+        return "";
+    }
+
+    public String visit(Mult mult) {
+        return "";
+    }
+
+    public String visit(Div div) {
         return "";
     }
 
@@ -88,6 +116,10 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return "";
     }
 
+    public String visit(IfThenElse ifThenElse) {
+        return "";
+    }
+
     public String visit(WhileExp whileExp) {
         return "";
     }
@@ -96,11 +128,27 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return "";
     }
 
+    public String visit(LetDecls letDecls) {
+        return "";
+    }
+
+    public String visit(LetScope letScope) {
+        return "";
+    }
+
     public String visit(LetExp letExp) {
         return "";
     }
 
-    public String visit(FieldCreate fieldCreate) {
+    public String visit(CallExpArgs callExpArgs) {
+        return "";
+    }
+
+    public String visit(CallExp callExp) {
+        return "";
+    }
+
+    public String visit(FieldDec fieldDec) {
         return "";
     }
 
@@ -108,11 +156,15 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return "";
     }
 
-    public String visit(VarDec varDec) {
+    public String visit(VarDecType varDecType) {
         return "";
     }
 
-    public String visit(VarDecFact varDecFact) {
+    public String visit(VarDecNoType varDecNoType) {
+        return "";
+    }
+
+    public String visit(FunArgs funArgs) {
         return "";
     }
 
@@ -120,11 +172,11 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return "";
     }
 
-    public String visit(EndDec endDec) {
+    public String visit(Id id) {
         return "";
     }
 
-    public String visit(Type type) {
+    public String visit(TypeId typeId) {
         return "";
     }
 
@@ -136,19 +188,43 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return "";
     }
 
-    public String visit(IntLitteral intLitteral) {
+    public String visit(Subscript subscript) {
         return "";
     }
 
-    public String visit(StringLitteral stringLitteral) {
+    public String visit(FieldExp fieldExp) {
         return "";
     }
 
-    public String visit(NilLitteral nilLitteral) {
+    public String visit(ArrCreate arrCreate) {
         return "";
     }
 
-    public String visit(BreakLitteral breakLitteral) {
+    public String visit(FieldCreate fieldCreate) {
+        return "";
+    }
+
+    public String visit(RecCreateFields recCreateFields) {
+        return "";
+    }
+
+    public String visit(RecCreate recCreate) {
+        return "";
+    }
+
+    public String visit(IntLiteral intLitteral) {
+        return "";
+    }
+
+    public String visit(StringLiteral stringLiteral) {
+        return "";
+    }
+
+    public String visit(NilLiteral nilLitteral) {
+        return "";
+    }
+
+    public String visit(BreakLiteral breakLitteral) {
         return "";
     }
 
