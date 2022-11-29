@@ -1,6 +1,6 @@
 package ast;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
 
 public class RecType extends Type {
 
@@ -8,9 +8,9 @@ public class RecType extends Type {
         return visitor.visit(this);
     }
 
-    public Hashtable<Id, Type> fields;
+    public ArrayList<FieldDec> fields;
 
-    public RecType(Hashtable<Id, Type> fields) {
+    public RecType(ArrayList<FieldDec> fields) {
         this.fields = fields;
     }
 
