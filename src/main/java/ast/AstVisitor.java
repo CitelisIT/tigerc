@@ -30,8 +30,6 @@ public interface AstVisitor<T> {
 
     public T visit(Div div);
 
-    public T visit(IdExp idExp);
-
     public T visit(SeqExp seqExp);
 
     public T visit(Neg neg);
