@@ -355,17 +355,12 @@ public class GraphVizVisitor implements AstVisitor<String> {
 
         String nodeIdentifier = this.nextState();
 
+        String declsId = letExp.letDecls.accept(this);
+        String inId = letExp.letScope.accept(this);
+
         this.addNode(nodeIdentifier, "Let In");
-
-        for (Ast decl : letExp.decls) {
-            String declId = decl.accept(this);
-            this.addTransition(nodeIdentifier, declId);
-        }
-
-        for (Ast exp : letExp.inExprs) {
-            String declId = exp.accept(this);
-            this.addTransition(nodeIdentifier, declId);
-        }
+        this.addTransition(nodeIdentifier, declsId);
+        this.addTransition(nodeIdentifier, inId);
 
         return nodeIdentifier;
     }
@@ -500,7 +495,6 @@ public class GraphVizVisitor implements AstVisitor<String> {
     public String visit(TypeId typeId) {
 
         String nodeIdentifier = this.nextState();
-
 
         this.addNode(nodeIdentifier, "Type Id: " + typeId.name);
 
