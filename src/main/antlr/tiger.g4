@@ -88,9 +88,13 @@ funDec:
 	( ':' returnType=ID )? body=exp;	
 
 type:
-	ID 			
-	| arrType	
-	| recType	
+	ID 				#TypeId	
+	| complexType	#CompositeType
+	;
+
+complexType: 
+	arrType
+	| recType
 	;
 
 arrType: 'array of' typeId=ID;
