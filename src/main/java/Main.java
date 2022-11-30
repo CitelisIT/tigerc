@@ -1,18 +1,18 @@
-import parser.tigerLexer;
-import parser.tigerParser;
-import parser.tigerParser.ProgramContext;
-
 import java.io.IOException;
 import java.util.Arrays;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
+import ast.Ast;
+import ast.AstCreator;
+import graphviz.GraphVizVisitor;
+import parser.tigerLexer;
+import parser.tigerParser;
+import parser.tigerParser.ProgramContext;
 
 public class Main {
 
@@ -35,6 +35,9 @@ public class Main {
             // Récupération du noeud program (le noeud à la racine)
             ProgramContext program = parser.program();
 
+            AstCreator astCreator = new AstCreator();
+            Ast ast = program.accept(astCreator);
+
             switch (mode) {
                 case "--parse-tree":
                     // code d'affichage de l'arbre syntaxique
@@ -49,8 +52,23 @@ public class Main {
                     frame.pack();
                     frame.setVisible(true);
                     break;
-            }
 
+                case "--ast":
+                    String outFile;
+                    if (args.length < 3) {
+                        System.out.println(
+                                "Error: '--ast' option expects a path for the output file.");
+                        return;
+                    } else {
+                        outFile = args[2];
+                    }
+                    // Visiteur de représentation graphique + appel
+                    GraphVizVisitor graphViz = new GraphVizVisitor();
+                    ast.accept(graphViz);
+
+                    graphViz.dumpGraph(outFile);
+                    break;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (RecognitionException e) {
