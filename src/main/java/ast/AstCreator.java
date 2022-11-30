@@ -344,59 +344,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	 * </p>
 	 */
 	@Override
-	public Ast visitVarDecNoType(tigerParser.VarDecNoTypeContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
-	@Override
-	public Ast visitVarDecWithType(tigerParser.VarDecWithTypeContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
-	@Override
 	public Ast visitFunDec(tigerParser.FunDecContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
-	@Override
-	public Ast visitFunDecNoType(tigerParser.FunDecNoTypeContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
-	@Override
-	public Ast visitFunDecWithType(tigerParser.FunDecWithTypeContext ctx) {
 		return visitChildren(ctx);
 	}
 
