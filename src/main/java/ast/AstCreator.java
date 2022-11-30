@@ -348,6 +348,11 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return visitChildren(ctx);
 	}
 
+	@Override
+	public Ast visitTypeId(tigerParser.TypeIdContext ctx) {
+		return visitChildren(ctx);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -357,7 +362,20 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	 * </p>
 	 */
 	@Override
-	public Ast visitType(tigerParser.TypeContext ctx) {
+	public Ast visitCompositeType(tigerParser.CompositeTypeContext ctx) {
+		return visitChildren(ctx);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>
+	 * The default implementation returns the result of calling {@link #visitChildren} on
+	 * {@code ctx}.
+	 * </p>
+	 */
+	@Override
+	public Ast visitComplexType(tigerParser.ComplexTypeContext ctx) {
 		return visitChildren(ctx);
 	}
 
