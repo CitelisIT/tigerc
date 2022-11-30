@@ -26,61 +26,118 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return new Program(exp);
 	}
 
-
 	@Override
 	public Ast visitExp(tigerParser.ExpContext ctx) {
-		return visitChildren(ctx);
+		Ast first = ctx.first.accept(this);
+		if (ctx.right != null) {
+			Ast right = ctx.right.accept(this);
+			return new Assign(first, right);
+		} else {
+			return first;
+		}
 	}
-
 
 	@Override
 	public Ast visitOrExp(tigerParser.OrExpContext ctx) {
-		return visitChildren(ctx);
-	}
+		Ast tempNode = ctx.first.accept(this);
+		int nodesCount = ctx.right.size();
 
+		for (int i = 0; i < nodesCount; i++) {
+			Ast right = ctx.right.get(i).accept(this);
+			tempNode = new Or(tempNode, right);
+		}
+		return tempNode;
+	}
 
 	@Override
 	public Ast visitAndExp(tigerParser.AndExpContext ctx) {
-		return visitChildren(ctx);
+		Ast tempNode = ctx.first.accept(this);
+		int nodesCount = ctx.right.size();
+
+		for (int i = 0; i < nodesCount; i++) {
+			Ast right = ctx.right.get(i).accept(this);
+			tempNode = new And(tempNode, right);
+		}
+		return tempNode;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitEqExp(tigerParser.EqExpContext ctx) {
-		return visitChildren(ctx);
+		Ast tempNode = ctx.first.accept(this);
+		int nodesCount = ctx.ops.size();
+
+		for (int i = 0; i < nodesCount; i++) {
+			Ast right = ctx.right.get(i).accept(this);
+			String op = ctx.ops.get(i).getText();
+			switch (op) {
+				case "=":
+					tempNode = new Eq(tempNode, right);
+					break;
+				case "<>":
+					tempNode = new NotEq(tempNode, right);
+					break;
+				case ">":
+					tempNode = new Sup(tempNode, right);
+					break;
+				case "<":
+					tempNode = new Inf(tempNode, right);
+					break;
+				case ">=":
+					tempNode = new SupEq(tempNode, right);
+					break;
+				case "<=":
+					tempNode = new InfEq(tempNode, right);
+					break;
+				default:
+					break;
+			}
+		}
+		return tempNode;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitAddExp(tigerParser.AddExpContext ctx) {
-		return visitChildren(ctx);
+		Ast tempNode = ctx.first.accept(this);
+		int nodesCount = ctx.ops.size();
+
+		for (int i = 0; i < nodesCount; i++) {
+			Ast right = ctx.right.get(i).accept(this);
+			String op = ctx.ops.get(i).getText();
+			switch (op) {
+				case "+":
+					tempNode = new Add(tempNode, right);
+					break;
+				case "-":
+					tempNode = new Sub(tempNode, right);
+					break;
+				default:
+					break;
+			}
+		}
+		return tempNode;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitMultExp(tigerParser.MultExpContext ctx) {
-		return visitChildren(ctx);
+		Ast tempNode = ctx.first.accept(this);
+		int nodesCount = ctx.ops.size();
+
+		for (int i = 0; i < nodesCount; i++) {
+			Ast right = ctx.right.get(i).accept(this);
+			String op = ctx.ops.get(i).getText();
+			switch (op) {
+				case "*":
+					tempNode = new Mult(tempNode, right);
+					break;
+				case "/":
+					tempNode = new Div(tempNode, right);
+					break;
+				default:
+					break;
+			}
+		}
+		return tempNode;
+
 	}
 
 	@Override
@@ -110,32 +167,15 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return new BreakLiteral();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitIdExp(tigerParser.IdExpContext ctx) {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitIdEndExp(tigerParser.IdEndExpContext ctx) {
-		return visitChildren(ctx);
+		return skipUnary(ctx);
 	}
-
 
 	@Override
 	public Ast visitCallExp(tigerParser.CallExpContext ctx) {
@@ -148,84 +188,35 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return new CallExpArgs(args);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitBracketExp(tigerParser.BracketExpContext ctx) {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitBracketExpAccess(tigerParser.BracketExpAccessContext ctx) {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitArrCreateEnd(tigerParser.ArrCreateEndContext ctx) {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitArrayAccess(tigerParser.ArrayAccessContext ctx) {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitRecordAccess(tigerParser.RecordAccessContext ctx) {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitRecAccessExp(tigerParser.RecAccessExpContext ctx) {
 		return visitChildren(ctx);
 	}
-
 
 	@Override
 	public Ast visitRecCreateExp(tigerParser.RecCreateExpContext ctx) {
@@ -247,7 +238,6 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return new RecCreateFields(fields);
 	}
 
-
 	@Override
 	public Ast visitSeqExp(tigerParser.SeqExpContext ctx) {
 		ArrayList<Ast> exps = new ArrayList<Ast>();
@@ -257,13 +247,11 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return new SeqExp(exps);
 	}
 
-
 	@Override
 	public Ast visitNeg(tigerParser.NegContext ctx) {
 		Ast expr = ctx.expr.accept(this);
 		return new Neg(expr);
 	}
-
 
 	@Override
 	public Ast visitIfThen(tigerParser.IfThenContext ctx) {
@@ -321,7 +309,6 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return skipUnary(ctx);
 	}
 
-
 	@Override
 	public Ast visitTypeDec(tigerParser.TypeDecContext ctx) {
 		TypeId typeId = new TypeId(ctx.typeId.getText());
@@ -329,63 +316,72 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return new TypeDec(typeId, typeValue);
 	}
 
-
 	@Override
 	public Ast visitVarDec(tigerParser.VarDecContext ctx) {
-		return visitChildren(ctx);
+		Id varId = new Id(ctx.varId.getText());
+		TypeId varType;
+		Ast varValue = ctx.varValue.accept(this);
+
+		if (ctx.typeId == null) {
+			return new VarDecNoType(varId, varValue);
+		} else {
+			varType = new TypeId(ctx.typeId.getText());
+			return new VarDecType(varId, varType, varValue);
+		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitFunDec(tigerParser.FunDecContext ctx) {
-		return visitChildren(ctx);
+		Id functionId = new Id(ctx.functionId.getText());
+		ArrayList<FieldDec> funArgsFields = new ArrayList<FieldDec>();
+		ArrayList<Id> argNames = new ArrayList<Id>();
+		ArrayList<TypeId> argTypes = new ArrayList<TypeId>();
+		TypeId returnType;
+		Ast functionBody = ctx.body.accept(this);
+
+		for (Token argName : ctx.argNames) {
+			argNames.add(new Id(argName.getText()));
+		}
+		for (Token argType : ctx.argTypes) {
+			argTypes.add(new TypeId(argType.getText()));
+		}
+
+		assert argNames.size() == argTypes.size();
+
+		for (int i = 0; i < argNames.size(); i++) {
+			funArgsFields.add(new FieldDec(argNames.get(i), argTypes.get(i)));
+		}
+		FunArgs args = new FunArgs(funArgsFields);
+
+		if (ctx.returnType == null) {
+			returnType = new TypeId("void");
+		} else {
+			returnType = new TypeId(ctx.returnType.getText());
+		}
+
+		return new FunDec(functionId, args, returnType, functionBody);
 	}
 
 	@Override
 	public Ast visitTypeId(tigerParser.TypeIdContext ctx) {
-		return visitChildren(ctx);
+		return new TypeId(getTokenString(ctx));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitCompositeType(tigerParser.CompositeTypeContext ctx) {
-		return visitChildren(ctx);
+		return skipUnary(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitComplexType(tigerParser.ComplexTypeContext ctx) {
-		return visitChildren(ctx);
+		return skipUnary(ctx);
 	}
-
 
 	@Override
 	public Ast visitArrType(tigerParser.ArrTypeContext ctx) {
 		TypeId name = new TypeId(ctx.typeId.getText());
 		return new ArrType(name);
 	}
-
 
 	@Override
 	public Ast visitRecType(tigerParser.RecTypeContext ctx) {
