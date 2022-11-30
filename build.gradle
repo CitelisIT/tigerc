@@ -73,7 +73,6 @@ tasks.register("dot") {
     tasks.findByName("build").mustRunAfter "clean"
     doLast {
         if (project.hasProperty("inFile") && project.hasProperty("outFile")) {
-            println outFile
             def startTime = System.nanoTime()
             def totalTime
             logTask "Generating dot representation of AST from file ${inFile}"
