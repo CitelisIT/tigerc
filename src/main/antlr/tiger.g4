@@ -80,22 +80,12 @@ dec: typeDec | varDec | funDec;
 
 typeDec: 'type' typeId=ID '=' typeValue=type;
 
-varDec: 'var' varId=ID varValue=varDecEnd;
-
-varDecEnd:
-	':=' expr=exp 					#VarDecNoType
-	| ':' typeId=ID ':=' expr=exp	#VarDecWithType
-	;
+varDec: 'var' varId=ID ( ':' typeId=ID )? varValue=exp;
 
 funDec:
 	'function'
 	functionId=ID '(' (argNames+=ID ':' argTypes+=ID (',' argNames+=ID ':' argTypes+=ID)*)? ')'
-	functionBody=funEndDec;
-
-funEndDec:
-	'=' expr=exp					#FunDecNoType
-	| ':' typeId=ID '=' expr=exp	#FunDecWithType
-	;
+	( ':' returnType=ID )? body=exp;	
 
 type:
 	ID 			
