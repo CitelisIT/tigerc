@@ -1,0 +1,6 @@
+let
+	type intArray = array of int
+	var tab := intArray [4] of 1
+in
+	tab[2] := 0
+end

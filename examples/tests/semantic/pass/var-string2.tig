@@ -1,0 +1,6 @@
+let
+	var a := "Hello"
+in
+    function compareTwoStrings (b : string, c : string) : bool = 
+        if b = c then true else false
+end

@@ -1,0 +1,5 @@
+let
+	function a () : int = 10
+	var b := a ()
+in
+end
