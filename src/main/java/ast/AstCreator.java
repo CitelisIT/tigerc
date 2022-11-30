@@ -3,8 +3,11 @@
 package ast;
 
 import parser.tigerParser;
+import parser.tigerParser.ExpContext;
 import parser.tigerBaseVisitor;
+import java.util.ArrayList;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 
 
 public class AstCreator extends tigerBaseVisitor<Ast> {
@@ -19,7 +22,8 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitProgram(tigerParser.ProgramContext ctx) {
-		return visitChildren(ctx);
+		Ast exp = skipUnary(ctx);
+		return new Program(exp);
 	}
 
 
@@ -79,69 +83,31 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitSimpleExp(tigerParser.SimpleExpContext ctx) {
-		return visitChildren(ctx);
+		return skipUnary(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitIntLitteral(tigerParser.IntLitteralContext ctx) {
-		return visitChildren(ctx);
+		String intValue = getTokenString(ctx);
+		return new IntLiteral(Integer.parseInt(intValue));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitStringLitteral(tigerParser.StringLitteralContext ctx) {
-		return visitChildren(ctx);
+		String stringValue = getTokenString(ctx);
+		return new StringLiteral(stringValue);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitNilLitteral(tigerParser.NilLitteralContext ctx) {
-		return visitChildren(ctx);
+		return new NilLiteral();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitBreakLitteral(tigerParser.BreakLitteralContext ctx) {
-		return visitChildren(ctx);
+		return new BreakLiteral();
 	}
 
 	/**
@@ -170,17 +136,16 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitCallExp(tigerParser.CallExpContext ctx) {
-		return visitChildren(ctx);
+		ArrayList<Ast> args = new ArrayList<Ast>();
+
+		for (ExpContext arg : ctx.args) {
+			args.add(arg.accept(this));
+		}
+
+		return new CallExpArgs(args);
 	}
 
 	/**
@@ -261,131 +226,110 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitRecCreateExp(tigerParser.RecCreateExpContext ctx) {
-		return visitChildren(ctx);
+		ArrayList<FieldCreate> fields = new ArrayList<FieldCreate>();
+		ArrayList<Id> fieldIds = new ArrayList<Id>();
+		ArrayList<Ast> fieldExps = new ArrayList<Ast>();
+
+		for (Token fieldId : ctx.fieldIds) {
+			fieldIds.add(new Id(fieldId.getText()));
+		}
+		for (ExpContext exp : ctx.fieldValues) {
+			fieldExps.add(exp.accept(this));
+		}
+		assert fieldExps.size() == fieldIds.size();
+
+		for (int i = 0; i < fieldIds.size(); i++) {
+			fields.add(new FieldCreate(fieldIds.get(i), fieldExps.get(i)));
+		}
+		return new RecCreateFields(fields);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitSeqExp(tigerParser.SeqExpContext ctx) {
-		return visitChildren(ctx);
+		ArrayList<Ast> exps = new ArrayList<Ast>();
+		for (ExpContext exp : ctx.exprs) {
+			exps.add(exp.accept(this));
+		}
+		return new SeqExp(exps);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitNeg(tigerParser.NegContext ctx) {
-		return visitChildren(ctx);
+		Ast expr = ctx.expr.accept(this);
+		return new Neg(expr);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitIfThen(tigerParser.IfThenContext ctx) {
-		return visitChildren(ctx);
+		Ast condition = ctx.condition.accept(this);
+		Ast thenExp = ctx.thenExpr.accept(this);
+		Ast elseExp = ctx.elseExpr.accept(this);
+
+		if (elseExp != null) {
+			return new IfThenElse(condition, thenExp, elseExp);
+		} else {
+			return new IfThen(condition, thenExp);
+		}
+
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitWhileExp(tigerParser.WhileExpContext ctx) {
-		return visitChildren(ctx);
+		Ast condition = ctx.condition.accept(this);
+		Ast doExp = ctx.doExpr.accept(this);
+		return new WhileExp(condition, doExp);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
 	@Override
 	public Ast visitForExp(tigerParser.ForExpContext ctx) {
-		return visitChildren(ctx);
+		Id forId = new Id(ctx.forId.getText());
+		Ast startValue = ctx.startValue.accept(this);
+		Ast endValue = ctx.endValue.accept(this);
+		Ast doExp = ctx.doExp.accept(this);
+
+		return new ForExp(forId, startValue, endValue, doExp);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitLetExp(tigerParser.LetExpContext ctx) {
-		return visitChildren(ctx);
+		ArrayList<Ast> decls = new ArrayList<Ast>();
+
+		for (tigerParser.DecContext decl : ctx.decls) {
+			decls.add(decl.accept(this));
+		}
+		ArrayList<Ast> exps = new ArrayList<Ast>();
+
+		for (tigerParser.ExpContext exp : ctx.inExprs) {
+			exps.add(exp.accept(this));
+		}
+
+		LetDecls letDecls = new LetDecls(decls);
+		LetScope letScope = new LetScope(exps);
+		return new LetExp(letDecls, letScope);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitDec(tigerParser.DecContext ctx) {
-		return visitChildren(ctx);
+		return skipUnary(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitTypeDec(tigerParser.TypeDecContext ctx) {
-		return visitChildren(ctx);
+		TypeId typeId = new TypeId(ctx.typeId.getText());
+		Type typeValue = (Type) ctx.typeValue.accept(this);
+		return new TypeDec(typeId, typeValue);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitVarDec(tigerParser.VarDecContext ctx) {
 		return visitChildren(ctx);
@@ -469,29 +413,31 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		return visitChildren(ctx);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitArrType(tigerParser.ArrTypeContext ctx) {
-		return visitChildren(ctx);
+		TypeId name = new TypeId(ctx.typeId.getText());
+		return new ArrType(name);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>
-	 * The default implementation returns the result of calling {@link #visitChildren} on
-	 * {@code ctx}.
-	 * </p>
-	 */
+
 	@Override
 	public Ast visitRecType(tigerParser.RecTypeContext ctx) {
-		return visitChildren(ctx);
+		ArrayList<FieldDec> fields = new ArrayList<FieldDec>();
+		ArrayList<Id> fieldNames = new ArrayList<Id>();
+		ArrayList<TypeId> fieldTypes = new ArrayList<TypeId>();
+
+		for (Token id : ctx.fieldIds) {
+			fieldNames.add(new Id(id.getText()));
+		}
+		for (Token type : ctx.fieldTypes) {
+			fieldTypes.add(new TypeId(type.getText()));
+		}
+		assert fieldNames.size() == fieldTypes.size();
+
+		for (int i = 0; i < fieldNames.size(); i++) {
+			fields.add(new FieldDec(fieldNames.get(i), fieldTypes.get(i)));
+		}
+		return new RecType(fields);
 	}
 }
