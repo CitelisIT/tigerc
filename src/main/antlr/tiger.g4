@@ -80,7 +80,7 @@ dec: typeDec | varDec | funDec;
 
 typeDec: 'type' typeId=ID '=' typeValue=type;
 
-varDec: 'var' varId=ID ( ':' typeId=ID )? varValue=exp;
+varDec: 'var' varId=ID ( ':' typeId=ID )? ':=' varValue=exp;
 
 funDec:
 	'function'
