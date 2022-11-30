@@ -2250,7 +2250,6 @@ public class tigerParser extends Parser {
 	public static class RecTypeContext extends ParserRuleContext {
 		public Token ID;
 		public List<Token> fieldIds = new ArrayList<Token>();
-		public List<Token> filedTypes = new ArrayList<Token>();
 		public List<Token> fieldTypes = new ArrayList<Token>();
 		public List<TerminalNode> ID() { return getTokens(tigerParser.ID); }
 		public TerminalNode ID(int i) {
@@ -2288,7 +2287,7 @@ public class tigerParser extends Parser {
 				match(T__37);
 				setState(321);
 				((RecTypeContext)_localctx).ID = match(ID);
-				((RecTypeContext)_localctx).filedTypes.add(((RecTypeContext)_localctx).ID);
+				((RecTypeContext)_localctx).fieldTypes.add(((RecTypeContext)_localctx).ID);
 				setState(328);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
