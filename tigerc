@@ -39,6 +39,11 @@ else
     shift
 fi
 
+if [[ "$TASK" == "--ast" ]]; then
+    OUTFILE=$1
+    shift
+fi
+
 # Parse optional options
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -68,5 +73,6 @@ esac
 
 case $TASK in
 --parse-tree) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL tree -PinFile=$TARGET -Pcolor=$COLOR ;;
+--ast) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL dot -PinFile=$TARGET -PoutFile=$OUTFILE -Pcolor=$COLOR ;;
 *) error "Invalid task $TASK" ;;
 esac
