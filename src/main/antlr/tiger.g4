@@ -48,10 +48,10 @@ idEndExp:
 callExp: '(' ( args+=exp ( ',' args+=exp)*)? ')' ;
 
 bracketExp:
-	'[' accessExpr=exp ']' ( exprEnd=bracketExpEnd)*;
+	'[' accessExpr=exp ']' exprEnd=bracketExpEnd;
 
 bracketExpEnd:
-	access							#BracketExpAccess
+	( access )*						#BracketExpAccess
 	| 'of' arrTypeExp=simpleExp 	#ArrCreateEnd
 	;
 
