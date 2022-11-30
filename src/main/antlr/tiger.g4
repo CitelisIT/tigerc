@@ -105,7 +105,7 @@ type:
 
 arrType: 'array of' typeId=ID;
 
-recType: '{' (fieldIds+=ID ':' filedTypes+=ID (',' fieldIds+=ID ':' fieldTypes+=ID)*)? '}';
+recType: '{' (fieldIds+=ID ':' fieldTypes+=ID (',' fieldIds+=ID ':' fieldTypes+=ID)*)? '}';
 
 KEYWORD:
 	'array'
