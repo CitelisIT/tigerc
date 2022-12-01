@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-public class RecType extends Type {
+public class RecType implements Type {
 
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);

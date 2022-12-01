@@ -1,6 +1,6 @@
 package ast;
 
-public class TypeId extends Type {
+public class TypeId implements Type {
 
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);

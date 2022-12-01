@@ -1,5 +1,5 @@
 package ast;
 
-public abstract class Type implements Ast {
+public interface Type extends Ast {
 
 }
