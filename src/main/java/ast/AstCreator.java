@@ -4,6 +4,7 @@ package ast;
 
 import parser.tigerParser;
 import parser.tigerParser.ExpContext;
+import parser.tigerParser.SimpleExpContext;
 import parser.tigerBaseVisitor;
 import java.util.ArrayList;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -169,73 +170,60 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitIdExp(tigerParser.IdExpContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	@Override
-	public Ast visitIdEndExp(tigerParser.IdEndExpContext ctx) {
-		return skipUnary(ctx);
-	}
-
-	@Override
-	public Ast visitCallExp(tigerParser.CallExpContext ctx) {
-		ArrayList<Ast> args = new ArrayList<Ast>();
-
-		for (ExpContext arg : ctx.args) {
-			args.add(arg.accept(this));
+		// CallExp
+		if (ctx.callArgs.size() != 0) {
+			ArrayList<Ast> callArgs = new ArrayList<Ast>();
+			for (ExpContext exp : ctx.callArgs) {
+				callArgs.add(exp.accept(this));
+			}
+			return new CallExp(new Id(ctx.id.getText()), new CallExpArgs(callArgs));
 		}
 
-		return new CallExpArgs(args);
-	}
+		// RecCreate
+		if (ctx.recIds.size() != 0) {
+			ArrayList<Id> fieldIds = new ArrayList<Id>();
+			for (Token id : ctx.recIds) {
+				fieldIds.add(new Id(id.getText()));
+			}
 
-	@Override
-	public Ast visitBracketExp(tigerParser.BracketExpContext ctx) {
-		return visitChildren(ctx);
-	}
+			ArrayList<Ast> fieldValues = new ArrayList<Ast>();
+			for (ExpContext exp : ctx.recValues) {
+				fieldValues.add(exp.accept(this));
+			}
 
-	@Override
-	public Ast visitBracketExpAccess(tigerParser.BracketExpAccessContext ctx) {
-		return visitChildren(ctx);
-	}
+			assert fieldIds.size() == fieldValues.size();
 
-	@Override
-	public Ast visitArrCreateEnd(tigerParser.ArrCreateEndContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	@Override
-	public Ast visitArrayAccess(tigerParser.ArrayAccessContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	@Override
-	public Ast visitRecordAccess(tigerParser.RecordAccessContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	@Override
-	public Ast visitRecAccessExp(tigerParser.RecAccessExpContext ctx) {
-		return visitChildren(ctx);
-	}
-
-	@Override
-	public Ast visitRecCreateExp(tigerParser.RecCreateExpContext ctx) {
-		ArrayList<FieldCreate> fields = new ArrayList<FieldCreate>();
-		ArrayList<Id> fieldIds = new ArrayList<Id>();
-		ArrayList<Ast> fieldExps = new ArrayList<Ast>();
-
-		for (Token fieldId : ctx.fieldIds) {
-			fieldIds.add(new Id(fieldId.getText()));
+			ArrayList<FieldCreate> fields = new ArrayList<FieldCreate>();
+			for (int i = 0; i < fieldIds.size(); i++) {
+				fields.add(new FieldCreate(fieldIds.get(i), fieldValues.get(i)));
+			}
+			return new RecCreate(new TypeId(ctx.id.getText()), new RecCreateFields(fields));
 		}
-		for (ExpContext exp : ctx.fieldValues) {
-			fieldExps.add(exp.accept(this));
-		}
-		assert fieldExps.size() == fieldIds.size();
 
-		for (int i = 0; i < fieldIds.size(); i++) {
-			fields.add(new FieldCreate(fieldIds.get(i), fieldExps.get(i)));
+		// ArrCreate
+		if (ctx.arrCreateType != null) {
+			return new ArrCreate(new TypeId(ctx.id.getText()), ctx.getChild(2).accept(this),
+					ctx.arrCreateType.accept(this));
 		}
-		return new RecCreateFields(fields);
+
+		// Accesses
+		int expIndex = 2;
+		Ast tempNode = new Id(ctx.id.getText());
+		for (Token accessOp : ctx.accessOps) {
+			switch (accessOp.getText()) {
+				case "[":
+					tempNode = new Subscript(tempNode, ctx.getChild(expIndex).accept(this));
+					expIndex += 3;
+					break;
+				case ".":
+					tempNode = new FieldExp(tempNode, new Id(ctx.getChild(expIndex).getText()));
+					expIndex += 2;
+					break;
+				default:
+					break;
+			}
+		}
+		return tempNode;
 	}
 
 	@Override
@@ -257,10 +245,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	public Ast visitIfThen(tigerParser.IfThenContext ctx) {
 		Ast condition = ctx.condition.accept(this);
 		Ast thenExp = ctx.thenExpr.accept(this);
-		Ast elseExp = ctx.elseExpr.accept(this);
+		SimpleExpContext elseExpContext = ctx.elseExpr;
 
-		if (elseExp != null) {
-			return new IfThenElse(condition, thenExp, elseExp);
+		if (elseExpContext != null) {
+			return new IfThenElse(condition, thenExp, elseExpContext.accept(this));
 		} else {
 			return new IfThen(condition, thenExp);
 		}
@@ -379,8 +367,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitArrType(tigerParser.ArrTypeContext ctx) {
-		TypeId name = new TypeId(ctx.typeId.getText());
-		return new ArrType(name);
+		return new ArrType(ctx.typeId.getText());
 	}
 
 	@Override
