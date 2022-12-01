@@ -2,8 +2,53 @@ package graphviz;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import ast.Add;
+import ast.And;
+import ast.ArrCreate;
+import ast.ArrType;
+import ast.Assign;
+import ast.Ast;
 import ast.AstVisitor;
-import ast.*;
+import ast.BreakLiteral;
+import ast.CallExp;
+import ast.CallExpArgs;
+import ast.Div;
+import ast.Eq;
+import ast.FieldCreate;
+import ast.FieldDec;
+import ast.FieldExp;
+import ast.ForExp;
+import ast.FunArgs;
+import ast.FunDec;
+import ast.Id;
+import ast.IfThen;
+import ast.IfThenElse;
+import ast.Inf;
+import ast.InfEq;
+import ast.IntLiteral;
+import ast.LetDecls;
+import ast.LetExp;
+import ast.LetScope;
+import ast.Mult;
+import ast.Neg;
+import ast.NilLiteral;
+import ast.NotEq;
+import ast.Or;
+import ast.Program;
+import ast.RecCreate;
+import ast.RecCreateFields;
+import ast.RecType;
+import ast.SeqExp;
+import ast.StringLiteral;
+import ast.Sub;
+import ast.Subscript;
+import ast.Sup;
+import ast.SupEq;
+import ast.TypeDec;
+import ast.TypeId;
+import ast.VarDecNoType;
+import ast.VarDecType;
+import ast.WhileExp;
 
 public class GraphVizVisitor implements AstVisitor<String> {
 
@@ -623,7 +668,7 @@ public class GraphVizVisitor implements AstVisitor<String> {
 
         String nodeIdentifier = this.nextState();
 
-        this.addNode(nodeIdentifier, stringLiteral.value);
+        this.addNode(nodeIdentifier, (stringLiteral.value).replaceAll("\"$|^\"", ""));
 
         return nodeIdentifier;
     }
