@@ -95,64 +95,6 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdExp(tigerParser.IdExpContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link tigerParser#idEndExp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIdEndExp(tigerParser.IdEndExpContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link tigerParser#callExp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitCallExp(tigerParser.CallExpContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link tigerParser#bracketExp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBracketExp(tigerParser.BracketExpContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code BracketExpAccess}
-	 * labeled alternative in {@link tigerParser#bracketExpEnd}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBracketExpAccess(tigerParser.BracketExpAccessContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ArrCreateEnd}
-	 * labeled alternative in {@link tigerParser#bracketExpEnd}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrCreateEnd(tigerParser.ArrCreateEndContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ArrayAccess}
-	 * labeled alternative in {@link tigerParser#access}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayAccess(tigerParser.ArrayAccessContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code RecordAccess}
-	 * labeled alternative in {@link tigerParser#access}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRecordAccess(tigerParser.RecordAccessContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link tigerParser#recAccessExp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRecAccessExp(tigerParser.RecAccessExpContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link tigerParser#recCreateExp}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRecCreateExp(tigerParser.RecCreateExpContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link tigerParser#seqExp}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

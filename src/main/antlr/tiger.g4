@@ -36,33 +36,12 @@ litteralExp:
 ;
 
 idExp:
-	idName=ID ( exprEnd=idEndExp )?;
-
-idEndExp: 
-	callExp
-	| bracketExp
-	| recAccessExp
-	| recCreateExp 
-	;
-
-callExp: '(' ( args+=exp ( ',' args+=exp)*)? ')' ;
-
-bracketExp:
-	'[' accessExpr=exp ']' exprEnd=bracketExpEnd;
-
-bracketExpEnd:
-	( access )*						#BracketExpAccess
-	| 'of' arrTypeExp=simpleExp 	#ArrCreateEnd
-	;
-
-access:
-	'[' accessExpr=exp ']'	#ArrayAccess
-	| '.' accessId=ID		#RecordAccess
-	;
-
-recAccessExp: '.' accessId=ID ( succAccess=access )*;
-
-recCreateExp: '{' ( fieldIds+=ID '=' fieldValues+=exp ( ',' fieldIds+=ID '=' fieldValues+=exp)*)? '}';	
+	id=ID (
+		'(' ( callArgs+=exp ( ',' callArgs+=exp)*)? ')'
+		| accessOps+='[' exp ']' (( accessOps+='[' exp ']' | accessOps+='.' ID)* | 'of' arrCreateType=simpleExp)
+		| accessOps+='.' ID ( accessOps+='[' exp ']' | accessOps+='.' ID)*
+		| '{' ( recIds+=ID '=' recValues+=exp ( ',' recIds+=ID '=' recValues+=exp)*)? '}'
+	)?;
 
 seqExp: '(' (exprs+=exp (';' exprs+=exp)*)? ')';
 
@@ -85,7 +64,7 @@ varDec: 'var' varId=ID ( ':' typeId=ID )? ':=' varValue=exp;
 funDec:
 	'function'
 	functionId=ID '(' (argNames+=ID ':' argTypes+=ID (',' argNames+=ID ':' argTypes+=ID)*)? ')'
-	( ':' returnType=ID )? body=exp;	
+	( ':' returnType=ID )? '=' body=exp;	
 
 type:
 	ID 				#TypeId	
