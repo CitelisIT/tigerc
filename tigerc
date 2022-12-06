@@ -6,6 +6,7 @@ Usage:
 
 Tasks:
     --parse-tree            Generates a representation of the input program's parse tree
+    --ast <out-path>        Generates a DOT representation of the input program's AST
 
 Options:
     -h, --help              Show this message
