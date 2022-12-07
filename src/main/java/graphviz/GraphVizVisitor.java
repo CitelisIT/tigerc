@@ -12,7 +12,9 @@ import ast.AstVisitor;
 import ast.BreakLiteral;
 import ast.CallExp;
 import ast.CallExpArgs;
+import ast.Condition;
 import ast.Div;
+import ast.Else;
 import ast.Eq;
 import ast.FieldCreate;
 import ast.FieldDec;
@@ -21,7 +23,6 @@ import ast.ForExp;
 import ast.FunArgs;
 import ast.FunDec;
 import ast.Id;
-import ast.IfThen;
 import ast.IfThenElse;
 import ast.Inf;
 import ast.InfEq;
@@ -44,6 +45,7 @@ import ast.Sub;
 import ast.Subscript;
 import ast.Sup;
 import ast.SupEq;
+import ast.Then;
 import ast.TypeDec;
 import ast.TypeId;
 import ast.VarDecNoType;
@@ -308,16 +310,43 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return nodeIdentifier;
     }
 
-    public String visit(IfThen ifThen) {
+    public String visit(Condition condition) {
 
         String nodeIdentifier = this.nextState();
 
-        String condId = ifThen.condition.accept(this);
-        String thenId = ifThen.thenExpr.accept(this);
+        String condId = condition.condition.accept(this);
 
-        this.addNode(nodeIdentifier, "If Then");
+        this.addNode(nodeIdentifier, "Condition");
         this.addTransition(nodeIdentifier, condId);
+
+        return nodeIdentifier;
+    }
+
+    public String visit(Then then) {
+
+        String nodeIdentifier = this.nextState();
+
+        String thenId = then.then.accept(this);
+
+        this.addNode(nodeIdentifier, "Then");
         this.addTransition(nodeIdentifier, thenId);
+
+        return nodeIdentifier;
+    }
+
+    public String visit(Else elseExpr) {
+
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Else");
+
+        if (elseExpr.elsee == null) {
+            return nodeIdentifier;
+        }
+
+        String elseId = elseExpr.elsee.accept(this);
+
+        this.addTransition(nodeIdentifier, elseId);
 
         return nodeIdentifier;
     }
@@ -328,7 +357,7 @@ public class GraphVizVisitor implements AstVisitor<String> {
 
         String condId = ifThenElse.condition.accept(this);
         String thenId = ifThenElse.thenExpr.accept(this);
-        String elseId = ifThenElse.thenExpr.accept(this);
+        String elseId = ifThenElse.elseExpr.accept(this);
 
         this.addNode(nodeIdentifier, "If Then Else");
         this.addTransition(nodeIdentifier, condId);

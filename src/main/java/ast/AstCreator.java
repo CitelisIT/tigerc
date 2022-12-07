@@ -243,14 +243,14 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitIfThen(tigerParser.IfThenContext ctx) {
-		Ast condition = ctx.condition.accept(this);
-		Ast thenExp = ctx.thenExpr.accept(this);
+		Condition condition = new Condition(ctx.condition.accept(this));
+		Then thenExp = new Then(ctx.thenExpr.accept(this));
 		SimpleExpContext elseExpContext = ctx.elseExpr;
 
 		if (elseExpContext != null) {
-			return new IfThenElse(condition, thenExp, elseExpContext.accept(this));
+			return new IfThenElse(condition, thenExp, new Else(elseExpContext.accept(this)));
 		} else {
-			return new IfThen(condition, thenExp);
+			return new IfThenElse(condition, thenExp, new Else(null));
 		}
 
 	}
