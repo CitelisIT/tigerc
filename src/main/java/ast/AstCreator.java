@@ -171,7 +171,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	@Override
 	public Ast visitIdExp(tigerParser.IdExpContext ctx) {
 		// CallExp
-		if (ctx.callArgs.size() != 0) {
+		if (ctx.isCall != null) {
 			ArrayList<Ast> callArgs = new ArrayList<Ast>();
 			for (ExpContext exp : ctx.callArgs) {
 				callArgs.add(exp.accept(this));
@@ -180,7 +180,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		}
 
 		// RecCreate
-		if (ctx.recIds.size() != 0) {
+		if (ctx.isRecord != null) {
 			ArrayList<Id> fieldIds = new ArrayList<Id>();
 			for (Token id : ctx.recIds) {
 				fieldIds.add(new Id(id.getText()));

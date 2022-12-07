@@ -793,12 +793,14 @@ public class tigerParser extends Parser {
 
 	public static class IdExpContext extends ParserRuleContext {
 		public Token id;
+		public Token isCall;
 		public ExpContext exp;
 		public List<ExpContext> callArgs = new ArrayList<ExpContext>();
 		public Token s19;
 		public List<Token> accessOps = new ArrayList<Token>();
 		public Token s21;
 		public SimpleExpContext arrCreateType;
+		public Token isRecord;
 		public Token ID;
 		public List<Token> recIds = new ArrayList<Token>();
 		public List<ExpContext> recValues = new ArrayList<ExpContext>();
@@ -841,7 +843,7 @@ public class tigerParser extends Parser {
 			case T__15:
 				{
 				setState(118);
-				match(T__15);
+				((IdExpContext)_localctx).isCall = match(T__15);
 				setState(127);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
@@ -1016,7 +1018,7 @@ public class tigerParser extends Parser {
 			case T__22:
 				{
 				setState(161);
-				match(T__22);
+				((IdExpContext)_localctx).isRecord = match(T__22);
 				setState(174);
 				_errHandler.sync(this);
 				_la = _input.LA(1);

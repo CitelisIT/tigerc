@@ -37,10 +37,10 @@ litteralExp:
 
 idExp:
 	id=ID (
-		'(' ( callArgs+=exp ( ',' callArgs+=exp)*)? ')'
+		isCall='(' ( callArgs+=exp ( ',' callArgs+=exp)*)? ')'
 		| accessOps+='[' exp ']' (( accessOps+='[' exp ']' | accessOps+='.' ID)* | 'of' arrCreateType=simpleExp)
 		| accessOps+='.' ID ( accessOps+='[' exp ']' | accessOps+='.' ID)*
-		| '{' ( recIds+=ID '=' recValues+=exp ( ',' recIds+=ID '=' recValues+=exp)*)? '}'
+		| isRecord='{' ( recIds+=ID '=' recValues+=exp ( ',' recIds+=ID '=' recValues+=exp)*)? '}'
 	)?;
 
 seqExp: '(' (exprs+=exp (';' exprs+=exp)*)? ')';
