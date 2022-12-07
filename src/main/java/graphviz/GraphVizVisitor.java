@@ -668,7 +668,13 @@ public class GraphVizVisitor implements AstVisitor<String> {
 
         String nodeIdentifier = this.nextState();
 
-        this.addNode(nodeIdentifier, (stringLiteral.value).replaceAll("\"$|^\"", ""));
+        this.addNode(nodeIdentifier, (stringLiteral.value.replace("\\", "\\\\")
+                .replace("\t", "\\t")
+                .replace("\b", "\\b")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\f", "\\f")
+                .replace("\'", "\\'")).replaceAll("\"$|^\"", "\\\\\""));
 
         return nodeIdentifier;
     }
