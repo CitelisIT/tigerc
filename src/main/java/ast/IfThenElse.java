@@ -6,15 +6,13 @@ public class IfThenElse implements Ast {
         return visitor.visit(this);
     }
 
-    public Condition condition;
-    public Then thenExpr;
-    public Else elseExpr;
+    public Ast condition;
+    public Ast thenExpr;
+    public Ast elseExpr;
 
-    public IfThenElse(Condition condition, Then thenExpr, Else elseExpr) {
+    public IfThenElse(Ast condition, Ast thenExpr, Ast elseExpr) {
         this.condition = condition;
         this.thenExpr = thenExpr;
         this.elseExpr = elseExpr;
     }
-
-
 }

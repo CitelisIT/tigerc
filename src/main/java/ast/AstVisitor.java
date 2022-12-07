@@ -34,11 +34,7 @@ public interface AstVisitor<T> {
 
     public T visit(Neg neg);
 
-    public T visit(Condition condition);
-
-    public T visit(Then then);
-
-    public T visit(Else elseExpr);
+    public T visit(IfThen ifThen);
 
     public T visit(IfThenElse ifThenElse);
 
