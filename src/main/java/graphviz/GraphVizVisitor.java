@@ -21,7 +21,6 @@ import ast.ForExp;
 import ast.FunArgs;
 import ast.FunDec;
 import ast.Id;
-import ast.IfThen;
 import ast.IfThenElse;
 import ast.Inf;
 import ast.InfEq;
@@ -308,32 +307,20 @@ public class GraphVizVisitor implements AstVisitor<String> {
         return nodeIdentifier;
     }
 
-    public String visit(IfThen ifThen) {
-
-        String nodeIdentifier = this.nextState();
-
-        String condId = ifThen.condition.accept(this);
-        String thenId = ifThen.thenExpr.accept(this);
-
-        this.addNode(nodeIdentifier, "If Then");
-        this.addTransition(nodeIdentifier, condId);
-        this.addTransition(nodeIdentifier, thenId);
-
-        return nodeIdentifier;
-    }
-
     public String visit(IfThenElse ifThenElse) {
 
         String nodeIdentifier = this.nextState();
 
         String condId = ifThenElse.condition.accept(this);
         String thenId = ifThenElse.thenExpr.accept(this);
-        String elseId = ifThenElse.thenExpr.accept(this);
 
         this.addNode(nodeIdentifier, "If Then Else");
         this.addTransition(nodeIdentifier, condId);
         this.addTransition(nodeIdentifier, thenId);
-        this.addTransition(nodeIdentifier, elseId);
+        if (ifThenElse.elseExpr != null) {
+            String elseId = ifThenElse.elseExpr.accept(this);
+            this.addTransition(nodeIdentifier, elseId);
+        }
 
         return nodeIdentifier;
     }
@@ -668,13 +655,10 @@ public class GraphVizVisitor implements AstVisitor<String> {
 
         String nodeIdentifier = this.nextState();
 
-        this.addNode(nodeIdentifier, (stringLiteral.value.replace("\\", "\\\\")
-                .replace("\t", "\\t")
-                .replace("\b", "\\b")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\f", "\\f")
-                .replace("\'", "\\'")).replaceAll("\"$|^\"", "\\\\\""));
+        this.addNode(nodeIdentifier,
+                (stringLiteral.value.replace("\\", "\\\\").replace("\t", "\\t").replace("\b", "\\b")
+                        .replace("\n", "\\n").replace("\r", "\\r").replace("\f", "\\f")
+                        .replace("\'", "\\'")).replaceAll("\"$|^\"", "\\\\\""));
 
         return nodeIdentifier;
     }

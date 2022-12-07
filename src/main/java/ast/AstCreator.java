@@ -250,7 +250,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		if (elseExpContext != null) {
 			return new IfThenElse(condition, thenExp, elseExpContext.accept(this));
 		} else {
-			return new IfThen(condition, thenExp);
+			return new IfThenElse(condition, thenExp, null);
 		}
 
 	}
