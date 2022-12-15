@@ -4,7 +4,6 @@ package ast;
 
 import parser.tigerParser;
 import parser.tigerParser.ExpContext;
-import parser.tigerParser.SimpleExpContext;
 import parser.tigerBaseVisitor;
 import java.util.ArrayList;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -245,7 +244,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	public Ast visitIfThen(tigerParser.IfThenContext ctx) {
 		Ast condition = ctx.condition.accept(this);
 		Ast thenExp = ctx.thenExpr.accept(this);
-		SimpleExpContext elseExpContext = ctx.elseExpr;
+		ExpContext elseExpContext = ctx.elseExpr;
 
 		if (elseExpContext != null) {
 			return new IfThenElse(condition, thenExp, elseExpContext.accept(this));

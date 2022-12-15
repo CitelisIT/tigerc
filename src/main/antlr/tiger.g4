@@ -45,13 +45,13 @@ idExp:
 
 seqExp: '(' (exprs+=exp (';' exprs+=exp)*)? ')';
 
-neg: '-' expr=simpleExp;
+neg: '-' expr=exp;
 
-ifThen: 'if' condition=exp 'then' thenExpr=simpleExp ('else' elseExpr=simpleExp)?;
+ifThen: 'if' condition=exp 'then' thenExpr=exp ('else' elseExpr=exp)?;
 
-whileExp: 'while' condition=exp 'do' doExpr=simpleExp;
+whileExp: 'while' condition=exp 'do' doExpr=exp;
 
-forExp: 'for' forId=ID ':=' startValue=exp 'to' endValue=exp 'do' doExp=simpleExp;
+forExp: 'for' forId=ID ':=' startValue=exp 'to' endValue=exp 'do' doExp=exp;
 
 letExp: 'let' (decls+=dec)+ 'in' (inExprs+=exp (';' inExprs+=exp)*)? 'end';
 
