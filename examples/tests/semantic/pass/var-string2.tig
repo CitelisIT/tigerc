@@ -1,6 +1,6 @@
 let
 	var a := "Hello"
+    function compareTwoStrings (b: string, c: string) : int = 
+        if b = c then 1 else 0
 in
-    function compareTwoStrings (b : string, c : string) : bool = 
-        if b = c then true else false
 end

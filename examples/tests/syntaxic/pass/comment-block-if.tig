@@ -1,7 +1,0 @@
-/* Commentaire
-*/
-if 11 then
-	if a&2 then
-		a:=13
-	else
-		a:=3
