@@ -76,7 +76,7 @@ complexType:
 	| recType
 	;
 
-arrType: 'array of' typeId=ID;
+arrType: 'array' 'of' typeId=ID;
 
 recType: '{' (fieldIds+=ID ':' fieldTypes+=ID (',' fieldIds+=ID ':' fieldTypes+=ID)*)? '}';
 
