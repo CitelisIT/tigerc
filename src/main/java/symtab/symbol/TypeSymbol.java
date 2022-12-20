@@ -1,4 +1,4 @@
-package symtab;
+package symtab.symbol;
 
 public class TypeSymbol implements Symbol {
 

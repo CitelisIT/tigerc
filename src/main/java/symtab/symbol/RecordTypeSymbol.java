@@ -1,4 +1,4 @@
-package symtab;
+package symtab.symbol;
 
 import java.util.Map;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package symtab;
+package symtab.symbol;
 
 public class ArrayTypeSymbol extends TypeSymbol {
 
