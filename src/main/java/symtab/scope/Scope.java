@@ -1,6 +1,7 @@
-package symtab;
+package symtab.scope;
 
 import java.util.Map;
+import symtab.symbol.Symbol;
 
 public interface Scope {
 
