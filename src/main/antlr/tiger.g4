@@ -59,6 +59,8 @@ dec: typeDec | varDec | funDec;
 
 typeDec: 'type' typeId=ID '=' typeValue=type;
 
+typeDecs: (tydecs+=typeDec)*;
+
 varDec: 'var' varId=ID ( ':' typeId=ID )? ':=' varValue=exp;
 
 funDec:

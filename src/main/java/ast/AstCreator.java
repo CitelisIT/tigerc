@@ -304,6 +304,16 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	}
 
 	@Override
+	public Ast visitTypeDecs(tigerParser.TypeDecsContext ctx) {
+		ArrayList<Ast> typeDecs = new ArrayList<Ast>();
+		for (tigerParser.TypeDecContext typeDec : ctx.tydecs) {
+			typeDecs.add(typeDec.accept(this));
+		}
+		return new TypeDecs(typeDecs);
+	}
+
+
+	@Override
 	public Ast visitVarDec(tigerParser.VarDecContext ctx) {
 		Id varId = new Id(ctx.varId.getText());
 		TypeId varType;

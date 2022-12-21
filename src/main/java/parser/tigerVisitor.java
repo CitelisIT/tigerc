@@ -143,6 +143,12 @@ public interface tigerVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeDec(tigerParser.TypeDecContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link tigerParser#typeDecs}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTypeDecs(tigerParser.TypeDecsContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link tigerParser#varDec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

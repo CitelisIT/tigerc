@@ -44,6 +44,7 @@ import ast.Subscript;
 import ast.Sup;
 import ast.SupEq;
 import ast.TypeDec;
+import ast.TypeDecs;
 import ast.TypeId;
 import ast.VarDecNoType;
 import ast.VarDecType;
@@ -679,6 +680,12 @@ public class GraphVizVisitor implements AstVisitor<String> {
         this.addNode(nodeIdentifier, "break");
 
         return nodeIdentifier;
+    }
+
+    @Override
+    public String visit(TypeDecs typeDecs) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

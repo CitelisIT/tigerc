@@ -54,6 +54,8 @@ public interface AstVisitor<T> {
 
     public T visit(TypeDec typeDec);
 
+    public T visit(TypeDecs typeDecs);
+
     public T visit(VarDecType varDecType);
 
     public T visit(VarDecNoType varDecNoType);
