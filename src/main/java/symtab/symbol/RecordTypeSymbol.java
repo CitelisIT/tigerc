@@ -5,13 +5,13 @@ import java.util.Set;
 
 public class RecordTypeSymbol extends TypeSymbol {
 
-    private Map<String, Symbol> fields;
+    private Map<String, String> fields;
 
-    public RecordTypeSymbol(Map<String, Symbol> fields) {
+    public RecordTypeSymbol(Map<String, String> fields) {
         this.fields = fields;
     }
 
-    public Map<String, Symbol> getFields() {
+    public Map<String, String> getFields() {
         return fields;
     }
 
