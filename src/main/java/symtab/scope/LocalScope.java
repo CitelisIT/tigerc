@@ -36,6 +36,10 @@ public class LocalScope implements Scope {
         return this.symbols;
     }
 
+    public Symbol getSymbol(String name) {
+        return this.symbols.get(name);
+    }
+
     public void addSymbol(String name, Symbol symbol) {
         this.symbols.put(name, symbol);
     }

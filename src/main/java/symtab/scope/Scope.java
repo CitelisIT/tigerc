@@ -13,6 +13,8 @@ public interface Scope {
 
     public Map<String, Symbol> getSymbols();
 
+    public Symbol getSymbol(String name);
+
     public void addSymbol(String name, Symbol symbol);
 
 }
