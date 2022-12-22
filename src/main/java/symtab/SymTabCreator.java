@@ -1,15 +1,61 @@
 package symtab;
 
 import ast.AstVisitor;
+import java.util.Map;
 import ast.*;
+import symtab.symbol.Symbol;
+import symtab.scope.Scope;
+import symtab.scope.PredefinedScope;
+import symtab.scope.GlobalScope;
+import symtab.scope.LocalScope;
 
 public class SymTabCreator implements AstVisitor<Void> {
+
+    private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
+    private String currentScopeId;
+
+    public SymTabCreator() {
+        this.symtab.put("predefined", new PredefinedScope());
+        this.symtab.put("global", new GlobalScope());
+        this.currentScopeId = "global";
+    }
+
+    private void addSymbol(String name, Symbol symbol) {
+        Scope scope = this.symtab.get(this.currentScopeId);
+        scope.addSymbol(name, symbol);
+    }
+
+    private Symbol lookup(String name) {
+        Scope scope = this.symtab.get(this.currentScopeId);
+        while (scope != null) {
+            Symbol symbol = scope.getSymbol(name);
+            if (symbol != null) {
+                return symbol;
+            }
+            scope = this.symtab.get(scope.getParentScope());
+        }
+        return null;
+    }
+
+    private int getImbricationLevel() {
+        return this.symtab.get(this.currentScopeId).getImbricationLevel();
+    }
+
+    private void openScope(String scopeId) {
+        Scope scope = new LocalScope(scopeId, this.currentScopeId, this.getImbricationLevel() + 1);
+        this.symtab.put(scopeId, scope);
+        this.currentScopeId = scopeId;
+    }
+    
+    private void closeScope() {
+        this.currentScopeId = this.symtab.get(this.currentScopeId).getParentScope();
+    }
 
     public Void visit(Program program) {
         return null;
     }
 
-    public Void visit(Assign assign){
+    public Void visit(Assign assign) {
         return null;
     }
 
