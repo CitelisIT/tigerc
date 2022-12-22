@@ -1185,9 +1185,9 @@ public class tigerParser extends Parser {
 	}
 
 	public static class NegContext extends ParserRuleContext {
-		public ExpContext expr;
-		public ExpContext exp() {
-			return getRuleContext(ExpContext.class,0);
+		public SimpleExpContext expr;
+		public SimpleExpContext simpleExp() {
+			return getRuleContext(SimpleExpContext.class,0);
 		}
 		public NegContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1209,7 +1209,7 @@ public class tigerParser extends Parser {
 			setState(194);
 			match(T__10);
 			setState(195);
-			((NegContext)_localctx).expr = exp();
+			((NegContext)_localctx).expr = simpleExp();
 			}
 		}
 		catch (RecognitionException re) {
@@ -2134,7 +2134,7 @@ public class tigerParser extends Parser {
 		"\2\2\2\u00bc\u00bf\3\2\2\2\u00bd\u00bb\3\2\2\2\u00bd\u00be\3\2\2\2\u00be"+
 		"\u00c1\3\2\2\2\u00bf\u00bd\3\2\2\2\u00c0\u00b8\3\2\2\2\u00c0\u00c1\3\2"+
 		"\2\2\u00c1\u00c2\3\2\2\2\u00c2\u00c3\7\24\2\2\u00c3\27\3\2\2\2\u00c4\u00c5"+
-		"\7\r\2\2\u00c5\u00c6\5\4\3\2\u00c6\31\3\2\2\2\u00c7\u00c8\7\34\2\2\u00c8"+
+		"\7\r\2\2\u00c5\u00c6\5\20\t\2\u00c6\31\3\2\2\2\u00c7\u00c8\7\34\2\2\u00c8"+
 		"\u00c9\5\4\3\2\u00c9\u00ca\7\35\2\2\u00ca\u00cd\5\4\3\2\u00cb\u00cc\7"+
 		"\36\2\2\u00cc\u00ce\5\4\3\2\u00cd\u00cb\3\2\2\2\u00cd\u00ce\3\2\2\2\u00ce"+
 		"\33\3\2\2\2\u00cf\u00d0\7\37\2\2\u00d0\u00d1\5\4\3\2\u00d1\u00d2\7 \2"+

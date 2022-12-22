@@ -45,7 +45,7 @@ idExp:
 
 seqExp: '(' (exprs+=exp (';' exprs+=exp)*)? ')';
 
-neg: '-' expr=exp;
+neg: '-' expr=simpleExp;
 
 ifThen: 'if' condition=exp 'then' thenExpr=exp ('else' elseExpr=exp)?;
 
