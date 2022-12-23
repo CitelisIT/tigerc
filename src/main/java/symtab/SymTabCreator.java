@@ -10,14 +10,13 @@ import symtab.symbol.FuncSymbol;
 import symtab.symbol.RecordTypeSymbol;
 import symtab.symbol.SimpleTypeSymbol;
 import symtab.symbol.Symbol;
-import symtab.symbol.TypeSymbol;
 import symtab.symbol.VarSymbol;
 import symtab.scope.Scope;
 import symtab.scope.PredefinedScope;
 import symtab.scope.GlobalScope;
 import symtab.scope.LocalScope;
 
-public class SymTabCreator implements AstVisitor<Void> {
+public class SymTabCreator implements AstVisitor<String> {
 
     private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
@@ -59,113 +58,113 @@ public class SymTabCreator implements AstVisitor<Void> {
         this.currentScopeId = this.symtab.get(this.currentScopeId).getParentScope();
     }
 
-    public Void visit(Program program) {
+    public String visit(Program program) {
         program.exp.accept(this);
         return null;
     }
 
-    public Void visit(Assign assign) {
+    public String visit(Assign assign) {
         assign.expr.accept(this);
         assign.lValue.accept(this);
         return null;
     }
 
-    public Void visit(Or or) {
+    public String visit(Or or) {
         or.left.accept(this);
         or.right.accept(this);
         return null;
     }
 
-    public Void visit(And and) {
+    public String visit(And and) {
         and.left.accept(this);
         and.right.accept(this);
         return null;
     }
 
-    public Void visit(Eq eq) {
+    public String visit(Eq eq) {
         eq.left.accept(this);
         eq.right.accept(this);
         return null;
     }
 
-    public Void visit(NotEq notEq) {
+    public String visit(NotEq notEq) {
         notEq.accept(this);
         return null;
     }
 
-    public Void visit(InfEq infEq) {
+    public String visit(InfEq infEq) {
         infEq.accept(this);
         return null;
     }
 
-    public Void visit(Inf inf) {
+    public String visit(Inf inf) {
         inf.left.accept(this);
         inf.right.accept(this);
         return null;
     }
 
-    public Void visit(SupEq supEq) {
+    public String visit(SupEq supEq) {
         supEq.left.accept(this);
         supEq.left.accept(this);
         return null;
     }
 
-    public Void visit(Sup sup) {
+    public String visit(Sup sup) {
         sup.left.accept(this);
         sup.right.accept(this);
         return null;
     }
 
-    public Void visit(Add add) {
+    public String visit(Add add) {
         add.left.accept(this);
         add.right.accept(this);
         return null;
     }
 
-    public Void visit(Sub sub) {
+    public String visit(Sub sub) {
         sub.left.accept(this);
         sub.right.accept(this);
         return null;
     }
 
-    public Void visit(Mult mult) {
+    public String visit(Mult mult) {
         mult.left.accept(this);
         mult.right.accept(this);
         return null;
     }
 
-    public Void visit(Div div) {
+    public String visit(Div div) {
         div.left.accept(this);
         div.right.accept(this);
         return null;
     }
 
-    public Void visit(SeqExp seqExp) {
+    public String visit(SeqExp seqExp) {
         for (Ast exp : seqExp.exprs) {
             exp.accept(this);
         }
         return null;
     }
 
-    public Void visit(Neg neg) {
+    public String visit(Neg neg) {
         neg.expr.accept(this);
         return null;
     }
 
-    public Void visit(IfThenElse ifThenElse) {
+    public String visit(IfThenElse ifThenElse) {
         ifThenElse.condition.accept(this);
         ifThenElse.elseExpr.accept(this);
         ifThenElse.thenExpr.accept(this);
         return null;
     }
 
-    public Void visit(WhileExp whileExp) {
+    public String visit(WhileExp whileExp) {
         whileExp.condition.accept(this);
         whileExp.doExpr.accept(this);
         return null;
     }
 
-    public Void visit(ForExp forExp) {
+    public String visit(ForExp forExp) {
         forExp.doExpr.accept(this);
         forExp.endValue.accept(this);
         forExp.startValue.accept(this);
@@ -173,21 +172,21 @@ public class SymTabCreator implements AstVisitor<Void> {
         return null;
     }
 
-    public Void visit(LetDecls letDecls) {
+    public String visit(LetDecls letDecls) {
         for (Ast decl : letDecls.decls) {
             decl.accept(this);
         }
         return null;
     }
 
-    public Void visit(LetScope letScope) {
+    public String visit(LetScope letScope) {
         for (Ast exp : letScope.exprs) {
             exp.accept(this);
         }
         return null;
     }
 
-    public Void visit(LetExp letExp) {
+    public String visit(LetExp letExp) {
         this.openScope(currentScopeId);
         letExp.letDecls.accept(this);
         letExp.letScope.accept(this);
@@ -195,24 +194,24 @@ public class SymTabCreator implements AstVisitor<Void> {
         return null;
     }
 
-    public Void visit(CallExpArgs callExpArgs) {
+    public String visit(CallExpArgs callExpArgs) {
         for (Ast arg : callExpArgs.args) {
             arg.accept(this);
         }
         return null;
     }
 
-    public Void visit(CallExp callExp) {
+    public String visit(CallExp callExp) {
         callExp.id.accept(this);
         callExp.args.accept(this);
         return null;
     }
 
-    public Void visit(FieldDec fieldDec) {
+    public String visit(FieldDec fieldDec) {
         return null;
     }
 
-    public Void visit(TypeDec typeDec) {
+    public String visit(TypeDec typeDec) {
         Type typeValue = typeDec.typeValue;
 
         if (typeValue instanceof TypeId) {
@@ -238,34 +237,34 @@ public class SymTabCreator implements AstVisitor<Void> {
         return null;
     }
 
-    public Void visit(TypeDecs typeDecs) {
+    public String visit(TypeDecs typeDecs) {
         for (Ast typdec : typeDecs.tydecs) {
             typdec.accept(this);
         }
         return null;
     }
 
-    public Void visit(VarDecType varDecType) {
+    public String visit(VarDecType varDecType) {
         this.addSymbol(varDecType.varId.name, new VarSymbol(varDecType.varTypeId.name));
         varDecType.varValue.accept(this);
         return null;
     }
 
-    public Void visit(VarDecNoType varDecNoType) {
+    public String visit(VarDecNoType varDecNoType) {
         varDecNoType.varValue.accept(this);
         // utiliser le typeCheker pour récup le type de varValue pour remplir la TDS
         // this.addSymbol(varDecNoType.varId.name, new VarSymbol(#TYPE DE varValue#));
         return null;
     }
 
-    public Void visit(FunArgs funArgs) {
+    public String visit(FunArgs funArgs) {
         for (Ast arg : funArgs.args) {
             arg.accept(this);
         }
         return null;
     }
 
-    public Void visit(FunDec funDec) {
+    public String visit(FunDec funDec) {
         ArrayList<String> argTypes = new ArrayList<String>();
         for (FieldDec arg : funDec.args.args) {
             argTypes.add(arg.typeId.name);
@@ -277,62 +276,62 @@ public class SymTabCreator implements AstVisitor<Void> {
         return null;
     }
 
-    public Void visit(Id id) {
+    public String visit(Id id) {
         return null;
     }
 
-    public Void visit(TypeId typeId) {
+    public String visit(TypeId typeId) {
         return null;
     }
 
-    public Void visit(ArrType arrType) {
+    public String visit(ArrType arrType) {
         return null;
     }
 
-    public Void visit(RecType recType) {
+    public String visit(RecType recType) {
 
         return null;
     }
 
-    public Void visit(Subscript subscript) {
+    public String visit(Subscript subscript) {
         subscript.expr.accept(this);
         subscript.lValue.accept(this);
         return null;
     }
 
-    public Void visit(FieldExp fieldExp) {
+    public String visit(FieldExp fieldExp) {
         return null;
     }
 
-    public Void visit(ArrCreate arrCreate) {
+    public String visit(ArrCreate arrCreate) {
         return null;
     }
 
-    public Void visit(FieldCreate fieldCreate) {
+    public String visit(FieldCreate fieldCreate) {
         return null;
     }
 
-    public Void visit(RecCreateFields recCreateFields) {
+    public String visit(RecCreateFields recCreateFields) {
         return null;
     }
 
-    public Void visit(RecCreate recCreate) {
+    public String visit(RecCreate recCreate) {
         return null;
     }
 
-    public Void visit(IntLiteral intLitteral) {
+    public String visit(IntLiteral intLitteral) {
         return null;
     }
 
-    public Void visit(StringLiteral stringLiteral) {
+    public String visit(StringLiteral stringLiteral) {
         return null;
     }
 
-    public Void visit(NilLiteral nilLitteral) {
+    public String visit(NilLiteral nilLitteral) {
         return null;
     }
 
-    public Void visit(BreakLiteral breakLitteral) {
+    public String visit(BreakLiteral breakLitteral) {
         return null;
     }
 }
