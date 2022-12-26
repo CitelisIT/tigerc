@@ -47,16 +47,18 @@ tasks.register("tree") {
             def totalTime
             logTask "Generating parse tree vizualisation from file ${inFile}"
             logCmd "java -cp build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar Main ${inFile} --parse-tree"
+            def cmdOutput = new ByteArrayOutputStream()
             def cmdError = new ByteArrayOutputStream()
             exec {
                 commandLine "java", "-cp", "build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar", "Main", inFile, "--parse-tree",
+                standardOutput = cmdOutput
                 errorOutput = cmdError
                 ignoreExitValue = true
             }
+            logCmdOutput(cmdOutput, cmdError)
             if (cmdError.size() != 0) {
-                logError(cmdError.toString())
                 totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
-                println "${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
+                println "\n${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
                 return
             }
             logInfo "Parse tree vizualisation generated"
@@ -77,16 +79,18 @@ tasks.register("dot") {
             def totalTime
             logTask "Generating dot representation of AST from file ${inFile}"
             logCmd "java -cp build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar Main ${inFile} --ast ${outFile}"
+            def cmdOutput = new ByteArrayOutputStream()
             def cmdError = new ByteArrayOutputStream()
             exec {
                 commandLine "java", "-cp", "build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar", "Main", inFile, "--ast", outFile
+                standardOutput = cmdOutput
                 errorOutput = cmdError
                 ignoreExitValue = true
             }
+            logCmdOutput(cmdOutput, cmdError)
             if (cmdError.size() != 0) {
-                logError(cmdError.toString())
                 totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
-                println "${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
+                println "\n${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
                 return
             }
             logInfo "Dot representation of AST generated"

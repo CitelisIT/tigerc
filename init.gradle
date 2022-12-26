@@ -41,4 +41,19 @@ allprojects {
     ext.logOutput = {message ->
         println "${ansiBold}${ansiMagenta}[OUT]${ansiReset} ${message}"
     }
+
+    ext.logCmdOutput = {stdOut, stdErr ->
+        if (stdOut.size() != 0) {
+            def outputs = stdOut.toString().split("\n")
+            for (output in outputs) {
+                logOutput(output)
+            }
+        }
+        if (stdErr.size() != 0) {
+            def errors = stdErr.toString().split("\n")
+            for (error in errors) {
+                logError(error)
+            }
+        }
+    }
 }
