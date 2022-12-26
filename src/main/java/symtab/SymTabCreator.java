@@ -294,7 +294,6 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(RecType recType) {
-
         return null;
     }
 
@@ -321,6 +320,29 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(RecCreate recCreate) {
+        Symbol recordType = this.lookup(recCreate.typeId.name);
+        if (recordType == null) {
+            System.err.println("Record type " + recCreate.typeId.name + " not found");
+        } else {
+            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) recordType;
+            ArrayList<FieldCreate> fields = recCreate.fields.fields;
+            for (FieldCreate field : fields) {
+                Map<String, String> fieldsMap = recordTypeSymbol.getFields();
+                if (!fieldsMap.containsKey(field.id.name)) {
+                    System.err.println("Field " + field.id.name + " not found in record type "
+                            + recCreate.typeId.name);
+                } else {
+                    String fieldType = fieldsMap.get(field.id.name);
+                    /*
+                     * Typechecker doit être appelé pour récupérer le type de field String
+                     * declarationType = ; if (!fieldType.equals(declarationType)) {
+                     * System.err.println("Field " + field.id.name + " has type " + fieldType +
+                     * " but is initialized with type " + declarationType); } Reste à ajouter le
+                     * record dans la TDS
+                     */
+                }
+            }
+        }
         return null;
     }
 
