@@ -13,6 +13,7 @@ import graphviz.GraphVizVisitor;
 import parser.tigerLexer;
 import parser.tigerParser;
 import parser.tigerParser.ProgramContext;
+import symtab.SymTabCreator;
 
 public class Main {
 
@@ -37,6 +38,9 @@ public class Main {
 
             AstCreator astCreator = new AstCreator();
             Ast ast = program.accept(astCreator);
+
+            SymTabCreator symTabCreator = new SymTabCreator();
+            ast.accept(symTabCreator);
 
             switch (mode) {
                 case "--parse-tree":
