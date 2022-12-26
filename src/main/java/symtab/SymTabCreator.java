@@ -20,6 +20,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
+    private boolean insideLoop = false;
 
     public SymTabCreator() {
         this.symtab.put("predefined", new PredefinedScope());
@@ -159,16 +160,20 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(WhileExp whileExp) {
+        this.insideLoop = true;
         whileExp.condition.accept(this);
         whileExp.doExpr.accept(this);
+        this.insideLoop = false;
         return null;
     }
 
     public String visit(ForExp forExp) {
+        this.insideLoop = true;
         forExp.doExpr.accept(this);
         forExp.endValue.accept(this);
         forExp.startValue.accept(this);
         forExp.forId.accept(this);
+        this.insideLoop = false;
         return null;
     }
 
@@ -332,6 +337,10 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(BreakLiteral breakLitteral) {
+        // Check if break is only used in a loop
+        if (!this.insideLoop) {
+            System.err.println("Break statement used outside a loop");
+        }
         return null;
     }
 }
