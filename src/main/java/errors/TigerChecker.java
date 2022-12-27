@@ -51,12 +51,10 @@ public class TigerChecker {
             this.semanticErrors = symTabCreator.getSemanticErrors();
 
             if (this.semanticErrors.size() != 0) {
-                this.reportSemanticErrors();
                 return true;
             }
             return false;
         } else {
-            this.reportSyntaxErrors();
             return true;
         }
     }
@@ -70,6 +68,15 @@ public class TigerChecker {
     public void reportSemanticErrors() {
         for (String error : this.semanticErrors) {
             System.err.println(error);
+        }
+    }
+
+    public void reportAllErrors() {
+        if (this.syntaxErrors != null) {
+            this.reportSyntaxErrors();
+        }
+        if (this.semanticErrors != null) {
+            this.reportSemanticErrors();
         }
     }
 

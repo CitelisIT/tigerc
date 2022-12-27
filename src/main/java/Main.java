@@ -55,6 +55,15 @@ public class Main {
                         graphViz.dumpGraph(outFile);
                         break;
                 }
+            } else {
+                switch (mode) {
+                    case "--check-syntax":
+                        programChecker.reportSyntaxErrors();
+                    case "--check-semantic":
+                        programChecker.reportSemanticErrors();
+                    default:
+                        programChecker.reportAllErrors();
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -11,7 +11,7 @@ echo "Tests that should have passed but didn't:"
 
 for TEST in ${ArraySyntaxicPass[@]}
 do
-	if ./tigerc examples/tests/syntaxic/pass/$TEST --parse-tree | grep -q "TASK FAILED"
+	if ./tigerc examples/tests/syntaxic/pass/$TEST --check-syntax | grep -q "TASK FAILED"
 	then
 		echo $TEST
 		failedTests=(${failedTests[@]} "syntaxic/pass/$TEST")
@@ -23,7 +23,7 @@ echo "Tests that should have failed but didn't:"
 
 for TEST in ${ArraySyntaxicFail[@]}
 do
-	if ./tigerc examples/tests/syntaxic/fail/$TEST --parse-tree | grep -q "TASK SUCCESSFUL"
+	if ./tigerc examples/tests/syntaxic/fail/$TEST --check-syntax | grep -q "TASK SUCCESSFUL"
 	then
 		echo $TEST
 		failedTests=(${failedTests[@]} "syntaxic/fail/$TEST")

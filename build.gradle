@@ -100,3 +100,67 @@ tasks.register("dot") {
         }
     } 
 }
+
+tasks.register("syntax") {
+    dependsOn "clean"
+    dependsOn "build"
+    tasks.findByName("build").mustRunAfter "clean"
+    doLast {
+        if (project.hasProperty("inFile")) {
+            def startTime = System.nanoTime()
+            def totalTime
+            logTask "Checking syntax for file ${inFile}"
+            logCmd "java -cp build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar Main ${inFile} --check-syntax"
+            def cmdOutput = new ByteArrayOutputStream()
+            def cmdError = new ByteArrayOutputStream()
+            exec {
+                commandLine "java", "-cp", "build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar", "Main", inFile, "--check-syntax",
+                standardOutput = cmdOutput
+                errorOutput = cmdError
+                ignoreExitValue = true
+            }
+            logCmdOutput(cmdOutput, cmdError)
+            if (cmdError.size() != 0) {
+                totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+                println "\n${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
+                return
+            }
+            logInfo "Program syntax checked"
+
+            totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+            println "\n${project.ext.ansiBold}${project.ext.ansiGreen}TASK SUCCESSFUL${project.ext.ansiReset} in ${totalTime}ms"
+        }
+    } 
+}
+
+tasks.register("semantic") {
+    dependsOn "clean"
+    dependsOn "build"
+    tasks.findByName("build").mustRunAfter "clean"
+    doLast {
+        if (project.hasProperty("inFile")) {
+            def startTime = System.nanoTime()
+            def totalTime
+            logTask "Checking semantics for file ${inFile}"
+            logCmd "java -cp build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar Main ${inFile} --check-semantics"
+            def cmdOutput = new ByteArrayOutputStream()
+            def cmdError = new ByteArrayOutputStream()
+            exec {
+                commandLine "java", "-cp", "build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar", "Main", inFile, "--check-semantics",
+                standardOutput = cmdOutput
+                errorOutput = cmdError
+                ignoreExitValue = true
+            }
+            logCmdOutput(cmdOutput, cmdError)
+            if (cmdError.size() != 0) {
+                totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+                println "\n${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
+                return
+            }
+            logInfo "Program semantics checked"
+
+            totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+            println "\n${project.ext.ansiBold}${project.ext.ansiGreen}TASK SUCCESSFUL${project.ext.ansiReset} in ${totalTime}ms"
+        }
+    } 
+}
