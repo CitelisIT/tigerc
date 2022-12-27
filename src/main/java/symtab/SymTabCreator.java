@@ -3,6 +3,7 @@ package symtab;
 import ast.AstVisitor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import ast.*;
 import symtab.symbol.ArrayTypeSymbol;
@@ -21,6 +22,8 @@ public class SymTabCreator implements AstVisitor<String> {
     private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
     private boolean insideLoop = false;
+
+    private List<String> semanticErrors = new ArrayList<String>();
 
     public SymTabCreator() {
         this.symtab.put("predefined", new PredefinedScope());
@@ -330,14 +333,14 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(RecCreate recCreate) {
         Symbol recordType = this.lookup(recCreate.typeId.name);
         if (recordType == null) {
-            System.err.println("Record type " + recCreate.typeId.name + " not found");
+            this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
         } else {
             RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) recordType;
             ArrayList<FieldCreate> fields = recCreate.fields.fields;
             for (FieldCreate field : fields) {
                 Map<String, String> fieldsMap = recordTypeSymbol.getFields();
                 if (!fieldsMap.containsKey(field.id.name)) {
-                    System.err.println("Field " + field.id.name + " not found in record type "
+                    this.semanticErrors.add("Field " + field.id.name + " not found in record type "
                             + recCreate.typeId.name);
                 } else {
                     String fieldType = fieldsMap.get(field.id.name);
@@ -370,8 +373,13 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(BreakLiteral breakLitteral) {
         // Check if break is only used in a loop
         if (!this.insideLoop) {
-            System.err.println("Break statement used outside a loop");
+            this.semanticErrors.add("Break statement used outside a loop");
         }
         return null;
     }
+
+    public List<String> getSemanticErrors() {
+        return this.semanticErrors;
+    }
+
 }
