@@ -22,4 +22,8 @@ public class RecordTypeSymbol extends TypeSymbol {
     public boolean hasField(String name) {
         return this.fields.containsKey(name);
     }
+
+    public String getFieldType(String name) {
+        return this.fields.get(name);
+    }
 }
