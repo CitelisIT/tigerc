@@ -6,7 +6,7 @@ This project is a compiler for the `tiger` language, developed as part of our co
 
 This program is used with the bash script `./tigerc` found at the root of the project. It is used as follows :
 
-```bash
+```text
 Usage:
     tigerc <file> <task> [argument] [options...]
 
