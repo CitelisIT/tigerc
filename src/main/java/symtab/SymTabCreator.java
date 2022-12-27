@@ -22,6 +22,7 @@ public class SymTabCreator implements AstVisitor<String> {
     private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
     private boolean insideLoop = false;
+    private Map<String, String> typeAliases = new HashMap<String, String>();
 
     private List<String> semanticErrors = new ArrayList<String>();
 
@@ -29,6 +30,10 @@ public class SymTabCreator implements AstVisitor<String> {
         this.symtab.put("predefined", new PredefinedScope());
         this.symtab.put("global", new GlobalScope());
         this.currentScopeId = "global";
+
+        this.typeAliases.put("int", null);
+        this.typeAliases.put("string", null);
+        this.typeAliases.put("void", null);
     }
 
     private void addSymbol(String name, Symbol symbol) {
@@ -60,6 +65,14 @@ public class SymTabCreator implements AstVisitor<String> {
 
     private void closeScope() {
         this.currentScopeId = this.symtab.get(this.currentScopeId).getParentScope();
+    }
+
+    private String resolveTypeAlias(String type) {
+        String resolvedType = type;
+        while (this.typeAliases.get(resolvedType) != null) {
+            resolvedType = this.typeAliases.get(resolvedType);
+        }
+        return resolvedType;
     }
 
     public String visit(Program program) {
@@ -220,26 +233,28 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(TypeDec typeDec) {
+        String typeName = typeDec.typeId.name;
         Type typeValue = typeDec.typeValue;
 
         if (typeValue instanceof TypeId) {
-            TypeId typeId = (TypeId) typeValue;
-            this.addSymbol(typeDec.typeId.name, new SimpleTypeSymbol(typeId.name));
+            TypeId typeIdValue = (TypeId) typeValue;
+            this.addSymbol(typeName, new SimpleTypeSymbol(typeIdValue.name));
+            this.typeAliases.put(typeName, typeIdValue.name);
         }
         if (typeValue instanceof ArrType) {
-            ArrType arrType = (ArrType) typeValue;
-            this.addSymbol(typeDec.typeId.name, new ArrayTypeSymbol(arrType.name));
+            ArrType arrTypeValue = (ArrType) typeValue;
+            this.addSymbol(typeName, new ArrayTypeSymbol(arrTypeValue.name));
         }
         if (typeValue instanceof RecType) {
 
-            RecType recType = (RecType) typeValue;
+            RecType recTypeValue = (RecType) typeValue;
             Map<String, String> fields = new HashMap<String, String>();
 
-            for (FieldDec field : recType.fields) {
+            for (FieldDec field : recTypeValue.fields) {
                 fields.put(field.id.name, field.typeId.name);
             }
 
-            this.addSymbol(typeDec.typeId.name, new RecordTypeSymbol(fields));
+            this.addSymbol(typeName, new RecordTypeSymbol(fields));
 
         }
         return null;
@@ -347,8 +362,8 @@ public class SymTabCreator implements AstVisitor<String> {
                     // Typechecker doit être appelé pour récupérer le type de field
                     // String declarationType = TypeChecker.getType(field.expr);
                     // if (!fieldType.equals(declarationType)) {
-                    //     System.err.println("Field " + field.id.name + " has type " + fieldType
-                    //             + " but is initialized with type " + declarationType);
+                    // System.err.println("Field " + field.id.name + " has type " + fieldType
+                    // + " but is initialized with type " + declarationType);
                     // }
                     // Reste à ajouter le record dans la TDS
 
@@ -358,7 +373,7 @@ public class SymTabCreator implements AstVisitor<String> {
         return null;
     }
 
-    public String visit(IntLiteral intLitteral) {
+    public String visit(IntLiteral intLiteral) {
         return "int";
     }
 
@@ -366,11 +381,11 @@ public class SymTabCreator implements AstVisitor<String> {
         return "string";
     }
 
-    public String visit(NilLiteral nilLitteral) {
+    public String visit(NilLiteral nilLiteral) {
         return null;
     }
 
-    public String visit(BreakLiteral breakLitteral) {
+    public String visit(BreakLiteral breakLiteral) {
         // Check if break is only used in a loop
         if (!this.insideLoop) {
             this.semanticErrors.add("Break statement used outside a loop");
