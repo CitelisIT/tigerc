@@ -70,77 +70,77 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(Assign assign) {
         assign.expr.accept(this);
         assign.lValue.accept(this);
-        return null;
+        return "void";
     }
 
     public String visit(Or or) {
         or.left.accept(this);
         or.right.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(And and) {
         and.left.accept(this);
         and.right.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(Eq eq) {
         eq.left.accept(this);
         eq.right.accept(this);
-        return null;
+        return "void";
     }
 
     public String visit(NotEq notEq) {
         notEq.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(InfEq infEq) {
         infEq.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(Inf inf) {
         inf.left.accept(this);
         inf.right.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(SupEq supEq) {
         supEq.left.accept(this);
         supEq.left.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(Sup sup) {
         sup.left.accept(this);
         sup.right.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(Add add) {
         add.left.accept(this);
         add.right.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(Sub sub) {
         sub.left.accept(this);
         sub.right.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(Mult mult) {
         mult.left.accept(this);
         mult.right.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(Div div) {
         div.left.accept(this);
         div.right.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(SeqExp seqExp) {
@@ -152,7 +152,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Neg neg) {
         neg.expr.accept(this);
-        return null;
+        return "int";
     }
 
     public String visit(IfThenElse ifThenElse) {
@@ -167,7 +167,7 @@ public class SymTabCreator implements AstVisitor<String> {
         whileExp.condition.accept(this);
         whileExp.doExpr.accept(this);
         this.insideLoop = false;
-        return null;
+        return "void";
     }
 
     public String visit(ForExp forExp) {
@@ -177,7 +177,7 @@ public class SymTabCreator implements AstVisitor<String> {
         forExp.startValue.accept(this);
         forExp.forId.accept(this);
         this.insideLoop = false;
-        return null;
+        return "void";
     }
 
     public String visit(LetDecls letDecls) {
@@ -375,7 +375,7 @@ public class SymTabCreator implements AstVisitor<String> {
         if (!this.insideLoop) {
             this.semanticErrors.add("Break statement used outside a loop");
         }
-        return null;
+        return "void";
     }
 
     public List<String> getSemanticErrors() {
