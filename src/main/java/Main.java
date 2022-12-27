@@ -59,10 +59,13 @@ public class Main {
                 switch (mode) {
                     case "--check-syntax":
                         programChecker.reportSyntaxErrors();
+                        break;
                     case "--check-semantic":
                         programChecker.reportSemanticErrors();
+                        break;
                     default:
                         programChecker.reportAllErrors();
+                        break;
                 }
             }
         } catch (IOException e) {
