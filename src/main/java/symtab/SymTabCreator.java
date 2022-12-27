@@ -282,6 +282,14 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(Id id) {
+        Symbol symbol = this.lookup(id.name);
+        if (symbol instanceof VarSymbol) {
+            VarSymbol varSymbol = (VarSymbol) symbol;
+            return varSymbol.getType();
+        } else if (symbol instanceof FuncSymbol) {
+            FuncSymbol funcSymbol = (FuncSymbol) symbol;
+            return funcSymbol.getType();
+        }
         return null;
     }
 
@@ -335,10 +343,10 @@ public class SymTabCreator implements AstVisitor<String> {
                     String fieldType = fieldsMap.get(field.id.name);
                     // Typechecker doit être appelé pour récupérer le type de field
                     // String declarationType = TypeChecker.getType(field.expr);
-                    if (!fieldType.equals(declarationType)) {
-                        System.err.println("Field " + field.id.name + " has type " + fieldType
-                                + " but is initialized with type " + declarationType);
-                    }
+                    // if (!fieldType.equals(declarationType)) {
+                    //     System.err.println("Field " + field.id.name + " has type " + fieldType
+                    //             + " but is initialized with type " + declarationType);
+                    // }
                     // Reste à ajouter le record dans la TDS
 
                 }
@@ -348,11 +356,11 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(IntLiteral intLitteral) {
-        return null;
+        return "int";
     }
 
     public String visit(StringLiteral stringLiteral) {
-        return null;
+        return "string";
     }
 
     public String visit(NilLiteral nilLitteral) {
