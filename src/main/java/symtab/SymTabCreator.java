@@ -37,6 +37,10 @@ public class SymTabCreator implements AstVisitor<String> {
         this.typeAliases.put("void", null);
     }
 
+    public Map<String, Scope> getSymTab() {
+        return this.symtab;
+    }
+
     private void addSymbol(String name, Symbol symbol) {
         Scope scope = this.symtab.get(this.currentScopeId);
         scope.addSymbol(name, symbol);

@@ -3,6 +3,7 @@ package errors;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -13,16 +14,18 @@ import parser.tigerLexer;
 import parser.tigerParser;
 import parser.tigerParser.ProgramContext;
 import symtab.SymTabCreator;
+import symtab.scope.Scope;
 
 public class TigerChecker {
 
     private String file;
     private List<String> syntaxErrors;
     private List<String> semanticErrors;
-    tigerLexer lexer;
-    tigerParser parser;
-    ProgramContext program;
-    public Ast ast;
+    private tigerLexer lexer;
+    private tigerParser parser;
+    private ProgramContext program;
+    private Ast ast;
+    private Map<String, Scope> symtab;
 
     public TigerChecker(String file) {
         this.file = file;
@@ -49,6 +52,7 @@ public class TigerChecker {
             SymTabCreator symTabCreator = new SymTabCreator();
             this.ast.accept(symTabCreator);
             this.semanticErrors = symTabCreator.getSemanticErrors();
+            this.symtab = symTabCreator.getSymTab();
 
             if (this.semanticErrors.size() != 0) {
                 return true;
@@ -86,6 +90,10 @@ public class TigerChecker {
 
     public Ast getAst() {
         return this.ast;
+    }
+
+    public Map<String, Scope> getSymTab() {
+        return this.symtab;
     }
 
 }
