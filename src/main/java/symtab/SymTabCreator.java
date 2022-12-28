@@ -23,6 +23,7 @@ public class SymTabCreator implements AstVisitor<String> {
     private String currentScopeId;
     private boolean insideLoop = false;
     private Map<String, String> typeAliases = new HashMap<String, String>();
+    private List<Integer> scopesByDepth = new ArrayList<Integer>();
 
     private List<String> semanticErrors = new ArrayList<String>();
 
@@ -57,10 +58,22 @@ public class SymTabCreator implements AstVisitor<String> {
         return this.symtab.get(this.currentScopeId).getImbricationLevel();
     }
 
-    private void openScope(String scopeId) {
-        Scope scope = new LocalScope(scopeId, this.currentScopeId, this.getImbricationLevel() + 1);
-        this.symtab.put(scopeId, scope);
-        this.currentScopeId = scopeId;
+    private void openScope() {
+        String base = this.currentScopeId;
+        if (base == "global") {
+            base = "local";
+        }
+        int currentDepth = this.getImbricationLevel();
+        if (this.scopesByDepth.size() <= currentDepth) {
+            this.scopesByDepth.add(0);
+        } else {
+            this.scopesByDepth.set(currentDepth, this.scopesByDepth.get(currentDepth) + 1);
+        }
+        String newScopeId = base + "_" + this.scopesByDepth.get(currentDepth);
+        Scope scope =
+                new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
+        this.symtab.put(newScopeId, scope);
+        this.currentScopeId = newScopeId;
     }
 
     private void closeScope() {
@@ -105,12 +118,14 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(NotEq notEq) {
-        notEq.accept(this);
+        notEq.left.accept(this);
+        notEq.right.accept(this);
         return "int";
     }
 
     public String visit(InfEq infEq) {
-        infEq.accept(this);
+        infEq.left.accept(this);
+        infEq.right.accept(this);
         return "int";
     }
 
@@ -157,10 +172,11 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(SeqExp seqExp) {
+        String type = "void";
         for (Ast exp : seqExp.exprs) {
-            exp.accept(this);
+            type = exp.accept(this);
         }
-        return null;
+        return this.resolveTypeAlias(type);
     }
 
     public String visit(Neg neg) {
@@ -170,9 +186,13 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(IfThenElse ifThenElse) {
         ifThenElse.condition.accept(this);
-        ifThenElse.elseExpr.accept(this);
-        ifThenElse.thenExpr.accept(this);
-        return null;
+        String thenType = ifThenElse.thenExpr.accept(this);
+        if (ifThenElse.elseExpr == null) {
+            return "void";
+        } else {
+            String elseType = ifThenElse.elseExpr.accept(this);
+            return this.resolveTypeAlias(thenType);
+        }
     }
 
     public String visit(WhileExp whileExp) {
@@ -201,18 +221,19 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(LetScope letScope) {
+        String type = "void";
         for (Ast exp : letScope.exprs) {
-            exp.accept(this);
+            type = exp.accept(this);
         }
-        return null;
+        return this.resolveTypeAlias(type);
     }
 
     public String visit(LetExp letExp) {
-        this.openScope(currentScopeId);
+        this.openScope();
         letExp.letDecls.accept(this);
-        letExp.letScope.accept(this);
+        String scopeExpType = letExp.letScope.accept(this);
         this.closeScope();
-        return null;
+        return scopeExpType;
     }
 
     public String visit(CallExpArgs callExpArgs) {
@@ -225,10 +246,14 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(CallExp callExp) {
         callExp.id.accept(this);
         callExp.args.accept(this);
-        return null;
+        String functionId = callExp.id.name;
+        FuncSymbol funcSymbol = (FuncSymbol) this.lookup(functionId);
+        String callType = funcSymbol.getType();
+        return callType;
     }
 
     public String visit(FieldDec fieldDec) {
+        // No type for declartations
         return null;
     }
 
@@ -257,6 +282,7 @@ public class SymTabCreator implements AstVisitor<String> {
             this.addSymbol(typeName, new RecordTypeSymbol(fields));
 
         }
+        // No type for declartations
         return null;
     }
 
@@ -264,19 +290,23 @@ public class SymTabCreator implements AstVisitor<String> {
         for (Ast typdec : typeDecs.tydecs) {
             typdec.accept(this);
         }
+        // No type for declartations
         return null;
     }
 
     public String visit(VarDecType varDecType) {
         this.addSymbol(varDecType.varId.name, new VarSymbol(varDecType.varTypeId.name));
         varDecType.varValue.accept(this);
+
+        // No type for declartations
         return null;
     }
 
     public String visit(VarDecNoType varDecNoType) {
-        varDecNoType.varValue.accept(this);
-        // utiliser le typeCheker pour récup le type de varValue pour remplir la TDS
-        // this.addSymbol(varDecNoType.varId.name, new VarSymbol(#TYPE DE varValue#));
+        String varType = varDecNoType.varValue.accept(this);
+        this.addSymbol(varDecNoType.varId.name, new VarSymbol(varType));
+
+        // No type for declartations
         return null;
     }
 
@@ -293,9 +323,10 @@ public class SymTabCreator implements AstVisitor<String> {
             argTypes.add(arg.typeId.name);
         }
         this.addSymbol(funDec.id.name, new FuncSymbol(funDec.returnTypeId.name, argTypes));
-        this.openScope(this.currentScopeId);
+        this.openScope();
         funDec.body.accept(this);
         this.closeScope();
+        // No type for declartations
         return null;
     }
 
@@ -303,38 +334,49 @@ public class SymTabCreator implements AstVisitor<String> {
         Symbol symbol = this.lookup(id.name);
         if (symbol instanceof VarSymbol) {
             VarSymbol varSymbol = (VarSymbol) symbol;
-            return varSymbol.getType();
+            return this.resolveTypeAlias(varSymbol.getType());
         } else if (symbol instanceof FuncSymbol) {
             FuncSymbol funcSymbol = (FuncSymbol) symbol;
-            return funcSymbol.getType();
+            return this.resolveTypeAlias(funcSymbol.getType());
         }
         return null;
     }
 
     public String visit(TypeId typeId) {
+        // Type IDs themselves have no type
         return null;
     }
 
     public String visit(ArrType arrType) {
+        // Type IDs themselves have no type
         return null;
     }
 
     public String visit(RecType recType) {
+        // Type IDs themselves have no type
         return null;
     }
 
     public String visit(Subscript subscript) {
-        subscript.expr.accept(this);
-        subscript.lValue.accept(this);
-        return null;
+        String accessExprType = subscript.expr.accept(this);
+        String arrayType = subscript.lValue.accept(this);
+        String resolvedArrayType = this.resolveTypeAlias(arrayType);
+        ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(resolvedArrayType);
+        return this.resolveTypeAlias(arrayTypeSymbol.getType());
     }
 
     public String visit(FieldExp fieldExp) {
-        return null;
+        String recordType = fieldExp.lValue.accept(this);
+        String resolvedRecordType = this.resolveTypeAlias(recordType);
+        RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(resolvedRecordType);
+        return this.resolveTypeAlias(recordTypeSymbol.getFields().get(fieldExp.id.name));
     }
 
     public String visit(ArrCreate arrCreate) {
-        return null;
+        String arrayType = arrCreate.typeId.name;
+        String sizeExpType = arrCreate.index.accept(this);
+        String initializerExpType = arrCreate.of.accept(this);
+        return this.resolveTypeAlias(arrayType);
     }
 
     public String visit(FieldCreate fieldCreate) {
