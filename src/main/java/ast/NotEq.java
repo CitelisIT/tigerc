@@ -8,9 +8,13 @@ public class NotEq implements Ast {
 
     public Ast left;
     public Ast right;
+    public int lineNumber;
+    public int columnNumber;
 
-    public NotEq(Ast left, Ast right) {
+    public NotEq(Ast left, Ast right, int lineNumber, int columnNumber) {
         this.left = left;
         this.right = right;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

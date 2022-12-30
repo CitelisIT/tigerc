@@ -7,8 +7,12 @@ public class Program implements Ast {
     }
 
     public Ast exp;
+    public int lineNumber;
+    public int columnNumber;
 
-    public Program(Ast exp) {
+    public Program(Ast exp, int lineNumber, int columnNumber) {
         this.exp = exp;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

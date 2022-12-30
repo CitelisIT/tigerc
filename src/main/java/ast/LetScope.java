@@ -9,8 +9,12 @@ public class LetScope implements Ast {
     }
 
     public ArrayList<Ast> exprs;
+    int lineNumber;
+    int columnNumber;
 
-    public LetScope(ArrayList<Ast> exprs) {
+    public LetScope(ArrayList<Ast> exprs, int lineNumber, int columnNumber) {
         this.exprs = exprs;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

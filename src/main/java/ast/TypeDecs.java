@@ -9,10 +9,13 @@ public class TypeDecs implements Ast {
     }
 
     public ArrayList<Ast> tydecs;
+    public int lineNumber;
+    public int columnNumber;
 
-    public TypeDecs(ArrayList<Ast> tydecs) {
+    public TypeDecs(ArrayList<Ast> tydecs, int lineNumber, int columnNumber) {
         this.tydecs = tydecs;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
-
 
 }

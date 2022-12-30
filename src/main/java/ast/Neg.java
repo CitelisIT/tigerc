@@ -7,8 +7,12 @@ public class Neg implements Ast {
     }
 
     public Ast expr;
+    public int lineNumber;
+    public int columnNumber;
 
-    public Neg(Ast expr) {
+    public Neg(Ast expr, int lineNumber, int columnNumber) {
         this.expr = expr;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

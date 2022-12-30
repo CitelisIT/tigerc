@@ -7,8 +7,12 @@ public class Id implements Ast {
     }
 
     public String name;
+    public int lineNumber;
+    public int columnNumber;
 
-    public Id(String name) {
+    public Id(String name, int lineNumber, int columnNumber) {
         this.name = name;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

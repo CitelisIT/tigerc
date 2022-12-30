@@ -8,11 +8,14 @@ public class TypeDec implements Ast {
 
     public TypeId typeId;
     public Type typeValue;
+    public int lineNumber;
+    public int columnNumber;
 
-    public TypeDec(TypeId typeId, Type typeValue) {
+    public TypeDec(TypeId typeId, Type typeValue, int lineNumber, int columnNumber) {
         this.typeId = typeId;
         this.typeValue = typeValue;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
-
 
 }

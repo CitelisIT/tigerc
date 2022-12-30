@@ -9,8 +9,12 @@ public class LetDecls implements Ast {
     }
 
     public ArrayList<Ast> decls;
+    public int lineNumber;
+    public int columnNumber;
 
-    public LetDecls(ArrayList<Ast> decls) {
+    public LetDecls(ArrayList<Ast> decls, int lineNumber, int columnNumber) {
         this.decls = decls;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

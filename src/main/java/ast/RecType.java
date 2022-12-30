@@ -9,9 +9,13 @@ public class RecType implements Type {
     }
 
     public ArrayList<FieldDec> fields;
+    public int lineNumber;
+    public int columnNumber;
 
-    public RecType(ArrayList<FieldDec> fields) {
+    public RecType(ArrayList<FieldDec> fields, int lineNumber, int columnNumber) {
         this.fields = fields;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 
 }

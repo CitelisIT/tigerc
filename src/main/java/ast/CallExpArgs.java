@@ -9,9 +9,13 @@ public class CallExpArgs implements Ast {
     }
 
     public ArrayList<Ast> args;
+    public int lineNumber;
+    public int columnNumber;
 
-    public CallExpArgs(ArrayList<Ast> args) {
+    public CallExpArgs(ArrayList<Ast> args, int lineNumber, int columnNumber) {
         this.args = args;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 
 }

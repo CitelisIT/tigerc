@@ -8,9 +8,13 @@ public class FieldExp implements Ast {
 
     public Ast lValue;
     public Id id;
+    public int lineNumber;
+    public int columnNumber;
 
-    public FieldExp(Ast lValue, Id id) {
+    public FieldExp(Ast lValue, Id id, int lineNumber, int columnNumber) {
         this.lValue = lValue;
         this.id = id;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

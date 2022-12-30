@@ -7,8 +7,12 @@ public class ArrType implements Type {
     }
 
     public String name;
+    public int lineNumber;
+    public int columnNumber;
 
-    public ArrType(String name) {
+    public ArrType(String name, int lineNumber, int columnNumber) {
         this.name = name;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

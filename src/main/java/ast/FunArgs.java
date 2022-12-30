@@ -9,9 +9,13 @@ public class FunArgs implements Ast {
     }
 
     public ArrayList<FieldDec> args;
+    int lineNumber;
+    int columnNumber;
 
-    public FunArgs(ArrayList<FieldDec> args) {
+    public FunArgs(ArrayList<FieldDec> args, int lineNumber, int columnNumber) {
         this.args = args;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 
 }

@@ -8,9 +8,13 @@ public class FieldCreate implements Ast {
 
     public Id id;
     public Ast expr;
+    int lineNumber;
+    int columnNumber;
 
-    public FieldCreate(Id id, Ast expr) {
+    public FieldCreate(Id id, Ast expr, int lineNumber, int columnNumber) {
         this.id = id;
         this.expr = expr;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

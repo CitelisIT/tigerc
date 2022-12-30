@@ -8,9 +8,13 @@ public class Div implements Ast {
 
     public Ast left;
     public Ast right;
+    public int lineNumber;
+    public int columnNumber;
 
-    public Div(Ast left, Ast right) {
+    public Div(Ast left, Ast right, int lineNumber, int columnNumber) {
         this.left = left;
         this.right = right;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 }

@@ -8,10 +8,14 @@ public class RecCreate implements Ast {
 
     public TypeId typeId;
     public RecCreateFields fields;
+    public int lineNumber;
+    public int columnNumber;
 
-    public RecCreate(TypeId typeId, RecCreateFields fields) {
+    public RecCreate(TypeId typeId, RecCreateFields fields, int lineNumber, int columnNumber) {
         this.typeId = typeId;
         this.fields = fields;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 
 }

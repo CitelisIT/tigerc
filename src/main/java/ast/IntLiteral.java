@@ -7,9 +7,13 @@ public class IntLiteral implements Ast {
     }
 
     public int value;
+    public int lineNumber;
+    public int columnNumber;
 
-    public IntLiteral(int value) {
+    public IntLiteral(int value, int lineNumber, int columnNumber) {
         this.value = value;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 
 }

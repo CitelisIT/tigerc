@@ -7,9 +7,13 @@ public class StringLiteral implements Ast {
     }
 
     public String value;
+    public int lineNumber;
+    public int columnNumber;
 
-    public StringLiteral(String value) {
+    public StringLiteral(String value, int lineNumber, int columnNumber) {
         this.value = value;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
     }
 
 }
