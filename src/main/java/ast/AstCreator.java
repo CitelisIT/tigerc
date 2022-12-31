@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
 
-
 public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	private String getTokenString(ParserRuleContext ctx) {
@@ -23,7 +22,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	@Override
 	public Ast visitProgram(tigerParser.ProgramContext ctx) {
 		Ast exp = skipUnary(ctx);
-		return new Program(exp);
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new Program(exp, lineNumber, columnNumber);
 	}
 
 	@Override
@@ -31,7 +33,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		Ast first = ctx.first.accept(this);
 		if (ctx.right != null) {
 			Ast right = ctx.right.accept(this);
-			return new Assign(first, right);
+			Token tok = ctx.getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
+			return new Assign(first, right, lineNumber, columnNumber);
 		} else {
 			return first;
 		}
@@ -44,7 +49,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		for (int i = 0; i < nodesCount; i++) {
 			Ast right = ctx.right.get(i).accept(this);
-			tempNode = new Or(tempNode, right);
+			Token tok = ctx.getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
+			tempNode = new Or(tempNode, right, lineNumber, columnNumber);
 		}
 		return tempNode;
 	}
@@ -56,7 +64,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		for (int i = 0; i < nodesCount; i++) {
 			Ast right = ctx.right.get(i).accept(this);
-			tempNode = new And(tempNode, right);
+			Token tok = ctx.getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
+			tempNode = new And(tempNode, right, lineNumber, columnNumber);
 		}
 		return tempNode;
 	}
@@ -68,25 +79,28 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		for (int i = 0; i < nodesCount; i++) {
 			Ast right = ctx.right.get(i).accept(this);
+			Token tok = ((ParserRuleContext) ctx.ops.get(i)).getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
 			String op = ctx.ops.get(i).getText();
 			switch (op) {
 				case "=":
-					tempNode = new Eq(tempNode, right);
+					tempNode = new Eq(tempNode, right, lineNumber, columnNumber);
 					break;
 				case "<>":
-					tempNode = new NotEq(tempNode, right);
+					tempNode = new NotEq(tempNode, right, lineNumber, columnNumber);
 					break;
 				case ">":
-					tempNode = new Sup(tempNode, right);
+					tempNode = new Sup(tempNode, right, lineNumber, columnNumber);
 					break;
 				case "<":
-					tempNode = new Inf(tempNode, right);
+					tempNode = new Inf(tempNode, right, lineNumber, columnNumber);
 					break;
 				case ">=":
-					tempNode = new SupEq(tempNode, right);
+					tempNode = new SupEq(tempNode, right, lineNumber, columnNumber);
 					break;
 				case "<=":
-					tempNode = new InfEq(tempNode, right);
+					tempNode = new InfEq(tempNode, right, lineNumber, columnNumber);
 					break;
 				default:
 					break;
@@ -102,13 +116,16 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		for (int i = 0; i < nodesCount; i++) {
 			Ast right = ctx.right.get(i).accept(this);
+			Token tok = ((ParserRuleContext) ctx.ops.get(i)).getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
 			String op = ctx.ops.get(i).getText();
 			switch (op) {
 				case "+":
-					tempNode = new Add(tempNode, right);
+					tempNode = new Add(tempNode, right, lineNumber, columnNumber);
 					break;
 				case "-":
-					tempNode = new Sub(tempNode, right);
+					tempNode = new Sub(tempNode, right, lineNumber, columnNumber);
 					break;
 				default:
 					break;
@@ -124,13 +141,16 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		for (int i = 0; i < nodesCount; i++) {
 			Ast right = ctx.right.get(i).accept(this);
+			Token tok = ((ParserRuleContext) ctx.ops.get(i)).getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
 			String op = ctx.ops.get(i).getText();
 			switch (op) {
 				case "*":
-					tempNode = new Mult(tempNode, right);
+					tempNode = new Mult(tempNode, right, lineNumber, columnNumber);
 					break;
 				case "/":
-					tempNode = new Div(tempNode, right);
+					tempNode = new Div(tempNode, right, lineNumber, columnNumber);
 					break;
 				default:
 					break;
@@ -148,13 +168,19 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	@Override
 	public Ast visitIntLitteral(tigerParser.IntLitteralContext ctx) {
 		String intValue = getTokenString(ctx);
-		return new IntLiteral(Integer.parseInt(intValue));
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new IntLiteral(Integer.parseInt(intValue), lineNumber, columnNumber);
 	}
 
 	@Override
 	public Ast visitStringLitteral(tigerParser.StringLitteralContext ctx) {
 		String stringValue = getTokenString(ctx);
-		return new StringLiteral(stringValue);
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new StringLiteral(stringValue, lineNumber, columnNumber);
 	}
 
 	@Override
@@ -175,14 +201,30 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 			for (ExpContext exp : ctx.callArgs) {
 				callArgs.add(exp.accept(this));
 			}
-			return new CallExp(new Id(ctx.id.getText()), new CallExpArgs(callArgs));
+			Token tok = ctx.getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
+
+			Token argsTok = ctx.callArgs.get(0).getStart();
+			int argsLineNumber = argsTok.getLine();
+			int argsColumnNumber = argsTok.getCharPositionInLine();
+
+			String idName = ctx.id.getText();
+			int idLineNumber = ctx.id.getLine();
+			int idColumnNumber = ctx.id.getCharPositionInLine();
+			return new CallExp(new Id(idName, idLineNumber, idColumnNumber),
+					new CallExpArgs(callArgs, argsLineNumber, argsColumnNumber), lineNumber,
+					columnNumber);
 		}
 
 		// RecCreate
 		if (ctx.isRecord != null) {
 			ArrayList<Id> fieldIds = new ArrayList<Id>();
 			for (Token id : ctx.recIds) {
-				fieldIds.add(new Id(id.getText()));
+				String idName = id.getText();
+				int idLineNumber = id.getLine();
+				int idColumnNumber = id.getCharPositionInLine();
+				fieldIds.add(new Id(idName, idLineNumber, idColumnNumber));
 			}
 
 			ArrayList<Ast> fieldValues = new ArrayList<Ast>();
@@ -194,28 +236,70 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 			ArrayList<FieldCreate> fields = new ArrayList<FieldCreate>();
 			for (int i = 0; i < fieldIds.size(); i++) {
-				fields.add(new FieldCreate(fieldIds.get(i), fieldValues.get(i)));
+				Id id = fieldIds.get(i);
+				Ast value = fieldValues.get(i);
+				Token tok = ((ParserRuleContext) fieldValues.get(i)).getStart();
+				int fieldLineNumber = tok.getLine();
+				int fieldColumnNumber = tok.getCharPositionInLine();
+				fields.add(new FieldCreate(id, value, fieldLineNumber, fieldColumnNumber));
 			}
-			return new RecCreate(new TypeId(ctx.id.getText()), new RecCreateFields(fields));
+
+			Token tok = ctx.getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
+
+			Token argsTok = ctx.recValues.get(0).getStart();
+			int argsLineNumber = argsTok.getLine();
+			int argsColumnNumber = argsTok.getCharPositionInLine();
+
+			String typeIdName = ctx.id.getText();
+			int typeIdLineNumber = ctx.id.getLine();
+			int typeIdColumnNumber = ctx.id.getCharPositionInLine();
+			return new RecCreate(new TypeId(typeIdName, typeIdLineNumber, typeIdColumnNumber),
+					new RecCreateFields(fields, argsLineNumber, argsColumnNumber), lineNumber,
+					columnNumber);
 		}
 
 		// ArrCreate
 		if (ctx.arrCreateType != null) {
-			return new ArrCreate(new TypeId(ctx.id.getText()), ctx.getChild(2).accept(this),
-					ctx.arrCreateType.accept(this));
+
+			Token tok = ctx.getStart();
+			int lineNumber = tok.getLine();
+			int columnNumber = tok.getCharPositionInLine();
+
+			String idName = ctx.id.getText();
+			int idLineNumber = ctx.id.getLine();
+			int idColumnNumber = ctx.id.getCharPositionInLine();
+			return new ArrCreate(new TypeId(idName, idLineNumber, idColumnNumber),
+					ctx.getChild(2).accept(this), ctx.arrCreateType.accept(this), lineNumber,
+					columnNumber);
 		}
 
 		// Accesses
 		int expIndex = 2;
-		Ast tempNode = new Id(ctx.id.getText());
+
+		String idName = ctx.id.getText();
+		int idLineNumber = ctx.id.getLine();
+		int idColumnNumber = ctx.id.getCharPositionInLine();
+		Ast tempNode = new Id(idName, idLineNumber, idColumnNumber);
+
 		for (Token accessOp : ctx.accessOps) {
+			int lineNumber = accessOp.getLine();
+			int columnNumber = accessOp.getCharPositionInLine();
 			switch (accessOp.getText()) {
 				case "[":
-					tempNode = new Subscript(tempNode, ctx.getChild(expIndex).accept(this));
+					tempNode = new Subscript(tempNode, ctx.getChild(expIndex).accept(this),
+							lineNumber, columnNumber);
 					expIndex += 3;
 					break;
 				case ".":
-					tempNode = new FieldExp(tempNode, new Id(ctx.getChild(expIndex).getText()));
+					String fieldName = ctx.getChild(expIndex).getText();
+					Token fieldTok = (Token) ctx.getChild(expIndex);
+					int fieldLineNumber = fieldTok.getLine();
+					int fieldColumnNumber = fieldTok.getCharPositionInLine();
+					tempNode = new FieldExp(tempNode,
+							new Id(fieldName, fieldLineNumber, fieldColumnNumber), lineNumber,
+							columnNumber);
 					expIndex += 2;
 					break;
 				default:
@@ -231,13 +315,19 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		for (ExpContext exp : ctx.exprs) {
 			exps.add(exp.accept(this));
 		}
-		return new SeqExp(exps);
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new SeqExp(exps, lineNumber, columnNumber);
 	}
 
 	@Override
 	public Ast visitNeg(tigerParser.NegContext ctx) {
 		Ast expr = ctx.expr.accept(this);
-		return new Neg(expr);
+		Token tok = ctx.expr.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new Neg(expr, lineNumber, columnNumber);
 	}
 
 	@Override
@@ -246,10 +336,15 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		Ast thenExp = ctx.thenExpr.accept(this);
 		ExpContext elseExpContext = ctx.elseExpr;
 
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+
 		if (elseExpContext != null) {
-			return new IfThenElse(condition, thenExp, elseExpContext.accept(this));
+			return new IfThenElse(condition, thenExp, elseExpContext.accept(this), lineNumber,
+					columnNumber);
 		} else {
-			return new IfThenElse(condition, thenExp, null);
+			return new IfThenElse(condition, thenExp, null, lineNumber, columnNumber);
 		}
 
 	}
@@ -258,19 +353,29 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 	public Ast visitWhileExp(tigerParser.WhileExpContext ctx) {
 		Ast condition = ctx.condition.accept(this);
 		Ast doExp = ctx.doExpr.accept(this);
-		return new WhileExp(condition, doExp);
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new WhileExp(condition, doExp, lineNumber, columnNumber);
 	}
 
 	@Override
 	public Ast visitForExp(tigerParser.ForExpContext ctx) {
-		Id forId = new Id(ctx.forId.getText());
+		String idName = ctx.forId.getText();
+		int idLineNumber = ctx.forId.getLine();
+		int idColumnNumber = ctx.forId.getCharPositionInLine();
+
+		Id forId = new Id(idName, idLineNumber, idColumnNumber);
 		Ast startValue = ctx.startValue.accept(this);
 		Ast endValue = ctx.endValue.accept(this);
 		Ast doExp = ctx.doExp.accept(this);
 
-		return new ForExp(forId, startValue, endValue, doExp);
-	}
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
 
+		return new ForExp(forId, startValue, endValue, doExp, lineNumber, columnNumber);
+	}
 
 	@Override
 	public Ast visitLetExp(tigerParser.LetExpContext ctx) {
@@ -279,17 +384,27 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		for (tigerParser.DecContext decl : ctx.decls) {
 			decls.add(decl.accept(this));
 		}
+		Token declsTok = ctx.decls.get(0).getStart();
+		int declsLineNumber = declsTok.getLine();
+		int declsColumnNumber = declsTok.getCharPositionInLine();
 		ArrayList<Ast> exps = new ArrayList<Ast>();
 
 		for (tigerParser.ExpContext exp : ctx.inExprs) {
 			exps.add(exp.accept(this));
 		}
 
-		LetDecls letDecls = new LetDecls(decls);
-		LetScope letScope = new LetScope(exps);
-		return new LetExp(letDecls, letScope);
-	}
+		Token expsTok = ctx.inExprs.get(0).getStart();
+		int expsLineNumber = expsTok.getLine();
+		int expsColumnNumber = expsTok.getCharPositionInLine();
 
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+
+		LetDecls letDecls = new LetDecls(decls, declsLineNumber, declsColumnNumber);
+		LetScope letScope = new LetScope(exps, expsLineNumber, expsColumnNumber);
+		return new LetExp(letDecls, letScope, lineNumber, columnNumber);
+	}
 
 	@Override
 	public Ast visitDec(tigerParser.DecContext ctx) {
@@ -298,9 +413,15 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitTypeDec(tigerParser.TypeDecContext ctx) {
-		TypeId typeId = new TypeId(ctx.typeId.getText());
+		String typeName = ctx.typeId.getText();
+		int typeLineNumber = ctx.typeId.getLine();
+		int typeColumnNumber = ctx.typeId.getCharPositionInLine();
+		TypeId typeId = new TypeId(typeName, typeLineNumber, typeColumnNumber);
 		Type typeValue = (Type) ctx.typeValue.accept(this);
-		return new TypeDec(typeId, typeValue);
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new TypeDec(typeId, typeValue, lineNumber, columnNumber);
 	}
 
 	@Override
@@ -309,27 +430,42 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		for (tigerParser.TypeDecContext typeDec : ctx.tydecs) {
 			typeDecs.add(typeDec.accept(this));
 		}
-		return new TypeDecs(typeDecs);
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new TypeDecs(typeDecs, lineNumber, columnNumber);
 	}
-
 
 	@Override
 	public Ast visitVarDec(tigerParser.VarDecContext ctx) {
-		Id varId = new Id(ctx.varId.getText());
+		String varName = ctx.varId.getText();
+		int varLineNumber = ctx.varId.getLine();
+		int varColumnNumber = ctx.varId.getCharPositionInLine();
+		Id varId = new Id(varName, varLineNumber, varColumnNumber);
 		TypeId varType;
 		Ast varValue = ctx.varValue.accept(this);
 
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+
 		if (ctx.typeId == null) {
-			return new VarDecNoType(varId, varValue);
+			return new VarDecNoType(varId, varValue, lineNumber, columnNumber);
 		} else {
-			varType = new TypeId(ctx.typeId.getText());
-			return new VarDecType(varId, varType, varValue);
+			String typeName = ctx.typeId.getText();
+			int typeLineNumber = ctx.typeId.getLine();
+			int typeColumnNumber = ctx.typeId.getCharPositionInLine();
+			varType = new TypeId(typeName, typeLineNumber, typeColumnNumber);
+			return new VarDecType(varId, varType, varValue, lineNumber, columnNumber);
 		}
 	}
 
 	@Override
 	public Ast visitFunDec(tigerParser.FunDecContext ctx) {
-		Id functionId = new Id(ctx.functionId.getText());
+		String funName = ctx.functionId.getText();
+		int funLineNumber = ctx.functionId.getLine();
+		int funColumnNumber = ctx.functionId.getCharPositionInLine();
+		Id functionId = new Id(funName, funLineNumber, funColumnNumber);
 		ArrayList<FieldDec> funArgsFields = new ArrayList<FieldDec>();
 		ArrayList<Id> argNames = new ArrayList<Id>();
 		ArrayList<TypeId> argTypes = new ArrayList<TypeId>();
@@ -337,31 +473,56 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		Ast functionBody = ctx.body.accept(this);
 
 		for (Token argName : ctx.argNames) {
-			argNames.add(new Id(argName.getText()));
+			String argNameString = argName.getText();
+			int argNameLineNumber = argName.getLine();
+			int argNameColumnNumber = argName.getCharPositionInLine();
+			argNames.add(new Id(argNameString, argNameLineNumber, argNameColumnNumber));
 		}
 		for (Token argType : ctx.argTypes) {
-			argTypes.add(new TypeId(argType.getText()));
+			String argTypeString = argType.getText();
+			int argTypeLineNumber = argType.getLine();
+			int argTypeColumnNumber = argType.getCharPositionInLine();
+			argTypes.add(new TypeId(argTypeString, argTypeLineNumber, argTypeColumnNumber));
 		}
 
 		assert argNames.size() == argTypes.size();
 
 		for (int i = 0; i < argNames.size(); i++) {
-			funArgsFields.add(new FieldDec(argNames.get(i), argTypes.get(i)));
+			Token tok = ctx.argNames.get(i);
+			int argsNameLineNumber = tok.getLine();
+			int argsNameColumnNumber = tok.getCharPositionInLine();
+			funArgsFields.add(new FieldDec(argNames.get(i), argTypes.get(i), argsNameLineNumber,
+					argsNameColumnNumber));
 		}
-		FunArgs args = new FunArgs(funArgsFields);
+
+		Token argsNametok = ctx.argNames.get(0);
+		int argsNameLineNumber = argsNametok.getLine();
+		int argsNameColumnNumber = argsNametok.getCharPositionInLine();
+
+		FunArgs args = new FunArgs(funArgsFields, argsNameLineNumber, argsNameColumnNumber);
+
+		int returnLineNumber = ctx.returnType.getLine();
+		int returnColumnNumber = ctx.returnType.getCharPositionInLine();
 
 		if (ctx.returnType == null) {
-			returnType = new TypeId("void");
+			returnType = new TypeId("void", returnLineNumber, returnColumnNumber);
 		} else {
-			returnType = new TypeId(ctx.returnType.getText());
+			returnType = new TypeId(ctx.returnType.getText(), returnLineNumber, returnColumnNumber);
 		}
 
-		return new FunDec(functionId, args, returnType, functionBody);
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+
+		return new FunDec(functionId, args, returnType, functionBody, lineNumber, columnNumber);
 	}
 
 	@Override
 	public Ast visitTypeId(tigerParser.TypeIdContext ctx) {
-		return new TypeId(getTokenString(ctx));
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new TypeId(getTokenString(ctx), lineNumber, columnNumber);
 	}
 
 	@Override
@@ -376,7 +537,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitArrType(tigerParser.ArrTypeContext ctx) {
-		return new ArrType(ctx.typeId.getText());
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new ArrType(ctx.typeId.getText(), lineNumber, columnNumber);
 	}
 
 	@Override
@@ -386,16 +550,30 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		ArrayList<TypeId> fieldTypes = new ArrayList<TypeId>();
 
 		for (Token id : ctx.fieldIds) {
-			fieldNames.add(new Id(id.getText()));
+			String idString = id.getText();
+			int idLineNumber = id.getLine();
+			int idColumnNumber = id.getCharPositionInLine();
+			fieldNames.add(new Id(idString, idLineNumber, idColumnNumber));
 		}
 		for (Token type : ctx.fieldTypes) {
-			fieldTypes.add(new TypeId(type.getText()));
+			String typeString = type.getText();
+			int typeLineNumber = type.getLine();
+			int typeColumnNumber = type.getCharPositionInLine();
+			fieldTypes.add(new TypeId(typeString, typeLineNumber, typeColumnNumber));
 		}
 		assert fieldNames.size() == fieldTypes.size();
 
 		for (int i = 0; i < fieldNames.size(); i++) {
-			fields.add(new FieldDec(fieldNames.get(i), fieldTypes.get(i)));
+			Token tok = ctx.fieldIds.get(i);
+			int fieldIdLineNumber = tok.getLine();
+			int fieldIdColumnNumber = tok.getCharPositionInLine();
+			fields.add(new FieldDec(fieldNames.get(i), fieldTypes.get(i), fieldIdLineNumber,
+					fieldIdColumnNumber));
 		}
-		return new RecType(fields);
+
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new RecType(fields, lineNumber, columnNumber);
 	}
 }
