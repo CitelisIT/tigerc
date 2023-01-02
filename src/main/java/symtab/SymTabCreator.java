@@ -313,12 +313,12 @@ public class SymTabCreator implements AstVisitor<String> {
 
         if (typeValue instanceof TypeId) {
             TypeId typeIdValue = (TypeId) typeValue;
-            this.addSymbol(typeName, new SimpleTypeSymbol(typeIdValue.name));
+            this.addSymbol(typeName + "_TYPE", new SimpleTypeSymbol(typeIdValue.name, typeName));
             this.typeAliases.put(typeName, typeIdValue.name);
         }
         if (typeValue instanceof ArrType) {
             ArrType arrTypeValue = (ArrType) typeValue;
-            this.addSymbol(typeName, new ArrayTypeSymbol(arrTypeValue.name));
+            this.addSymbol(typeName + "_TYPE", new ArrayTypeSymbol(arrTypeValue.name, typeName));
         }
         if (typeValue instanceof RecType) {
 
@@ -329,7 +329,7 @@ public class SymTabCreator implements AstVisitor<String> {
                 fields.put(field.id.name, field.typeId.name);
             }
 
-            this.addSymbol(typeName, new RecordTypeSymbol(fields));
+            this.addSymbol(typeName + "_TYPE", new RecordTypeSymbol(fields, typeName));
 
         }
         // No type for declartations
@@ -345,7 +345,8 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(VarDecType varDecType) {
-        this.addSymbol(varDecType.varId.name, new VarSymbol(varDecType.varTypeId.name));
+        this.addSymbol(varDecType.varId.name + "_VAR",
+                new VarSymbol(varDecType.varTypeId.name, varDecType.varId.name));
         String varType = varDecType.varValue.accept(this);
         if (!varType.equals(varDecType.varTypeId.name)) {
             this.semanticErrors.add("incompatible declaration type : the variable "
@@ -358,7 +359,8 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(VarDecNoType varDecNoType) {
         String varType = varDecNoType.varValue.accept(this);
-        this.addSymbol(varDecNoType.varId.name, new VarSymbol(varType));
+        this.addSymbol(varDecNoType.varId.name + "_VAR",
+                new VarSymbol(varType, varDecNoType.varId.name));
 
         // No type for declartations
         return null;
@@ -382,7 +384,8 @@ public class SymTabCreator implements AstVisitor<String> {
         // this.semanticErrors.add(funDec.returnTypeId.name + " type does'nt exist");
         // }
 
-        this.addSymbol(funDec.id.name, new FuncSymbol(funDec.returnTypeId.name, argTypes));
+        this.addSymbol(funDec.id.name + "_FUN",
+                new FuncSymbol(funDec.returnTypeId.name, argTypes, funDec.id.name));
         this.openScope();
         String returnType = funDec.body.accept(this);
         this.closeScope();

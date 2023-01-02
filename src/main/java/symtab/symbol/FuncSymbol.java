@@ -6,10 +6,12 @@ import java.util.List;
 public class FuncSymbol implements Symbol {
 
     private String type;
+    private String name;
     private List<String> argTypes = new ArrayList<String>();
     private int displacement;
 
     public FuncSymbol(String type, List<String> argTypes) {
+        this.name = name;
         this.type = type;
         this.argTypes = argTypes;
     }
@@ -32,5 +34,9 @@ public class FuncSymbol implements Symbol {
 
     public List<String> getArgTypes() {
         return this.argTypes;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

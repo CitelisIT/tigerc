@@ -2,11 +2,13 @@ package symtab.symbol;
 
 public class VarSymbol implements Symbol {
 
+    private String name;
     private String type;
     private int displacement;
 
-    public VarSymbol(String type) {
+    public VarSymbol(String type, String name) {
         this.type = type;
+        this.name = name;
     }
 
     public SymbolCat getCategory() {
@@ -25,4 +27,7 @@ public class VarSymbol implements Symbol {
         return this.type;
     }
 
+    public String getName() {
+        return name;
+    }
 }

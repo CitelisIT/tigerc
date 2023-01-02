@@ -6,8 +6,10 @@ import java.util.Set;
 public class RecordTypeSymbol extends TypeSymbol {
 
     private Map<String, String> fields;
+    private String name;
 
-    public RecordTypeSymbol(Map<String, String> fields) {
+    public RecordTypeSymbol(Map<String, String> fields, String name) {
+        this.name = name;
         this.fields = fields;
     }
 
@@ -25,5 +27,9 @@ public class RecordTypeSymbol extends TypeSymbol {
 
     public String getFieldType(String name) {
         return this.fields.get(name);
+    }
+
+    public String getName() {
+        return this.name;
     }
 }
