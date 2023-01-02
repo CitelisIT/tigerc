@@ -3,11 +3,10 @@ package symtab.symbol;
 public class ArrayTypeSymbol extends TypeSymbol {
 
     private String type;
-    private String name;
 
     public ArrayTypeSymbol(String type, String name) {
+        super(name);
         this.type = type;
-        this.name = name;
     }
 
     public String getType() {

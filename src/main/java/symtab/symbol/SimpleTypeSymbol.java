@@ -2,12 +2,11 @@ package symtab.symbol;
 
 public class SimpleTypeSymbol extends TypeSymbol {
 
-    private String name;
     private String aliasedType;
 
     public SimpleTypeSymbol(String aliasedType, String name) {
+        super(name);
         this.aliasedType = aliasedType;
-        this.name = name;
     }
 
     public String getAliasedType() {

@@ -2,6 +2,12 @@ package symtab.symbol;
 
 public class TypeSymbol implements Symbol {
 
+    String name;
+
+    public TypeSymbol(String name) {
+        this.name = name;
+    }
+
     public SymbolCat getCategory() {
         return SymbolCat.TYPE;
     }
@@ -11,6 +17,6 @@ public class TypeSymbol implements Symbol {
     }
 
     public String getName() {
-        return null;
+        return name;
     }
 }

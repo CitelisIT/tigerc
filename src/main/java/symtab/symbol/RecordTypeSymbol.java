@@ -9,7 +9,7 @@ public class RecordTypeSymbol extends TypeSymbol {
     private String name;
 
     public RecordTypeSymbol(Map<String, String> fields, String name) {
-        this.name = name;
+        super(name);
         this.fields = fields;
     }
 
