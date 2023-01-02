@@ -1,21 +1,67 @@
 package symtab;
 
-import ast.AstVisitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import ast.*;
+import ast.Add;
+import ast.And;
+import ast.ArrCreate;
+import ast.ArrType;
+import ast.Assign;
+import ast.Ast;
+import ast.AstVisitor;
+import ast.BreakLiteral;
+import ast.CallExp;
+import ast.CallExpArgs;
+import ast.Div;
+import ast.Eq;
+import ast.FieldCreate;
+import ast.FieldDec;
+import ast.FieldExp;
+import ast.ForExp;
+import ast.FunArgs;
+import ast.FunDec;
+import ast.Id;
+import ast.IfThenElse;
+import ast.Inf;
+import ast.InfEq;
+import ast.IntLiteral;
+import ast.LetDecls;
+import ast.LetExp;
+import ast.LetScope;
+import ast.Mult;
+import ast.Neg;
+import ast.NilLiteral;
+import ast.NotEq;
+import ast.Or;
+import ast.Program;
+import ast.RecCreate;
+import ast.RecCreateFields;
+import ast.RecType;
+import ast.SeqExp;
+import ast.StringLiteral;
+import ast.Sub;
+import ast.Subscript;
+import ast.Sup;
+import ast.SupEq;
+import ast.Type;
+import ast.TypeDec;
+import ast.TypeDecs;
+import ast.TypeId;
+import ast.VarDecNoType;
+import ast.VarDecType;
+import ast.WhileExp;
+import symtab.scope.GlobalScope;
+import symtab.scope.LocalScope;
+import symtab.scope.PredefinedScope;
+import symtab.scope.Scope;
 import symtab.symbol.ArrayTypeSymbol;
 import symtab.symbol.FuncSymbol;
 import symtab.symbol.RecordTypeSymbol;
 import symtab.symbol.SimpleTypeSymbol;
 import symtab.symbol.Symbol;
 import symtab.symbol.VarSymbol;
-import symtab.scope.Scope;
-import symtab.scope.PredefinedScope;
-import symtab.scope.GlobalScope;
-import symtab.scope.LocalScope;
 
 public class SymTabCreator implements AstVisitor<String> {
 
@@ -300,8 +346,12 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(VarDecType varDecType) {
         this.addSymbol(varDecType.varId.name, new VarSymbol(varDecType.varTypeId.name));
-        varDecType.varValue.accept(this);
-
+        String varType = varDecType.varValue.accept(this);
+        if (!varType.equals(varDecType.varTypeId.name)) {
+            this.semanticErrors.add("incompatible declaration type : the variable "
+                    + varDecType.varId.name + " must be a value of " + varDecType.varTypeId.name
+                    + " type, not " + varType + " type");
+        }
         // No type for declartations
         return null;
     }
@@ -326,10 +376,22 @@ public class SymTabCreator implements AstVisitor<String> {
         for (FieldDec arg : funDec.args.args) {
             argTypes.add(arg.typeId.name);
         }
+
+        // if ((this.lookup(funDec.returnTypeId.name) == null)
+        // && this.typeAliases.containsKey(funDec.returnTypeId.name)) {
+        // this.semanticErrors.add(funDec.returnTypeId.name + " type does'nt exist");
+        // }
+
         this.addSymbol(funDec.id.name, new FuncSymbol(funDec.returnTypeId.name, argTypes));
         this.openScope();
-        funDec.body.accept(this);
+        String returnType = funDec.body.accept(this);
         this.closeScope();
+
+        if (funDec.returnTypeId.name.equals(returnType)) {
+            this.semanticErrors.add("incompatible return type : the function " + funDec.id.name
+                    + " must return value of " + funDec.returnTypeId.name + " type, not "
+                    + returnType + " type");
+        }
         // No type for declartations
         return null;
     }
@@ -363,6 +425,9 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Subscript subscript) {
         String accessExprType = subscript.expr.accept(this);
+        if (!accessExprType.equals("int")) {
+            this.semanticErrors.add("Subscript access to an array must be an integer");
+        }
         String arrayType = subscript.lValue.accept(this);
         String resolvedArrayType = this.resolveTypeAlias(arrayType);
         ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(resolvedArrayType);
