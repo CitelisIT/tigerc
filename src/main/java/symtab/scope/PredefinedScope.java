@@ -42,29 +42,31 @@ public class PredefinedScope implements Scope {
 
     public PredefinedScope() {
         // Predefined types
-        this.addSymbol("int", new TypeSymbol());
-        this.addSymbol("string", new TypeSymbol());
-        this.addSymbol("void", new TypeSymbol());
+        this.addSymbol("int_TYPE", new TypeSymbol("int"));
+        this.addSymbol("string_TYPE", new TypeSymbol("string"));
+        this.addSymbol("void_TYPE", new TypeSymbol("void"));
 
         // Predefined functions
-        this.addSymbol("print",
-                new FuncSymbol("void", new ArrayList<String>(Arrays.asList("string"))));
-        this.addSymbol("printi",
-                new FuncSymbol("void", new ArrayList<String>(Arrays.asList("int"))));
-        this.addSymbol("flush", new FuncSymbol("void", new ArrayList<String>()));
-        this.addSymbol("getchar", new FuncSymbol("string", new ArrayList<String>()));
-        this.addSymbol("ord",
-                new FuncSymbol("int", new ArrayList<String>(Arrays.asList("string"))));
-        this.addSymbol("chr",
-                new FuncSymbol("string", new ArrayList<String>(Arrays.asList("int"))));
-        this.addSymbol("size",
-                new FuncSymbol("int", new ArrayList<String>(Arrays.asList("string"))));
-        this.addSymbol("substring", new FuncSymbol("string",
-                new ArrayList<String>(Arrays.asList("string", "int", "int"))));
-        this.addSymbol("concat",
-                new FuncSymbol("string", new ArrayList<String>(Arrays.asList("string", "string"))));
-        this.addSymbol("not", new FuncSymbol("int", new ArrayList<String>(Arrays.asList("int"))));
-        this.addSymbol("exit", new FuncSymbol("void", new ArrayList<String>(Arrays.asList("int"))));
+        this.addSymbol("printns_FUN",
+                new FuncSymbol("void", new ArrayList<String>(Arrays.asList("string")), "printns"));
+        this.addSymbol("printi_FUN",
+                new FuncSymbol("void", new ArrayList<String>(Arrays.asList("int")), "printi"));
+        this.addSymbol("flush_FUN", new FuncSymbol("void", new ArrayList<String>(), "flush"));
+        this.addSymbol("getchar_FUN", new FuncSymbol("string", new ArrayList<String>(), "getchar"));
+        this.addSymbol("ord_FUN",
+                new FuncSymbol("int", new ArrayList<String>(Arrays.asList("string")), "ord"));
+        this.addSymbol("chr_FUN",
+                new FuncSymbol("string", new ArrayList<String>(Arrays.asList("int")), "chr"));
+        this.addSymbol("size_FUN",
+                new FuncSymbol("int", new ArrayList<String>(Arrays.asList("string")), "size"));
+        this.addSymbol("substring_FUN", new FuncSymbol("string",
+                new ArrayList<String>(Arrays.asList("string", "int", "int")), "substring"));
+        this.addSymbol("concat_FUN", new FuncSymbol("string",
+                new ArrayList<String>(Arrays.asList("string", "string")), "concat"));
+        this.addSymbol("not_FUN",
+                new FuncSymbol("int", new ArrayList<String>(Arrays.asList("int")), "not"));
+        this.addSymbol("exit_FUN",
+                new FuncSymbol("void", new ArrayList<String>(Arrays.asList("int")), "exit"));
     }
 
 }
