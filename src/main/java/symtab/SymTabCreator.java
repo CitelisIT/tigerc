@@ -471,11 +471,11 @@ public class SymTabCreator implements AstVisitor<String> {
                 } else {
                     String fieldType = fieldsMap.get(field.id.name);
                     // Typechecker doit être appelé pour récupérer le type de field
-                    // String declarationType = TypeChecker.getType(field.expr);
-                    // if (!fieldType.equals(declarationType)) {
-                    // System.err.println("Field " + field.id.name + " has type " + fieldType
-                    // + " but is initialized with type " + declarationType);
-                    // }
+                    String declarationType = field.expr.accept(this);
+                    if (!fieldType.equals(declarationType)) {
+                        System.err.println("Field " + field.id.name + " has type " + fieldType
+                                + " but is initialized with type " + declarationType);
+                    }
                     // Reste à ajouter le record dans la TDS
 
                 }
