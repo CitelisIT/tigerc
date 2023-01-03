@@ -47,25 +47,25 @@ public class PredefinedScope implements Scope {
         this.addSymbol("void_TYPE", new TypeSymbol("void"));
 
         // Predefined functions
-        this.addSymbol("printns_FUN",
-                new FuncSymbol("void", new ArrayList<String>(Arrays.asList("string")), "printns"));
-        this.addSymbol("printi_FUN",
+        this.addSymbol("print_VAR",
+                new FuncSymbol("void", new ArrayList<String>(Arrays.asList("string")), "print"));
+        this.addSymbol("printi_VAR",
                 new FuncSymbol("void", new ArrayList<String>(Arrays.asList("int")), "printi"));
-        this.addSymbol("flush_FUN", new FuncSymbol("void", new ArrayList<String>(), "flush"));
-        this.addSymbol("getchar_FUN", new FuncSymbol("string", new ArrayList<String>(), "getchar"));
-        this.addSymbol("ord_FUN",
+        this.addSymbol("flush_VAR", new FuncSymbol("void", new ArrayList<String>(), "flush"));
+        this.addSymbol("getchar_VAR", new FuncSymbol("string", new ArrayList<String>(), "getchar"));
+        this.addSymbol("ord_VAR",
                 new FuncSymbol("int", new ArrayList<String>(Arrays.asList("string")), "ord"));
-        this.addSymbol("chr_FUN",
+        this.addSymbol("chr_VAR",
                 new FuncSymbol("string", new ArrayList<String>(Arrays.asList("int")), "chr"));
-        this.addSymbol("size_FUN",
+        this.addSymbol("size_VAR",
                 new FuncSymbol("int", new ArrayList<String>(Arrays.asList("string")), "size"));
-        this.addSymbol("substring_FUN", new FuncSymbol("string",
+        this.addSymbol("substring_VAR", new FuncSymbol("string",
                 new ArrayList<String>(Arrays.asList("string", "int", "int")), "substring"));
-        this.addSymbol("concat_FUN", new FuncSymbol("string",
+        this.addSymbol("concat_VAR", new FuncSymbol("string",
                 new ArrayList<String>(Arrays.asList("string", "string")), "concat"));
-        this.addSymbol("not_FUN",
+        this.addSymbol("not_VAR",
                 new FuncSymbol("int", new ArrayList<String>(Arrays.asList("int")), "not"));
-        this.addSymbol("exit_FUN",
+        this.addSymbol("exit_VAR",
                 new FuncSymbol("void", new ArrayList<String>(Arrays.asList("int")), "exit"));
     }
 

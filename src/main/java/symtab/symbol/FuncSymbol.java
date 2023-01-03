@@ -10,7 +10,7 @@ public class FuncSymbol implements Symbol {
     private List<String> argTypes = new ArrayList<String>();
     private int displacement;
 
-    public FuncSymbol(String type, List<String> argTypes) {
+    public FuncSymbol(String type, List<String> argTypes, String name) {
         this.name = name;
         this.type = type;
         this.argTypes = argTypes;

@@ -384,7 +384,7 @@ public class SymTabCreator implements AstVisitor<String> {
         // this.semanticErrors.add(funDec.returnTypeId.name + " type does'nt exist");
         // }
 
-        this.addSymbol(funDec.id.name + "_FUN",
+        this.addSymbol(funDec.id.name + "_VAR",
                 new FuncSymbol(funDec.returnTypeId.name, argTypes, funDec.id.name));
         this.openScope();
         String returnType = funDec.body.accept(this);
