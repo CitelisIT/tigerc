@@ -67,7 +67,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
-    private boolean insideLoop = false;
+    private int loopCounter = 0;
     private Map<String, String> typeAliases = new HashMap<String, String>();
     private List<Integer> scopesByDepth = new ArrayList<Integer>();
 
@@ -246,20 +246,20 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(WhileExp whileExp) {
-        this.insideLoop = true;
+        this.loopCounter++;
         whileExp.condition.accept(this);
         whileExp.doExpr.accept(this);
-        this.insideLoop = false;
+        this.loopCounter--;
         return "void";
     }
 
     public String visit(ForExp forExp) {
-        this.insideLoop = true;
+        this.loopCounter++;
         forExp.doExpr.accept(this);
         forExp.endValue.accept(this);
         forExp.startValue.accept(this);
         forExp.forId.accept(this);
-        this.insideLoop = false;
+        this.loopCounter--;
         return "void";
     }
 
@@ -501,7 +501,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(BreakLiteral breakLiteral) {
         // Check if break is only used in a loop
-        if (!this.insideLoop) {
+        if (this.loopCounter == 0) {
             this.semanticErrors.add("Break statement used outside a loop");
         }
         return "void";
