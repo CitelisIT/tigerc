@@ -78,9 +78,9 @@ public class SymTabCreator implements AstVisitor<String> {
         this.symtab.put("global", new GlobalScope());
         this.currentScopeId = "global";
 
-        this.typeAliases.put("int", null);
-        this.typeAliases.put("string", null);
-        this.typeAliases.put("void", null);
+        this.typeAliases.put("int_TYPE", null);
+        this.typeAliases.put("string_TYPE", null);
+        this.typeAliases.put("void_TYPE", null);
     }
 
     public Map<String, Scope> getSymTab() {
@@ -146,83 +146,83 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(Assign assign) {
         assign.expr.accept(this);
         assign.lValue.accept(this);
-        return "void";
+        return "void_TYPE";
     }
 
     public String visit(Or or) {
         or.left.accept(this);
         or.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(And and) {
         and.left.accept(this);
         and.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(Eq eq) {
         eq.left.accept(this);
         eq.right.accept(this);
-        return "void";
+        return "void_TYPE";
     }
 
     public String visit(NotEq notEq) {
         notEq.left.accept(this);
         notEq.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(InfEq infEq) {
         infEq.left.accept(this);
         infEq.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(Inf inf) {
         inf.left.accept(this);
         inf.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(SupEq supEq) {
         supEq.left.accept(this);
         supEq.left.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(Sup sup) {
         sup.left.accept(this);
         sup.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(Add add) {
         add.left.accept(this);
         add.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(Sub sub) {
         sub.left.accept(this);
         sub.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(Mult mult) {
         mult.left.accept(this);
         mult.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(Div div) {
         div.left.accept(this);
         div.right.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(SeqExp seqExp) {
-        String type = "void";
+        String type = "void_TYPE";
         for (Ast exp : seqExp.exprs) {
             type = exp.accept(this);
         }
@@ -231,14 +231,14 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Neg neg) {
         neg.expr.accept(this);
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(IfThenElse ifThenElse) {
         ifThenElse.condition.accept(this);
         String thenType = ifThenElse.thenExpr.accept(this);
         if (ifThenElse.elseExpr == null) {
-            return "void";
+            return "void_TYPE";
         } else {
             String elseType = ifThenElse.elseExpr.accept(this);
             return this.resolveTypeAlias(thenType);
@@ -250,7 +250,7 @@ public class SymTabCreator implements AstVisitor<String> {
         whileExp.condition.accept(this);
         whileExp.doExpr.accept(this);
         this.loopCounter--;
-        return "void";
+        return "void_TYPE";
     }
 
     public String visit(ForExp forExp) {
@@ -260,7 +260,7 @@ public class SymTabCreator implements AstVisitor<String> {
         forExp.startValue.accept(this);
         forExp.forId.accept(this);
         this.loopCounter--;
-        return "void";
+        return "void_TYPE";
     }
 
     public String visit(LetDecls letDecls) {
@@ -271,7 +271,7 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(LetScope letScope) {
-        String type = "void";
+        String type = "void_TYPE";
         for (Ast exp : letScope.exprs) {
             type = exp.accept(this);
         }
@@ -401,14 +401,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Id id) {
         Symbol symbol = this.lookup(id.name);
-        if (symbol instanceof VarSymbol) {
-            VarSymbol varSymbol = (VarSymbol) symbol;
-            return this.resolveTypeAlias(varSymbol.getType());
-        } else if (symbol instanceof FuncSymbol) {
-            FuncSymbol funcSymbol = (FuncSymbol) symbol;
-            return this.resolveTypeAlias(funcSymbol.getType());
-        }
-        return null;
+        return symbol.getType();
     }
 
     public String visit(TypeId typeId) {
@@ -428,7 +421,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Subscript subscript) {
         String accessExprType = subscript.expr.accept(this);
-        if (!accessExprType.equals("int")) {
+        if (!accessExprType.equals("int_TYPE")) {
             this.semanticErrors.add("Subscript access to an array must be an integer");
         }
         String arrayType = subscript.lValue.accept(this);
@@ -488,11 +481,11 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(IntLiteral intLiteral) {
-        return "int";
+        return "int_TYPE";
     }
 
     public String visit(StringLiteral stringLiteral) {
-        return "string";
+        return "string_TYPE";
     }
 
     public String visit(NilLiteral nilLiteral) {
@@ -504,7 +497,7 @@ public class SymTabCreator implements AstVisitor<String> {
         if (this.loopCounter == 0) {
             this.semanticErrors.add("Break statement used outside a loop");
         }
-        return "void";
+        return "void_TYPE";
     }
 
     public List<String> getSemanticErrors() {
