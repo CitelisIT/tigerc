@@ -522,7 +522,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 		if (ctx.returnType == null) {
 			returnLineNumber = ctx.endParen.getLine();
 			returnColumnNumber = ctx.endParen.getCharPositionInLine();
-			returnType = new TypeId("void", returnLineNumber, returnColumnNumber);
+			returnType = new TypeId("void_TYPE", returnLineNumber, returnColumnNumber);
 		} else {
 			returnLineNumber = ctx.returnType.getLine();
 			returnColumnNumber = ctx.returnType.getCharPositionInLine();
