@@ -245,7 +245,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 			for (int i = 0; i < fieldIds.size(); i++) {
 				Id id = fieldIds.get(i);
 				Ast value = fieldValues.get(i);
-				Token tok = ((ParserRuleContext) fieldValues.get(i)).getStart();
+				Token tok = ctx.recIds.get(i);
 				int fieldLineNumber = tok.getLine();
 				int fieldColumnNumber = tok.getCharPositionInLine();
 				fields.add(new FieldCreate(id, value, fieldLineNumber, fieldColumnNumber));
