@@ -79,7 +79,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		for (int i = 0; i < nodesCount; i++) {
 			Ast right = ctx.right.get(i).accept(this);
-			Token tok = ((ParserRuleContext) ctx.ops.get(i)).getStart();
+			Token tok = ctx.ops.get(i);
 			int lineNumber = tok.getLine();
 			int columnNumber = tok.getCharPositionInLine();
 			String op = ctx.ops.get(i).getText();
@@ -116,7 +116,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		for (int i = 0; i < nodesCount; i++) {
 			Ast right = ctx.right.get(i).accept(this);
-			Token tok = ((ParserRuleContext) ctx.ops.get(i)).getStart();
+			Token tok = ctx.ops.get(i);
 			int lineNumber = tok.getLine();
 			int columnNumber = tok.getCharPositionInLine();
 			String op = ctx.ops.get(i).getText();
@@ -141,7 +141,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		for (int i = 0; i < nodesCount; i++) {
 			Ast right = ctx.right.get(i).accept(this);
-			Token tok = ((ParserRuleContext) ctx.ops.get(i)).getStart();
+			Token tok = ctx.ops.get(i);
 			int lineNumber = tok.getLine();
 			int columnNumber = tok.getCharPositionInLine();
 			String op = ctx.ops.get(i).getText();
