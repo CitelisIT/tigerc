@@ -254,12 +254,15 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(ForExp forExp) {
+        this.openScope();
+        this.addSymbol(forExp.forId.name, new VarSymbol("int_TYPE", forExp.forId.name));
         this.loopCounter++;
         forExp.doExpr.accept(this);
         forExp.endValue.accept(this);
         forExp.startValue.accept(this);
         forExp.forId.accept(this);
         this.loopCounter--;
+        this.closeScope();
         return "void_TYPE";
     }
 
