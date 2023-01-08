@@ -509,12 +509,16 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		FunArgs args = new FunArgs(funArgsFields, argsNameLineNumber, argsNameColumnNumber);
 
-		int returnLineNumber = ctx.returnType.getLine();
-		int returnColumnNumber = ctx.returnType.getCharPositionInLine();
+		int returnLineNumber;
+		int returnColumnNumber;
 
 		if (ctx.returnType == null) {
+			returnLineNumber = ctx.endParen.getLine();
+			returnColumnNumber = ctx.endParen.getCharPositionInLine();
 			returnType = new TypeId("void", returnLineNumber, returnColumnNumber);
 		} else {
+			returnLineNumber = ctx.returnType.getLine();
+			returnColumnNumber = ctx.returnType.getCharPositionInLine();
 			returnType = new TypeId(ctx.returnType.getText(), returnLineNumber, returnColumnNumber);
 		}
 
