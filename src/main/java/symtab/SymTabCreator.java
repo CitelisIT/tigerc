@@ -381,17 +381,19 @@ public class SymTabCreator implements AstVisitor<String> {
         for (FieldDec arg : funDec.args.args) {
             argTypes.add(arg.typeId.name);
         }
+        this.addSymbol(funDec.id.name + "_VAR",
+                new FuncSymbol(funDec.returnTypeId.name, argTypes, funDec.id.name));
+        this.openScope();
+        for (FieldDec arg : funDec.args.args) {
+            this.addSymbol(arg.id.name + "_VAR", new VarSymbol(arg.typeId.name, arg.id.name));
+        }
 
         // if ((this.lookup(funDec.returnTypeId.name) == null)
         // && this.typeAliases.containsKey(funDec.returnTypeId.name)) {
         // this.semanticErrors.add(funDec.returnTypeId.name + " type does'nt exist");
         // }
 
-        this.addSymbol(funDec.id.name + "_VAR",
-                new FuncSymbol(funDec.returnTypeId.name, argTypes, funDec.id.name));
-        this.openScope();
         String returnType = funDec.body.accept(this);
-        this.closeScope();
 
         if (funDec.returnTypeId.name.equals(returnType)) {
             this.semanticErrors.add("incompatible return type : the function " + funDec.id.name
@@ -399,6 +401,7 @@ public class SymTabCreator implements AstVisitor<String> {
                     + returnType + " type");
         }
         // No type for declartations
+        this.closeScope();
         return null;
     }
 
