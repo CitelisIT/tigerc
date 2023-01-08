@@ -65,7 +65,7 @@ varDec: 'var' varId=ID ( ':' typeId=ID )? ':=' varValue=exp;
 
 funDec:
 	'function'
-	functionId=ID '(' (argNames+=ID ':' argTypes+=ID (',' argNames+=ID ':' argTypes+=ID)*)? ')'
+	functionId=ID callParen='(' (argNames+=ID ':' argTypes+=ID (',' argNames+=ID ':' argTypes+=ID)*)? ')'
 	( ':' returnType=ID )? '=' body=exp;	
 
 type:
