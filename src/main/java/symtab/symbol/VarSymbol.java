@@ -13,7 +13,7 @@ public class VarSymbol implements Symbol {
     }
 
     public SymbolCat getCategory() {
-        return SymbolCat.FUNC;
+        return SymbolCat.VAR;
     }
 
     public void setDisplacement(int displacement) {
