@@ -92,10 +92,10 @@ public class SymTabCreator implements AstVisitor<String> {
         scope.addSymbol(name, symbol);
     }
 
-    private Symbol lookup(String name) {
+    private Symbol lookup(String name, String suffix) {
         Scope scope = this.symtab.get(this.currentScopeId);
         while (scope != null) {
-            Symbol symbol = scope.getSymbol(name);
+            Symbol symbol = scope.getSymbol(name + "_" + suffix);
             if (symbol != null) {
                 return symbol;
             }
@@ -255,7 +255,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(ForExp forExp) {
         this.openScope();
-        this.addSymbol(forExp.forId.name, new VarSymbol("int_TYPE", forExp.forId.name));
+        this.addSymbol(forExp.forId.name + "_VAR", new VarSymbol("int_TYPE", forExp.forId.name));
         this.loopCounter++;
         forExp.doExpr.accept(this);
         forExp.endValue.accept(this);
@@ -300,7 +300,7 @@ public class SymTabCreator implements AstVisitor<String> {
         callExp.id.accept(this);
         callExp.args.accept(this);
         String functionId = callExp.id.name;
-        FuncSymbol funcSymbol = (FuncSymbol) this.lookup(functionId);
+        FuncSymbol funcSymbol = (FuncSymbol) this.lookup(functionId, "VAR");
         String callType = funcSymbol.getType();
         return callType;
     }
@@ -403,7 +403,8 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(Id id) {
-        Symbol symbol = this.lookup(id.name);
+        System.out.println("id name : " + id.name);
+        Symbol symbol = this.lookup(id.name, "VAR");
         return symbol.getType();
     }
 
@@ -429,14 +430,14 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         String arrayType = subscript.lValue.accept(this);
         String resolvedArrayType = this.resolveTypeAlias(arrayType);
-        ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(resolvedArrayType);
+        ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(resolvedArrayType, "TYPE");
         return this.resolveTypeAlias(arrayTypeSymbol.getType());
     }
 
     public String visit(FieldExp fieldExp) {
         String recordType = fieldExp.lValue.accept(this);
         String resolvedRecordType = this.resolveTypeAlias(recordType);
-        RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(resolvedRecordType);
+        RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(resolvedRecordType, "TYPE");
         return this.resolveTypeAlias(recordTypeSymbol.getFields().get(fieldExp.id.name));
     }
 
@@ -456,7 +457,7 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(RecCreate recCreate) {
-        Symbol recordType = this.lookup(recCreate.typeId.name);
+        Symbol recordType = this.lookup(recCreate.typeId.name, "TYPE");
         if (recordType == null) {
             this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
         } else {
