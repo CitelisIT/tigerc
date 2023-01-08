@@ -8,4 +8,8 @@ public interface Symbol {
 
     public String getName();
 
+    public String getType();
+
+    public String getRootType();
+
 }

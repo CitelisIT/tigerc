@@ -14,6 +14,6 @@ public class ArrayTypeSymbol extends TypeSymbol {
     }
 
     public String getName() {
-        return this.name;
+        return super.getName();
     }
 }

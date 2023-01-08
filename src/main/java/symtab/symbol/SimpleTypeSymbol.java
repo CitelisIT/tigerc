@@ -14,6 +14,6 @@ public class SimpleTypeSymbol extends TypeSymbol {
     }
 
     public String getName() {
-        return name;
+        return super.getName();
     }
 }

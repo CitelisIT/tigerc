@@ -4,6 +4,7 @@ public class VarSymbol implements Symbol {
 
     private String name;
     private String type;
+    private String rootType;
     private int displacement;
 
     public VarSymbol(String type, String name) {
@@ -29,5 +30,9 @@ public class VarSymbol implements Symbol {
 
     public String getName() {
         return name;
+    }
+
+    public String getRootType() {
+        return this.rootType;
     }
 }
