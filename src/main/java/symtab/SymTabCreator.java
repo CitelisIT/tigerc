@@ -403,7 +403,6 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(Id id) {
-        System.out.println("id name : " + id.name);
         Symbol symbol = this.lookup(id.name, "VAR");
         return symbol.getType();
     }
