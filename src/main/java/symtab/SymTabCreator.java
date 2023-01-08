@@ -382,7 +382,7 @@ public class SymTabCreator implements AstVisitor<String> {
             argTypes.add(arg.typeId.name);
         }
         this.addSymbol(funDec.id.name + "_VAR",
-                new FuncSymbol(funDec.returnTypeId.name, argTypes, funDec.id.name));
+                new FuncSymbol(funDec.returnTypeId.name + "_TYPE", argTypes, funDec.id.name));
         this.openScope();
         for (FieldDec arg : funDec.args.args) {
             this.addSymbol(arg.id.name + "_VAR", new VarSymbol(arg.typeId.name + "_TYPE", arg.id.name));
