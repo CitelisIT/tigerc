@@ -1713,9 +1713,11 @@ public class tigerParser extends Parser {
 
 	public static class FunDecContext extends ParserRuleContext {
 		public Token functionId;
+		public Token callParen;
 		public Token ID;
 		public List<Token> argNames = new ArrayList<Token>();
 		public List<Token> argTypes = new ArrayList<Token>();
+		public Token endParen;
 		public Token returnType;
 		public ExpContext body;
 		public List<TerminalNode> ID() { return getTokens(tigerParser.ID); }
@@ -1748,7 +1750,7 @@ public class tigerParser extends Parser {
 			setState(264);
 			((FunDecContext)_localctx).functionId = match(ID);
 			setState(265);
-			match(T__15);
+			((FunDecContext)_localctx).callParen = match(T__15);
 			setState(278);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -1788,7 +1790,7 @@ public class tigerParser extends Parser {
 			}
 
 			setState(280);
-			match(T__17);
+			((FunDecContext)_localctx).endParen = match(T__17);
 			setState(283);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
