@@ -329,7 +329,7 @@ public class SymTabCreator implements AstVisitor<String> {
             Map<String, String> fields = new HashMap<String, String>();
 
             for (FieldDec field : recTypeValue.fields) {
-                fields.put(field.id.name, field.typeId.name);
+                fields.put(field.id.name, field.typeId.name + "_TYPE");
             }
 
             this.addSymbol(typeName + "_TYPE", new RecordTypeSymbol(fields, typeName));
