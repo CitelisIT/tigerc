@@ -395,7 +395,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
         String returnType = funDec.body.accept(this);
 
-        if (funDec.returnTypeId.name.equals(returnType)) {
+        if (!funDec.returnTypeId.name.equals(returnType)) {
             this.semanticErrors.add("incompatible return type : the function " + funDec.id.name
                     + " must return value of " + funDec.returnTypeId.name + " type, not "
                     + returnType + " type");
