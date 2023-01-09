@@ -324,8 +324,8 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         if (typeValue instanceof ArrType) {
             ArrType arrTypeValue = (ArrType) typeValue;
-            this.addSymbol(typeName + "_TYPE",
-                    new ArrayTypeSymbol(arrTypeValue.name + "_TYPE", arrTypeValue.name + "_TYPE", typeName));
+            this.addSymbol(typeName + "_TYPE", new ArrayTypeSymbol(arrTypeValue.name + "_TYPE",
+                    arrTypeValue.name + "_TYPE", typeName));
         }
         if (typeValue instanceof RecType) {
 
@@ -336,7 +336,8 @@ public class SymTabCreator implements AstVisitor<String> {
                 fields.put(field.id.name, field.typeId.name + "_TYPE");
             }
 
-            this.addSymbol(typeName + "_TYPE", new RecordTypeSymbol(fields, typeName + "_TYPE", typeName));
+            this.addSymbol(typeName + "_TYPE",
+                    new RecordTypeSymbol(fields, typeName + "_TYPE", typeName));
 
         }
         // No type for declartations
@@ -352,11 +353,11 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(VarDecType varDecType) {
-        String rootType = this.resolveTypeAlias(varDecType.varTypeId.name + "_TYPE");
+        String varDecRootType = this.lookup(varDecType.varTypeId.name, "TYPE").getRootType();
         this.addSymbol(varDecType.varId.name + "_VAR", new VarSymbol(
-                varDecType.varTypeId.name + "_TYPE", rootType, varDecType.varId.name));
+                varDecType.varTypeId.name + "_TYPE", varDecRootType, varDecType.varId.name));
         String varType = varDecType.varValue.accept(this);
-        if (!varType.equals(varDecType.varTypeId.name)) {
+        if (!varType.equals(varDecRootType)) {
             this.semanticErrors.add("incompatible declaration type : the variable "
                     + varDecType.varId.name + " must be a value of " + varDecType.varTypeId.name
                     + " type, not " + varType + " type");
@@ -415,7 +416,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Id id) {
         Symbol symbol = this.lookup(id.name, "VAR");
-        return symbol.getType();
+        return symbol.getRootType();
     }
 
     public String visit(TypeId typeId) {
@@ -441,7 +442,7 @@ public class SymTabCreator implements AstVisitor<String> {
         String arrayType = subscript.lValue.accept(this);
         String resolvedArrayType = this.resolveTypeAlias(arrayType);
         ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(resolvedArrayType, "TYPE");
-        return this.resolveTypeAlias(arrayTypeSymbol.getType());
+        return arrayTypeSymbol.getRootType();
     }
 
     public String visit(FieldExp fieldExp) {
