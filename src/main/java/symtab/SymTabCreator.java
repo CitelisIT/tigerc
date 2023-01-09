@@ -164,7 +164,7 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(Eq eq) {
         eq.left.accept(this);
         eq.right.accept(this);
-        return "void_TYPE";
+        return "int_TYPE";
     }
 
     public String visit(NotEq notEq) {
