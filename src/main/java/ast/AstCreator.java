@@ -206,7 +206,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 			int columnNumber = tok.getCharPositionInLine();
 
 			int argsLineNumber, argsColumnNumber;
-			
+
 			if (ctx.callArgs.size() != 0) {
 				Token argsTok = ctx.callArgs.get(0).getStart();
 				argsLineNumber = argsTok.getLine();
@@ -400,9 +400,17 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 			exps.add(exp.accept(this));
 		}
 
-		Token expsTok = ctx.inExprs.get(0).getStart();
-		int expsLineNumber = expsTok.getLine();
-		int expsColumnNumber = expsTok.getCharPositionInLine();
+		int expsLineNumber, expsColumnNumber;
+
+		if (ctx.inExprs.size() != 0) {
+			Token expsTok = ctx.inExprs.get(0).getStart();
+			expsLineNumber = expsTok.getLine();
+			expsColumnNumber = expsTok.getCharPositionInLine();
+		} else {
+			Token expsTok = ctx.inToken;
+			expsLineNumber = expsTok.getLine();
+			expsColumnNumber = expsTok.getCharPositionInLine();
+		}
 
 		Token tok = ctx.getStart();
 		int lineNumber = tok.getLine();

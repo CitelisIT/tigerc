@@ -1391,6 +1391,7 @@ public class tigerParser extends Parser {
 	public static class LetExpContext extends ParserRuleContext {
 		public DecContext dec;
 		public List<DecContext> decls = new ArrayList<DecContext>();
+		public Token inToken;
 		public ExpContext exp;
 		public List<ExpContext> inExprs = new ArrayList<ExpContext>();
 		public List<DecContext> dec() {
@@ -1441,7 +1442,7 @@ public class tigerParser extends Parser {
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__35) | (1L << T__36) | (1L << T__38))) != 0) );
 			setState(225);
-			match(T__33);
+			((LetExpContext)_localctx).inToken = match(T__33);
 			setState(234);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
