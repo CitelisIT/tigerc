@@ -7,8 +7,9 @@ public class VarSymbol implements Symbol {
     private String rootType;
     private int displacement;
 
-    public VarSymbol(String type, String name) {
+    public VarSymbol(String type, String rootType, String name) {
         this.type = type;
+        this.rootType = rootType;
         this.name = name;
     }
 

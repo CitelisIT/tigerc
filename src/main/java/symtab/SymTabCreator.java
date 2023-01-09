@@ -255,7 +255,8 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(ForExp forExp) {
         this.openScope();
-        this.addSymbol(forExp.forId.name + "_VAR", new VarSymbol("int_TYPE", forExp.forId.name));
+        this.addSymbol(forExp.forId.name + "_VAR",
+                new VarSymbol("int_TYPE", "int_TYPE", forExp.forId.name));
         this.loopCounter++;
         forExp.doExpr.accept(this);
         forExp.endValue.accept(this);
@@ -316,12 +317,15 @@ public class SymTabCreator implements AstVisitor<String> {
 
         if (typeValue instanceof TypeId) {
             TypeId typeIdValue = (TypeId) typeValue;
-            this.addSymbol(typeName + "_TYPE", new SimpleTypeSymbol(typeIdValue.name, typeName));
-            this.typeAliases.put(typeName, typeIdValue.name);
+            String rootType = this.resolveTypeAlias(typeIdValue.name + "_TYPE");
+            this.addSymbol(typeName + "_TYPE",
+                    new SimpleTypeSymbol(typeIdValue.name + "_TYPE", rootType, typeName));
+            this.typeAliases.put(typeName + "_TYPE", typeIdValue.name + "_TYPE");
         }
         if (typeValue instanceof ArrType) {
             ArrType arrTypeValue = (ArrType) typeValue;
-            this.addSymbol(typeName + "_TYPE", new ArrayTypeSymbol(arrTypeValue.name, typeName));
+            this.addSymbol(typeName + "_TYPE",
+                    new ArrayTypeSymbol(arrTypeValue.name + "_TYPE", arrTypeValue.name + "_TYPE", typeName));
         }
         if (typeValue instanceof RecType) {
 
@@ -332,7 +336,7 @@ public class SymTabCreator implements AstVisitor<String> {
                 fields.put(field.id.name, field.typeId.name + "_TYPE");
             }
 
-            this.addSymbol(typeName + "_TYPE", new RecordTypeSymbol(fields, typeName));
+            this.addSymbol(typeName + "_TYPE", new RecordTypeSymbol(fields, typeName + "_TYPE", typeName));
 
         }
         // No type for declartations
@@ -348,8 +352,9 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(VarDecType varDecType) {
-        this.addSymbol(varDecType.varId.name + "_VAR",
-                new VarSymbol(varDecType.varTypeId.name, varDecType.varId.name));
+        String rootType = this.resolveTypeAlias(varDecType.varTypeId.name + "_TYPE");
+        this.addSymbol(varDecType.varId.name + "_VAR", new VarSymbol(
+                varDecType.varTypeId.name + "_TYPE", rootType, varDecType.varId.name));
         String varType = varDecType.varValue.accept(this);
         if (!varType.equals(varDecType.varTypeId.name)) {
             this.semanticErrors.add("incompatible declaration type : the variable "
@@ -362,9 +367,9 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(VarDecNoType varDecNoType) {
         String varType = varDecNoType.varValue.accept(this);
+        String rootType = this.resolveTypeAlias(varType);
         this.addSymbol(varDecNoType.varId.name + "_VAR",
-                new VarSymbol(varType, varDecNoType.varId.name));
-
+                new VarSymbol(varType, rootType, varDecNoType.varId.name));
         // No type for declartations
         return null;
     }
@@ -381,11 +386,14 @@ public class SymTabCreator implements AstVisitor<String> {
         for (FieldDec arg : funDec.args.args) {
             argTypes.add(arg.typeId.name);
         }
-        this.addSymbol(funDec.id.name + "_VAR",
-                new FuncSymbol(funDec.returnTypeId.name + "_TYPE", argTypes, funDec.id.name));
+        String rootFunctionType = this.resolveTypeAlias(funDec.returnTypeId.name + "_TYPE");
+        this.addSymbol(funDec.id.name + "_VAR", new FuncSymbol(funDec.returnTypeId.name + "_TYPE",
+                rootFunctionType, argTypes, funDec.id.name));
         this.openScope();
         for (FieldDec arg : funDec.args.args) {
-            this.addSymbol(arg.id.name + "_VAR", new VarSymbol(arg.typeId.name + "_TYPE", arg.id.name));
+            String argRootType = this.resolveTypeAlias(arg.typeId.name + "_TYPE");
+            this.addSymbol(arg.id.name + "_VAR",
+                    new VarSymbol(arg.typeId.name + "_TYPE", argRootType, arg.id.name));
         }
 
         // if ((this.lookup(funDec.returnTypeId.name) == null)
@@ -439,7 +447,8 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(FieldExp fieldExp) {
         String recordType = fieldExp.lValue.accept(this);
         String resolvedRecordType = this.resolveTypeAlias(recordType);
-        RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(resolvedRecordType, "TYPE");
+        RecordTypeSymbol recordTypeSymbol =
+                (RecordTypeSymbol) this.lookup(resolvedRecordType, "TYPE");
         return this.resolveTypeAlias(recordTypeSymbol.getFields().get(fieldExp.id.name));
     }
 

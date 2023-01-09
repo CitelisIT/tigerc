@@ -4,9 +4,9 @@ public class ArrayTypeSymbol extends TypeSymbol {
 
     private String type;
 
-    public ArrayTypeSymbol(String type, String name) {
-        super(name);
-        this.type = type;
+    public ArrayTypeSymbol(String elementType, String rootType, String name) {
+        super(name, rootType);
+        this.type = elementType;
     }
 
     public String getType() {

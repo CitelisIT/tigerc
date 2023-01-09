@@ -3,9 +3,11 @@ package symtab.symbol;
 public class TypeSymbol implements Symbol {
 
     private String name;
+    private String rootType;
 
-    public TypeSymbol(String name) {
+    public TypeSymbol(String name, String rootType) {
         this.name = name;
+        this.rootType = rootType;
     }
 
     public SymbolCat getCategory() {
@@ -21,10 +23,10 @@ public class TypeSymbol implements Symbol {
     }
 
     public String getType() {
-        return this.name;
+        return this.name + "_TYPE";
     }
 
     public String getRootType() {
-        return this.name;
+        return this.rootType;
     }
 }

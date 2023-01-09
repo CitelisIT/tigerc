@@ -4,8 +4,8 @@ public class SimpleTypeSymbol extends TypeSymbol {
 
     private String aliasedType;
 
-    public SimpleTypeSymbol(String aliasedType, String name) {
-        super(name);
+    public SimpleTypeSymbol(String aliasedType, String rootType, String name) {
+        super(name, rootType);
         this.aliasedType = aliasedType;
     }
 
