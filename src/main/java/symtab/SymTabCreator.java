@@ -108,6 +108,18 @@ public class SymTabCreator implements AstVisitor<String> {
         return null;
     }
 
+    private Symbol lookup(String name) {
+        Scope scope = this.symtab.get(this.currentScopeId);
+        while (scope != null) {
+            Symbol symbol = scope.getSymbol(name);
+            if (symbol != null) {
+                return symbol;
+            }
+            scope = this.symtab.get(scope.getParentScope());
+        }
+        return null;
+    }
+
     private int getImbricationLevel() {
         return this.symtab.get(this.currentScopeId).getImbricationLevel();
     }
@@ -124,8 +136,7 @@ public class SymTabCreator implements AstVisitor<String> {
             this.scopesByDepth.set(currentDepth, this.scopesByDepth.get(currentDepth) + 1);
         }
         String newScopeId = base + "_" + this.scopesByDepth.get(currentDepth);
-        Scope scope =
-                new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
+        Scope scope = new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
         this.symtab.put(newScopeId, scope);
         this.currentScopeId = newScopeId;
     }
@@ -399,7 +410,6 @@ public class SymTabCreator implements AstVisitor<String> {
 
             this.addSymbol(typeName + "_TYPE",
                     new RecordTypeSymbol(fields, typeName + "_TYPE", typeName));
-
         }
         // No type for declartations
         return null;
@@ -516,9 +526,8 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(FieldExp fieldExp) {
         String recordType = fieldExp.lValue.accept(this);
-        String resolvedRecordType = this.resolveTypeAlias(recordType);
-        RecordTypeSymbol recordTypeSymbol =
-                (RecordTypeSymbol) this.lookup(resolvedRecordType, "TYPE");
+        System.out.println(recordType);
+        RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
         return this.resolveTypeAlias(recordTypeSymbol.getFields().get(fieldExp.id.name));
     }
 
@@ -542,7 +551,7 @@ public class SymTabCreator implements AstVisitor<String> {
         if (recordType == null) {
             this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
         } else {
-            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) recordType;
+            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType.getRootType());
             ArrayList<FieldCreate> fields = recCreate.fields.fields;
             for (FieldCreate field : fields) {
                 Map<String, String> fieldsMap = recordTypeSymbol.getFields();
@@ -551,16 +560,14 @@ public class SymTabCreator implements AstVisitor<String> {
                             + recCreate.typeId.name);
                 } else {
                     String fieldType = fieldsMap.get(field.id.name);
-                    // Typechecker doit être appelé pour récupérer le type de field
                     String declarationType = field.expr.accept(this);
                     if (!fieldType.equals(declarationType)) {
                         System.err.println("Field " + field.id.name + " has type " + fieldType
                                 + " but is initialized with type " + declarationType);
                     }
-                    // Reste à ajouter le record dans la TDS
-
                 }
             }
+            return recordTypeSymbol.getRootType();
         }
         return null;
     }
