@@ -136,7 +136,8 @@ public class SymTabCreator implements AstVisitor<String> {
             this.scopesByDepth.set(currentDepth, this.scopesByDepth.get(currentDepth) + 1);
         }
         String newScopeId = base + "_" + this.scopesByDepth.get(currentDepth);
-        Scope scope = new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
+        Scope scope =
+                new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
         this.symtab.put(newScopeId, scope);
         this.currentScopeId = newScopeId;
     }
@@ -172,7 +173,8 @@ public class SymTabCreator implements AstVisitor<String> {
                     this.semanticErrors.add("Variable " + id.name + " cannot be assigned to");
                 }
                 if (this.loopVariables.contains(symbol)) {
-                    this.semanticErrors.add("Variable " + id.name + " is a loop variable and cannot be assigned to");
+                    this.semanticErrors.add("Variable " + id.name
+                            + " is a loop variable and cannot be assigned to");
                 }
             }
         }
@@ -396,8 +398,10 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         if (typeValue instanceof ArrType) {
             ArrType arrTypeValue = (ArrType) typeValue;
-            this.addSymbol(typeName + "_TYPE", new ArrayTypeSymbol(arrTypeValue.name + "_TYPE",
-                    arrTypeValue.name + "_TYPE", typeName));
+            String rootType = this.resolveTypeAlias(typeName + "_TYPE");
+            String elementRootType = this.resolveTypeAlias(typeValue + "_TYPE");
+            this.addSymbol(typeName + "_TYPE",
+                    new ArrayTypeSymbol(elementRootType, rootType, typeName));
         }
         if (typeValue instanceof RecType) {
 
@@ -531,9 +535,10 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(ArrCreate arrCreate) {
         String arrayType = arrCreate.typeId.name;
+        Symbol arrayTypeSymbol = this.lookup(arrayType, "TYPE");
         String sizeExpType = arrCreate.index.accept(this);
         String initializerExpType = arrCreate.of.accept(this);
-        return this.resolveTypeAlias(arrayType);
+        return arrayTypeSymbol.getRootType();
     }
 
     public String visit(FieldCreate fieldCreate) {
@@ -549,7 +554,8 @@ public class SymTabCreator implements AstVisitor<String> {
         if (recordType == null) {
             this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
         } else {
-            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType.getRootType());
+            RecordTypeSymbol recordTypeSymbol =
+                    (RecordTypeSymbol) this.lookup(recordType.getRootType());
             ArrayList<FieldCreate> fields = recCreate.fields.fields;
             for (FieldCreate field : fields) {
                 Map<String, String> fieldsMap = recordTypeSymbol.getFields();
