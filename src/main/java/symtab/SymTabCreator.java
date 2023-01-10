@@ -519,14 +519,12 @@ public class SymTabCreator implements AstVisitor<String> {
             this.semanticErrors.add("Subscript access to an array must be an integer");
         }
         String arrayType = subscript.lValue.accept(this);
-        String resolvedArrayType = this.resolveTypeAlias(arrayType);
-        ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(resolvedArrayType, "TYPE");
+        ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(arrayType);
         return arrayTypeSymbol.getRootType();
     }
 
     public String visit(FieldExp fieldExp) {
         String recordType = fieldExp.lValue.accept(this);
-        System.out.println(recordType);
         RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
         return this.resolveTypeAlias(recordTypeSymbol.getFields().get(fieldExp.id.name));
     }
