@@ -353,14 +353,22 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(VarDecType varDecType) {
-        String varDecRootType = this.lookup(varDecType.varTypeId.name, "TYPE").getRootType();
-        this.addSymbol(varDecType.varId.name + "_VAR", new VarSymbol(
-                varDecType.varTypeId.name + "_TYPE", varDecRootType, varDecType.varId.name));
-        String varType = varDecType.varValue.accept(this);
-        if (!varType.equals(varDecRootType)) {
-            this.semanticErrors.add("incompatible declaration type : the variable "
-                    + varDecType.varId.name + " must be a value of " + varDecType.varTypeId.name
-                    + " type, not " + varType + " type");
+        Symbol varDecTypeSymbol = this.lookup(varDecType.varTypeId.name, "TYPE");
+        if (varDecTypeSymbol == null) {
+            this.semanticErrors.add("undeclared type : " + varDecType.varTypeId.name);
+            String varType = varDecType.varValue.accept(this);
+            this.addSymbol(varDecType.varId.name + "_VAR",
+                    new VarSymbol(varType, varType, varDecType.varId.name));
+        } else {
+            String varDecRootType = varDecTypeSymbol.getRootType();
+            this.addSymbol(varDecType.varId.name + "_VAR", new VarSymbol(
+                    varDecType.varTypeId.name + "_TYPE", varDecRootType, varDecType.varId.name));
+            String varType = varDecType.varValue.accept(this);
+            if (!varType.equals(varDecRootType)) {
+                this.semanticErrors.add("incompatible declaration type : the variable "
+                        + varDecType.varId.name + " must be a value of " + varDecType.varTypeId.name
+                        + " type, not " + varType + " type");
+            }
         }
         // No type for declartations
         return null;
