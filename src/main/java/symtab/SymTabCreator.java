@@ -2,8 +2,10 @@ package symtab;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import ast.Add;
 import ast.And;
 import ast.ArrCreate;
@@ -71,6 +73,7 @@ public class SymTabCreator implements AstVisitor<String> {
     private int loopCounter = 0;
     private Map<String, String> typeAliases = new HashMap<String, String>();
     private List<Integer> scopesByDepth = new ArrayList<Integer>();
+    private Set<Symbol> loopVariables = new HashSet<Symbol>();
 
     private List<String> semanticErrors = new ArrayList<String>();
 
@@ -148,27 +151,25 @@ public class SymTabCreator implements AstVisitor<String> {
         String expType = assign.expr.accept(this);
         String lvalueType = assign.lValue.accept(this);
 
-
         if (assign.lValue instanceof Id) {
             Id id = (Id) assign.lValue;
-            Symbol symbol = this.lookup(id.name, "var");
+            Symbol symbol = this.lookup(id.name, "VAR");
             if (symbol == null) {
                 this.semanticErrors.add("Variable " + id.name + " is not defined");
             } else {
                 if (symbol.getCategory() != SymbolCat.VAR) {
                     this.semanticErrors.add("Variable " + id.name + " cannot be assigned to");
                 }
+                if (this.loopVariables.contains(symbol)) {
+                    this.semanticErrors.add("Variable " + id.name + " is a loop variable and cannot be assigned to");
+                }
             }
         }
-
-
 
         if (!expType.equals(lvalueType)) {
             this.semanticErrors
                     .add("Type mismatch: cannot assign " + expType + " to " + lvalueType);
         }
-
-
 
         return "void_TYPE";
     }
@@ -262,7 +263,7 @@ public class SymTabCreator implements AstVisitor<String> {
         ifThenElse.condition.accept(this);
         String thenType = ifThenElse.thenExpr.accept(this);
         if (!thenType.equals("void_TYPE")) {
-            this.semanticErrors.add("then branch is of type " + thenType + " but should be void");
+            this.semanticErrors.add("Then branch is of type " + thenType + " but should be void");
         }
         if (ifThenElse.elseExpr == null) {
             return "void_TYPE";
@@ -270,7 +271,7 @@ public class SymTabCreator implements AstVisitor<String> {
             String elseType = ifThenElse.elseExpr.accept(this);
             if (!elseType.equals("void_TYPE")) {
                 this.semanticErrors
-                        .add("else branch is of type " + elseType + " but should be void");
+                        .add("Else branch is of type " + elseType + " but should be void");
             }
             return this.resolveTypeAlias(thenType);
         }
@@ -280,13 +281,13 @@ public class SymTabCreator implements AstVisitor<String> {
         this.loopCounter++;
         String whileConditionType = whileExp.condition.accept(this);
         if (!whileConditionType.equals("int_TYPE")) {
-            this.semanticErrors.add("while loop condition is of type " + whileConditionType
+            this.semanticErrors.add("While loop condition is of type " + whileConditionType
                     + " but should be of type int");
         }
         String whileBodyType = whileExp.doExpr.accept(this);
         if (!whileBodyType.equals("void_TYPE")) {
             this.semanticErrors.add(
-                    "while loop body is of type " + whileBodyType + " but should be of type void");
+                    "While loop body is of type " + whileBodyType + " but should be of type void");
         }
         this.loopCounter--;
         return "void_TYPE";
@@ -294,31 +295,34 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(ForExp forExp) {
         this.openScope();
-        if (this.lookup(forExp.forId.name, "VAR") == null) {
-            this.addSymbol(forExp.forId.name + "_VAR",
-                    new VarSymbol("int_TYPE", "int_TYPE", forExp.forId.name));
+        Symbol forIdSymbol = this.lookup(forExp.forId.name, "VAR");
+        if (forIdSymbol == null) {
+            forIdSymbol = new VarSymbol("int_TYPE", "int_TYPE", forExp.forId.name);
+            this.addSymbol(forExp.forId.name + "_VAR", forIdSymbol);
         }
+        this.loopVariables.add(forIdSymbol);
         this.loopCounter++;
         String forBodyType = forExp.doExpr.accept(this);
         if (!forBodyType.equals("void_TYPE")) {
             this.semanticErrors
-                    .add("for loop body is of type " + forBodyType + " but should be of type void");
+                    .add("For loop body is of type " + forBodyType + " but should be of type void");
         }
         String forStartIndexType = forExp.startValue.accept(this);
         if (!forStartIndexType.equals("int_TYPE")) {
-            this.semanticErrors.add("for loop start index is of type " + forStartIndexType
+            this.semanticErrors.add("For loop start index is of type " + forStartIndexType
                     + " but should be of type int");
         }
         String forEndIndexType = forExp.endValue.accept(this);
         if (!forEndIndexType.equals("int_TYPE")) {
-            this.semanticErrors.add("for loop end index is of type " + forEndIndexType
+            this.semanticErrors.add("For loop end index is of type " + forEndIndexType
                     + " but should be of type int");
         }
         String forVarValueType = forExp.forId.accept(this);
         if (!forVarValueType.equals("int_TYPE")) {
-            this.semanticErrors.add("for loop variable " + forExp.forId.name + " is of type "
+            this.semanticErrors.add("For loop variable " + forExp.forId.name + " is of type "
                     + forVarValueType + " but should be of type int");
         }
+        this.loopVariables.remove(forIdSymbol);
         this.loopCounter--;
         this.closeScope();
         return "void_TYPE";
@@ -412,7 +416,7 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(VarDecType varDecType) {
         Symbol varDecTypeSymbol = this.lookup(varDecType.varTypeId.name, "TYPE");
         if (varDecTypeSymbol == null) {
-            this.semanticErrors.add("undeclared type : " + varDecType.varTypeId.name);
+            this.semanticErrors.add("Undeclared type : " + varDecType.varTypeId.name);
             String varType = varDecType.varValue.accept(this);
             this.addSymbol(varDecType.varId.name + "_VAR",
                     new VarSymbol(varType, varType, varDecType.varId.name));
@@ -422,7 +426,7 @@ public class SymTabCreator implements AstVisitor<String> {
                     varDecType.varTypeId.name + "_TYPE", varDecRootType, varDecType.varId.name));
             String varType = varDecType.varValue.accept(this);
             if (!varType.equals(varDecRootType)) {
-                this.semanticErrors.add("incompatible declaration type : the variable "
+                this.semanticErrors.add("Incompatible declaration type : the variable "
                         + varDecType.varId.name + " must be a value of " + varDecType.varTypeId.name
                         + " type, not " + varType + " type");
             }
@@ -470,7 +474,7 @@ public class SymTabCreator implements AstVisitor<String> {
         String returnType = funDec.body.accept(this);
 
         if (!funDec.returnTypeId.name.equals(returnType)) {
-            this.semanticErrors.add("incompatible return type : the function " + funDec.id.name
+            this.semanticErrors.add("Incompatible return type : the function " + funDec.id.name
                     + " must return value of " + funDec.returnTypeId.name + " type, not "
                     + returnType + " type");
         }
