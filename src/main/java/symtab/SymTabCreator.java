@@ -247,7 +247,11 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(WhileExp whileExp) {
         this.loopCounter++;
-        whileExp.condition.accept(this);
+        String whileConditionType = whileExp.condition.accept(this);
+        if (!whileConditionType.equals("int_TYPE")) {
+            this.semanticErrors.add("while loop condition is of type " + whileConditionType
+                    + " but should be of type int");
+        }
         String whileBodyType = whileExp.doExpr.accept(this);
         if (!whileBodyType.equals("void_TYPE")) {
             this.semanticErrors.add("while loop body is of type " + whileBodyType
