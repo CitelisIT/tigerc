@@ -261,10 +261,17 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         this.loopCounter++;
         forExp.doExpr.accept(this);
-        forExp.endValue.accept(this);
-        forExp.startValue.accept(this);
+        String forStartIndexType = forExp.startValue.accept(this);
+        if (!forStartIndexType.equals("int_TYPE")) {
+            this.semanticErrors.add("for loop start index is of type "
+                    + forStartIndexType + " but should be of type int");
+        }
+        String forEndIndexType = forExp.endValue.accept(this);
+        if (!forEndIndexType.equals("int_TYPE")) {
+            this.semanticErrors.add("for loop end index is of type "
+                    + forEndIndexType + " but should be of type int");
+        }
         String forVarValueType = forExp.forId.accept(this);
-        System.out.println("forVarValueType = " + forVarValueType);
         if (!forVarValueType.equals("int_TYPE")) {
             this.semanticErrors.add("for loop variable " + forExp.forId.name + " is of type "
                     + forVarValueType + " but should be of type int");
