@@ -8,6 +8,7 @@ import parser.tigerBaseVisitor;
 import java.util.ArrayList;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.tree.TerminalNodeImpl;
 
 public class AstCreator extends tigerBaseVisitor<Ast> {
 
@@ -301,7 +302,7 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 					break;
 				case ".":
 					String fieldName = ctx.getChild(expIndex).getText();
-					Token fieldTok = (Token) ctx.getChild(expIndex);
+					Token fieldTok = ((TerminalNodeImpl) ctx.getChild(expIndex)).getSymbol();
 					int fieldLineNumber = fieldTok.getLine();
 					int fieldColumnNumber = fieldTok.getCharPositionInLine();
 					tempNode = new FieldExp(tempNode,
