@@ -61,6 +61,7 @@ import symtab.symbol.FuncSymbol;
 import symtab.symbol.RecordTypeSymbol;
 import symtab.symbol.SimpleTypeSymbol;
 import symtab.symbol.Symbol;
+import symtab.symbol.SymbolCat;
 import symtab.symbol.VarSymbol;
 
 public class SymTabCreator implements AstVisitor<String> {
@@ -144,8 +145,31 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(Assign assign) {
-        assign.expr.accept(this);
-        assign.lValue.accept(this);
+        String expType = assign.expr.accept(this);
+        String lvalueType = assign.lValue.accept(this);
+
+
+        if (assign.lValue instanceof Id) {
+            Id id = (Id) assign.lValue;
+            Symbol symbol = this.lookup(id.name, "var");
+            if (symbol == null) {
+                this.semanticErrors.add("Variable " + id.name + " is not defined");
+            } else {
+                if (symbol.getCategory() != SymbolCat.VAR) {
+                    this.semanticErrors.add("Variable " + id.name + " cannot be assigned to");
+                }
+            }
+        }
+
+
+
+        if (!expType.equals(lvalueType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot assign " + expType + " to " + lvalueType);
+        }
+
+
+
         return "void_TYPE";
     }
 
@@ -237,10 +261,17 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(IfThenElse ifThenElse) {
         ifThenElse.condition.accept(this);
         String thenType = ifThenElse.thenExpr.accept(this);
+        if (!thenType.equals("void_TYPE")) {
+            this.semanticErrors.add("then branch is of type " + thenType + " but should be void");
+        }
         if (ifThenElse.elseExpr == null) {
             return "void_TYPE";
         } else {
             String elseType = ifThenElse.elseExpr.accept(this);
+            if (!elseType.equals("void_TYPE")) {
+                this.semanticErrors
+                        .add("else branch is of type " + elseType + " but should be void");
+            }
             return this.resolveTypeAlias(thenType);
         }
     }
@@ -254,8 +285,8 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         String whileBodyType = whileExp.doExpr.accept(this);
         if (!whileBodyType.equals("void_TYPE")) {
-            this.semanticErrors.add("while loop body is of type " + whileBodyType
-                    + " but should be of type void");
+            this.semanticErrors.add(
+                    "while loop body is of type " + whileBodyType + " but should be of type void");
         }
         this.loopCounter--;
         return "void_TYPE";
@@ -270,18 +301,18 @@ public class SymTabCreator implements AstVisitor<String> {
         this.loopCounter++;
         String forBodyType = forExp.doExpr.accept(this);
         if (!forBodyType.equals("void_TYPE")) {
-            this.semanticErrors.add("for loop body is of type " + forBodyType
-                    + " but should be of type void");
+            this.semanticErrors
+                    .add("for loop body is of type " + forBodyType + " but should be of type void");
         }
         String forStartIndexType = forExp.startValue.accept(this);
         if (!forStartIndexType.equals("int_TYPE")) {
-            this.semanticErrors.add("for loop start index is of type "
-                    + forStartIndexType + " but should be of type int");
+            this.semanticErrors.add("for loop start index is of type " + forStartIndexType
+                    + " but should be of type int");
         }
         String forEndIndexType = forExp.endValue.accept(this);
         if (!forEndIndexType.equals("int_TYPE")) {
-            this.semanticErrors.add("for loop end index is of type "
-                    + forEndIndexType + " but should be of type int");
+            this.semanticErrors.add("for loop end index is of type " + forEndIndexType
+                    + " but should be of type int");
         }
         String forVarValueType = forExp.forId.accept(this);
         if (!forVarValueType.equals("int_TYPE")) {
