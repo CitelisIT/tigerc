@@ -399,7 +399,7 @@ public class SymTabCreator implements AstVisitor<String> {
         if (typeValue instanceof ArrType) {
             ArrType arrTypeValue = (ArrType) typeValue;
             String rootType = this.resolveTypeAlias(typeName + "_TYPE");
-            String elementRootType = this.resolveTypeAlias(typeValue + "_TYPE");
+            String elementRootType = this.resolveTypeAlias(arrTypeValue.name + "_TYPE");
             this.addSymbol(typeName + "_TYPE",
                     new ArrayTypeSymbol(elementRootType, rootType, typeName));
         }
