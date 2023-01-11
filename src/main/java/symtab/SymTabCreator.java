@@ -108,6 +108,18 @@ public class SymTabCreator implements AstVisitor<String> {
         return null;
     }
 
+    private Symbol lookup(String name) {
+        Scope scope = this.symtab.get(this.currentScopeId);
+        while (scope != null) {
+            Symbol symbol = scope.getSymbol(name);
+            if (symbol != null) {
+                return symbol;
+            }
+            scope = this.symtab.get(scope.getParentScope());
+        }
+        return null;
+    }
+
     private int getImbricationLevel() {
         return this.symtab.get(this.currentScopeId).getImbricationLevel();
     }
@@ -124,8 +136,7 @@ public class SymTabCreator implements AstVisitor<String> {
             this.scopesByDepth.set(currentDepth, this.scopesByDepth.get(currentDepth) + 1);
         }
         String newScopeId = base + "_" + this.scopesByDepth.get(currentDepth);
-        Scope scope =
-                new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
+        Scope scope = new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
         this.symtab.put(newScopeId, scope);
         this.currentScopeId = newScopeId;
     }
@@ -252,7 +263,7 @@ public class SymTabCreator implements AstVisitor<String> {
         for (Ast exp : seqExp.exprs) {
             type = exp.accept(this);
         }
-        return this.resolveTypeAlias(type);
+        return type;
     }
 
     public String visit(Neg neg) {
@@ -274,7 +285,7 @@ public class SymTabCreator implements AstVisitor<String> {
                 this.semanticErrors
                         .add("Else branch is of type " + elseType + " but should be void");
             }
-            return this.resolveTypeAlias(thenType);
+            return thenType;
         }
     }
 
@@ -341,7 +352,7 @@ public class SymTabCreator implements AstVisitor<String> {
         for (Ast exp : letScope.exprs) {
             type = exp.accept(this);
         }
-        return this.resolveTypeAlias(type);
+        return type;
     }
 
     public String visit(LetExp letExp) {
@@ -386,8 +397,10 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         if (typeValue instanceof ArrType) {
             ArrType arrTypeValue = (ArrType) typeValue;
-            this.addSymbol(typeName + "_TYPE", new ArrayTypeSymbol(arrTypeValue.name + "_TYPE",
-                    arrTypeValue.name + "_TYPE", typeName));
+            String rootType = this.resolveTypeAlias(typeName + "_TYPE");
+            String elementRootType = this.resolveTypeAlias(arrTypeValue.name + "_TYPE");
+            this.addSymbol(typeName + "_TYPE",
+                    new ArrayTypeSymbol(elementRootType, rootType, typeName));
         }
         if (typeValue instanceof RecType) {
 
@@ -395,12 +408,13 @@ public class SymTabCreator implements AstVisitor<String> {
             Map<String, String> fields = new HashMap<String, String>();
 
             for (FieldDec field : recTypeValue.fields) {
-                fields.put(field.id.name, field.typeId.name + "_TYPE");
+                Symbol fieldTypeSimbol = this.lookup(field.typeId.name, "TYPE");
+                String fieldRootType = fieldTypeSimbol.getRootType();
+                fields.put(field.id.name, fieldRootType);
             }
 
             this.addSymbol(typeName + "_TYPE",
                     new RecordTypeSymbol(fields, typeName + "_TYPE", typeName));
-
         }
         // No type for declartations
         return null;
@@ -510,24 +524,22 @@ public class SymTabCreator implements AstVisitor<String> {
             this.semanticErrors.add("Subscript access to an array must be an integer");
         }
         String arrayType = subscript.lValue.accept(this);
-        String resolvedArrayType = this.resolveTypeAlias(arrayType);
-        ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(resolvedArrayType, "TYPE");
+        ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(arrayType);
         return arrayTypeSymbol.getRootType();
     }
 
     public String visit(FieldExp fieldExp) {
         String recordType = fieldExp.lValue.accept(this);
-        String resolvedRecordType = this.resolveTypeAlias(recordType);
-        RecordTypeSymbol recordTypeSymbol =
-                (RecordTypeSymbol) this.lookup(resolvedRecordType, "TYPE");
-        return this.resolveTypeAlias(recordTypeSymbol.getFields().get(fieldExp.id.name));
+        RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
+        return recordTypeSymbol.getFields().get(fieldExp.id.name);
     }
 
     public String visit(ArrCreate arrCreate) {
         String arrayType = arrCreate.typeId.name;
+        Symbol arrayTypeSymbol = this.lookup(arrayType, "TYPE");
         String sizeExpType = arrCreate.index.accept(this);
         String initializerExpType = arrCreate.of.accept(this);
-        return this.resolveTypeAlias(arrayType);
+        return arrayTypeSymbol.getRootType();
     }
 
     public String visit(FieldCreate fieldCreate) {
@@ -543,7 +555,7 @@ public class SymTabCreator implements AstVisitor<String> {
         if (recordType == null) {
             this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
         } else {
-            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) recordType;
+            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType.getRootType());
             ArrayList<FieldCreate> fields = recCreate.fields.fields;
             for (FieldCreate field : fields) {
                 Map<String, String> fieldsMap = recordTypeSymbol.getFields();
@@ -552,16 +564,14 @@ public class SymTabCreator implements AstVisitor<String> {
                             + recCreate.typeId.name);
                 } else {
                     String fieldType = fieldsMap.get(field.id.name);
-                    // Typechecker doit être appelé pour récupérer le type de field
                     String declarationType = field.expr.accept(this);
                     if (!fieldType.equals(declarationType)) {
                         System.err.println("Field " + field.id.name + " has type " + fieldType
                                 + " but is initialized with type " + declarationType);
                     }
-                    // Reste à ajouter le record dans la TDS
-
                 }
             }
+            return recordTypeSymbol.getRootType();
         }
         return null;
     }
