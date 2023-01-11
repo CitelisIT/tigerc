@@ -16,7 +16,7 @@ public class TypeSymbol implements Symbol {
         ArrayList<String> line = new ArrayList<String>();
         line.add(getCategory().toString());
         line.add(getName());
-        line.add(getType() + " (@" + getRootType() + ")");
+        line.add(getPrintType());
         line.add("" + getDisplacement());
         return line;
     }

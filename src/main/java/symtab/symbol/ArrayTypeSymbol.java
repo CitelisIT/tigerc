@@ -15,7 +15,7 @@ public class ArrayTypeSymbol extends TypeSymbol {
         ArrayList<String> line = new ArrayList<String>();
         line.add(getCategory().toString());
         line.add(getName());
-        line.add("Array of " + getType() + " (@" + getRootType() + ")");
+        line.add("Array of " + getPrintType());
         line.add("" + getDisplacement());
         return line;
     }

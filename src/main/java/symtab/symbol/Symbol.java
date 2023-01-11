@@ -16,4 +16,9 @@ public interface Symbol {
 
     public ArrayList<String> getSymtabLine();
 
+    default String getPrintType() {
+        return this.getType().equals(this.getRootType()) ? getType()
+                : getType() + " (@" + getRootType() + ")";
+    }
+
 }

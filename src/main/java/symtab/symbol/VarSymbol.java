@@ -19,7 +19,9 @@ public class VarSymbol implements Symbol {
         ArrayList<String> line = new ArrayList<String>();
         line.add(getCategory().toString());
         line.add(getName());
-        line.add(getType() + " (@" + getRootType() + ")");
+        String typePrint = this.type.equals(this.rootType) ? getType()
+                : getType() + " (@" + getRootType() + ")";
+        line.add(typePrint);
         line.add("" + getDisplacement());
         return line;
     }
