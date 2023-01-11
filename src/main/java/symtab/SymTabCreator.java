@@ -487,10 +487,11 @@ public class SymTabCreator implements AstVisitor<String> {
         // }
 
         String returnType = funDec.body.accept(this);
+        Symbol functionSymbol = this.lookup(funDec.id.name, "VAR");
 
-        if (!funDec.returnTypeId.name.equals(returnType)) {
+        if (!functionSymbol.getRootType().equals(returnType)) {
             this.semanticErrors.add("Incompatible return type : the function " + funDec.id.name
-                    + " must return value of " + funDec.returnTypeId.name + " type, not "
+                    + " must return value of " + functionSymbol.getRootType() + " type, not "
                     + returnType + " type");
         }
         // No type for declartations
