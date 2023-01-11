@@ -263,7 +263,7 @@ public class SymTabCreator implements AstVisitor<String> {
         for (Ast exp : seqExp.exprs) {
             type = exp.accept(this);
         }
-        return this.resolveTypeAlias(type);
+        return type;
     }
 
     public String visit(Neg neg) {
@@ -285,7 +285,7 @@ public class SymTabCreator implements AstVisitor<String> {
                 this.semanticErrors
                         .add("Else branch is of type " + elseType + " but should be void");
             }
-            return this.resolveTypeAlias(thenType);
+            return thenType;
         }
     }
 
@@ -352,7 +352,7 @@ public class SymTabCreator implements AstVisitor<String> {
         for (Ast exp : letScope.exprs) {
             type = exp.accept(this);
         }
-        return this.resolveTypeAlias(type);
+        return type;
     }
 
     public String visit(LetExp letExp) {
