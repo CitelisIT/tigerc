@@ -18,6 +18,24 @@ public class FuncSymbol implements Symbol {
         this.argTypes = argTypes;
     }
 
+    public ArrayList<String> getSymtabLine() {
+        ArrayList<String> line = new ArrayList<String>();
+        line.add(getCategory().toString());
+        line.add(getName());
+        String argsTypeString = "( ";
+        for (String typeString : argTypes) {
+            argsTypeString += typeString + ",";
+        }
+        String typePrint = this.type.equals(this.rootType) ? getType()
+                : getType() + " (@" + getRootType() + ")";
+        argsTypeString =
+                argsTypeString.substring(0, argsTypeString.length() - 1) + " ) -> " + typePrint;
+        line.add(argsTypeString);
+        line.add("" + getDisplacement());
+        return line;
+    }
+
+
     public SymbolCat getCategory() {
         return SymbolCat.FUNC;
     }

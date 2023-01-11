@@ -1,5 +1,6 @@
 package symtab.symbol;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,6 +12,20 @@ public class RecordTypeSymbol extends TypeSymbol {
     public RecordTypeSymbol(Map<String, String> fields, String rootType, String name) {
         super(name, rootType);
         this.fields = fields;
+    }
+
+    public ArrayList<String> getSymtabLine() {
+        ArrayList<String> line = new ArrayList<String>();
+        line.add(getCategory().toString());
+        line.add(getName());
+        String fieldsTypeString = "{ ";
+        for (String key : getFields().keySet()) {
+            fieldsTypeString += " " + key + " : " + getFieldType(key) + ";";
+        }
+        fieldsTypeString = fieldsTypeString.substring(0, fieldsTypeString.length() - 1) + "}";
+        line.add(fieldsTypeString);
+        line.add("" + getDisplacement());
+        return line;
     }
 
     public Map<String, String> getFields() {

@@ -1,5 +1,7 @@
 package symtab.symbol;
 
+import java.util.ArrayList;
+
 public class ArrayTypeSymbol extends TypeSymbol {
 
     private String type;
@@ -8,6 +10,16 @@ public class ArrayTypeSymbol extends TypeSymbol {
         super(name, rootType);
         this.type = elementType;
     }
+
+    public ArrayList<String> getSymtabLine() {
+        ArrayList<String> line = new ArrayList<String>();
+        line.add(getCategory().toString());
+        line.add(getName());
+        line.add("Array of " + getType() + " (@" + getRootType() + ")");
+        line.add("" + getDisplacement());
+        return line;
+    }
+
 
     public String getType() {
         return type;

@@ -1,5 +1,7 @@
 package symtab.symbol;
 
+import java.util.ArrayList;
+
 public class VarSymbol implements Symbol {
 
     private String name;
@@ -11,6 +13,15 @@ public class VarSymbol implements Symbol {
         this.type = type;
         this.rootType = rootType;
         this.name = name;
+    }
+
+    public ArrayList<String> getSymtabLine() {
+        ArrayList<String> line = new ArrayList<String>();
+        line.add(getCategory().toString());
+        line.add(getName());
+        line.add(getType() + " (@" + getRootType() + ")");
+        line.add("" + getDisplacement());
+        return line;
     }
 
     public SymbolCat getCategory() {

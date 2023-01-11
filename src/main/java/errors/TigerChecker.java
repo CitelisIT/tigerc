@@ -15,6 +15,7 @@ import parser.tigerParser;
 import parser.tigerParser.ProgramContext;
 import symtab.SymTabCreator;
 import symtab.scope.Scope;
+import symtab.SymTabPrinter;
 
 public class TigerChecker {
 
@@ -53,6 +54,7 @@ public class TigerChecker {
             this.ast.accept(symTabCreator);
             this.semanticErrors = symTabCreator.getSemanticErrors();
             this.symtab = symTabCreator.getSymTab();
+            SymTabPrinter symTabPrinter = new SymTabPrinter(this.symtab);
 
             if (this.semanticErrors.size() != 0) {
                 return true;

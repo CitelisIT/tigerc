@@ -51,13 +51,13 @@ public class PredefinedScope implements Scope {
                                 new ArrayList<String>(Arrays.asList("string_TYPE")), "print"));
                 this.addSymbol("printi_VAR", new FuncSymbol("void_TYPE", "void_TYPE",
                                 new ArrayList<String>(Arrays.asList("int_TYPE")), "printi"));
-                this.addSymbol("flush_VAR",
-                                new FuncSymbol("void_TYPE", "void_TYPE", new ArrayList<String>(), "flush"));
-                this.addSymbol("getchar_VAR",
-                                new FuncSymbol("string_TYPE", "string_TYPE", new ArrayList<String>(), "getchar"));
+                this.addSymbol("flush_VAR", new FuncSymbol("void_TYPE", "void_TYPE",
+                                new ArrayList<String>(), "flush"));
+                this.addSymbol("getchar_VAR", new FuncSymbol("string_TYPE", "string_TYPE",
+                                new ArrayList<String>(), "getchar"));
                 this.addSymbol("ord_VAR", new FuncSymbol("int_TYPE", "int_TYPE",
                                 new ArrayList<String>(Arrays.asList("string_TYPE")), "ord"));
-                this.addSymbol("chr_VAR", new FuncSymbol("string_TYPE", "string)TYPE",
+                this.addSymbol("chr_VAR", new FuncSymbol("string_TYPE", "string_TYPE",
                                 new ArrayList<String>(Arrays.asList("int_TYPE")), "chr"));
                 this.addSymbol("size_VAR", new FuncSymbol("int_TYPE", "int_TYPE",
                                 new ArrayList<String>(Arrays.asList("string_TYPE")), "size"));

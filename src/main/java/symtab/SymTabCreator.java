@@ -161,7 +161,8 @@ public class SymTabCreator implements AstVisitor<String> {
                     this.semanticErrors.add("Variable " + id.name + " cannot be assigned to");
                 }
                 if (this.loopVariables.contains(symbol)) {
-                    this.semanticErrors.add("Variable " + id.name + " is a loop variable and cannot be assigned to");
+                    this.semanticErrors.add("Variable " + id.name
+                            + " is a loop variable and cannot be assigned to");
                 }
             }
         }

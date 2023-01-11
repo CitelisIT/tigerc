@@ -1,5 +1,7 @@
 package symtab.symbol;
 
+import java.util.ArrayList;
+
 public interface Symbol {
 
     public SymbolCat getCategory();
@@ -11,5 +13,7 @@ public interface Symbol {
     public String getType();
 
     public String getRootType();
+
+    public ArrayList<String> getSymtabLine();
 
 }
