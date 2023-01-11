@@ -136,8 +136,7 @@ public class SymTabCreator implements AstVisitor<String> {
             this.scopesByDepth.set(currentDepth, this.scopesByDepth.get(currentDepth) + 1);
         }
         String newScopeId = base + "_" + this.scopesByDepth.get(currentDepth);
-        Scope scope =
-                new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
+        Scope scope = new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
         this.symtab.put(newScopeId, scope);
         this.currentScopeId = newScopeId;
     }
@@ -291,7 +290,6 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         return "void_TYPE";
     }
-
 
     public String visit(WhileExp whileExp) {
         this.loopCounter++;
@@ -530,7 +528,7 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         String arrayType = subscript.lValue.accept(this);
         ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(arrayType);
-        return arrayTypeSymbol.getRootType();
+        return arrayTypeSymbol.getElementType();
     }
 
     public String visit(FieldExp fieldExp) {
@@ -560,8 +558,7 @@ public class SymTabCreator implements AstVisitor<String> {
         if (recordType == null) {
             this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
         } else {
-            RecordTypeSymbol recordTypeSymbol =
-                    (RecordTypeSymbol) this.lookup(recordType.getRootType());
+            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType.getRootType());
             ArrayList<FieldCreate> fields = recCreate.fields.fields;
             for (FieldCreate field : fields) {
                 Map<String, String> fieldsMap = recordTypeSymbol.getFields();

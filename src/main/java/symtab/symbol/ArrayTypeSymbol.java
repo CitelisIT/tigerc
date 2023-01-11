@@ -20,12 +20,15 @@ public class ArrayTypeSymbol extends TypeSymbol {
         return line;
     }
 
-
     public String getType() {
         return type;
     }
 
     public String getName() {
         return super.getName();
+    }
+
+    public String getElementType() {
+        return this.type;
     }
 }
