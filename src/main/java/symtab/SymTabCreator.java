@@ -400,6 +400,12 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         if (typeValue instanceof ArrType) {
             ArrType arrTypeValue = (ArrType) typeValue;
+
+            Symbol arrTypeValueSymbol = lookup(arrTypeValue.name, "TYPE");
+            if (arrTypeValueSymbol == null) {
+                this.semanticErrors.add("Undeclared type : " + arrTypeValue.name);
+            }
+
             String rootType = this.resolveTypeAlias(typeName + "_TYPE");
             String elementRootType = this.resolveTypeAlias(arrTypeValue.name + "_TYPE");
             this.addSymbol(typeName + "_TYPE",
@@ -484,10 +490,9 @@ public class SymTabCreator implements AstVisitor<String> {
                     new VarSymbol(arg.typeId.name + "_TYPE", argRootType, arg.id.name));
         }
 
-        // if ((this.lookup(funDec.returnTypeId.name) == null)
-        // && this.typeAliases.containsKey(funDec.returnTypeId.name)) {
-        // this.semanticErrors.add(funDec.returnTypeId.name + " type does'nt exist");
-        // }
+        if (this.lookup(funDec.returnTypeId.name, "TYPE") == null) {
+            this.semanticErrors.add("Undeclared type : " + funDec.returnTypeId.name);
+        }
 
         String returnType = funDec.body.accept(this);
         Symbol functionSymbol = this.lookup(funDec.id.name, "VAR");
