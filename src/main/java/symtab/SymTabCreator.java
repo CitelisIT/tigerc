@@ -136,7 +136,8 @@ public class SymTabCreator implements AstVisitor<String> {
             this.scopesByDepth.set(currentDepth, this.scopesByDepth.get(currentDepth) + 1);
         }
         String newScopeId = base + "_" + this.scopesByDepth.get(currentDepth);
-        Scope scope = new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
+        Scope scope =
+                new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
         this.symtab.put(newScopeId, scope);
         this.currentScopeId = newScopeId;
     }
@@ -187,74 +188,218 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(Or or) {
-        or.left.accept(this);
-        or.right.accept(this);
+        String leftType = or.left.accept(this);
+        String rightType = or.right.accept(this);
+        if (!leftType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator | to left operand: is of type "
+                            + leftType + " instead of type INT");
+        }
+        if (!rightType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator | to right operand: is of type "
+                            + rightType + " instead of type INT");
+        }
         return "int_TYPE";
     }
 
     public String visit(And and) {
-        and.left.accept(this);
-        and.right.accept(this);
+        String leftType = and.left.accept(this);
+        String rightType = and.right.accept(this);
+        if (!leftType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator & to left operand: is of type "
+                            + leftType + " instead of type INT");
+        }
+        if (!rightType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator & to right operand: is of type "
+                            + rightType + " instead of type INT");
+        }
         return "int_TYPE";
     }
 
     public String visit(Eq eq) {
-        eq.left.accept(this);
-        eq.right.accept(this);
+        String leftType = eq.left.accept(this);
+        String rightType = eq.right.accept(this);
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator = to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(NotEq notEq) {
-        notEq.left.accept(this);
-        notEq.right.accept(this);
+        String leftType = notEq.left.accept(this);
+        String rightType = notEq.right.accept(this);
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator != to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(InfEq infEq) {
-        infEq.left.accept(this);
-        infEq.right.accept(this);
+        String leftType = infEq.left.accept(this);
+        String rightType = infEq.right.accept(this);
+        if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator <= to left operand of type "
+                            + leftType + " instead of type INT or STRING");
+        }
+        if (!rightType.equals("int_TYPE") && !rightType.equals("string_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator <= to right operand of type  "
+                            + rightType + " instead of type INT or STRING");
+        }
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator <= to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(Inf inf) {
-        inf.left.accept(this);
-        inf.right.accept(this);
+        String leftType = inf.left.accept(this);
+        String rightType = inf.right.accept(this);
+        if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator < to operands of type  " + leftType);
+        }
+        if (!rightType.equals("int_TYPE") && !rightType.equals("string_TYPE")) {
+            this.semanticErrors.add(
+                    "Type mismatch: cannot apply operator < to operands of type  " + rightType);
+        }
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator < to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(SupEq supEq) {
-        supEq.left.accept(this);
-        supEq.left.accept(this);
+        String leftType = supEq.left.accept(this);
+        String rightType = supEq.left.accept(this);
+        if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
+            this.semanticErrors.add(
+                    "Type mismatch: cannot apply operator >= to operands of type  " + leftType);
+        }
+        if (!rightType.equals("int_TYPE") && !rightType.equals("string_TYPE")) {
+            this.semanticErrors.add(
+                    "Type mismatch: cannot apply operator >= to operands of type  " + rightType);
+        }
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator >= to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(Sup sup) {
-        sup.left.accept(this);
-        sup.right.accept(this);
+        String leftType = sup.left.accept(this);
+        String rightType = sup.right.accept(this);
+        if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator > to operands of type  " + leftType);
+        }
+        if (!rightType.equals("int_TYPE") && !rightType.equals("string_TYPE")) {
+            this.semanticErrors.add(
+                    "Type mismatch: cannot apply operator > to operands of type  " + rightType);
+        }
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator > to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(Add add) {
-        add.left.accept(this);
-        add.right.accept(this);
+        String leftType = add.left.accept(this);
+        String rightType = add.right.accept(this);
+        if (!leftType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator + to left operand : is of type "
+                            + leftType + " instead of type INT");
+        }
+        if (!rightType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator + to right operand : is of type "
+                            + rightType + " instead of type INT");
+        }
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator + to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(Sub sub) {
-        sub.left.accept(this);
-        sub.right.accept(this);
+        String leftType = sub.left.accept(this);
+        String rightType = sub.right.accept(this);
+        if (!leftType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator - to left operand : is of type "
+                            + leftType + " instead of type INT");
+        }
+        if (!rightType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator - to right operand : is of type "
+                            + rightType + " instead of type INT");
+        }
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator - to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(Mult mult) {
-        mult.left.accept(this);
-        mult.right.accept(this);
+        String leftType = mult.left.accept(this);
+        String rightType = mult.right.accept(this);
+        if (!leftType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator * to left operand : is of type "
+                            + leftType + " instead of type INT");
+        }
+        if (!rightType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator * to right operand : is of type "
+                            + rightType + " instead of type INT");
+        }
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator * to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
     public String visit(Div div) {
-        div.left.accept(this);
-        div.right.accept(this);
+        String leftType = div.left.accept(this);
+        String rightType = div.right.accept(this);
+        if (!leftType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator / to left operand : is of type "
+                            + leftType + " instead of type INT");
+        }
+        if (!rightType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator / to right operand : is of type "
+                            + rightType + " instead of type INT");
+        }
+        if (!leftType.equals(rightType)) {
+            this.semanticErrors
+                    .add("Type mismatch: cannot apply operator / to operands of different types  "
+                            + leftType + " and " + rightType);
+        }
         return "int_TYPE";
     }
 
@@ -558,7 +703,8 @@ public class SymTabCreator implements AstVisitor<String> {
         if (recordType == null) {
             this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
         } else {
-            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType.getRootType());
+            RecordTypeSymbol recordTypeSymbol =
+                    (RecordTypeSymbol) this.lookup(recordType.getRootType());
             ArrayList<FieldCreate> fields = recCreate.fields.fields;
             for (FieldCreate field : fields) {
                 Map<String, String> fieldsMap = recordTypeSymbol.getFields();
