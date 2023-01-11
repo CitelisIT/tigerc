@@ -133,7 +133,7 @@ tasks.register("syntax") {
     } 
 }
 
-tasks.register("semantic") {
+tasks.register("semantics") {
     dependsOn "clean"
     dependsOn "build"
     tasks.findByName("build").mustRunAfter "clean"

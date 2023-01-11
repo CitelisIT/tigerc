@@ -274,19 +274,21 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(IfThenElse ifThenElse) {
         ifThenElse.condition.accept(this);
         String thenType = ifThenElse.thenExpr.accept(this);
-        if (!thenType.equals("void_TYPE")) {
-            this.semanticErrors.add("Then branch is of type " + thenType + " but should be void");
-        }
-        if (ifThenElse.elseExpr == null) {
-            return "void_TYPE";
-        } else {
+        if (ifThenElse.elseExpr != null) {
             String elseType = ifThenElse.elseExpr.accept(this);
-            if (!elseType.equals("void_TYPE")) {
-                this.semanticErrors
-                        .add("Else branch is of type " + elseType + " but should be void");
+            if (!thenType.equals(elseType)) {
+                this.semanticErrors.add("Type mismatch: then branch is of type " + thenType
+                        + " but else branch is of type " + elseType);
+                return "void_TYPE";
             }
             return thenType;
+        } else {
+            if (!thenType.equals("void_TYPE")) {
+                this.semanticErrors.add("Type mismatch: then branch is of type " + thenType
+                        + " but else branch is of type void");
+            }
         }
+        return "void_TYPE";
     }
 
     public String visit(WhileExp whileExp) {
@@ -487,10 +489,11 @@ public class SymTabCreator implements AstVisitor<String> {
         // }
 
         String returnType = funDec.body.accept(this);
+        Symbol functionSymbol = this.lookup(funDec.id.name, "VAR");
 
-        if (!funDec.returnTypeId.name.equals(returnType)) {
+        if (!functionSymbol.getRootType().equals(returnType)) {
             this.semanticErrors.add("Incompatible return type : the function " + funDec.id.name
-                    + " must return value of " + funDec.returnTypeId.name + " type, not "
+                    + " must return value of " + functionSymbol.getRootType() + " type, not "
                     + returnType + " type");
         }
         // No type for declartations
@@ -525,7 +528,7 @@ public class SymTabCreator implements AstVisitor<String> {
         }
         String arrayType = subscript.lValue.accept(this);
         ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(arrayType);
-        return arrayTypeSymbol.getRootType();
+        return arrayTypeSymbol.getElementType();
     }
 
     public String visit(FieldExp fieldExp) {
