@@ -531,7 +531,7 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(FieldExp fieldExp) {
         String recordType = fieldExp.lValue.accept(this);
         RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
-        return this.resolveTypeAlias(recordTypeSymbol.getFields().get(fieldExp.id.name));
+        return recordTypeSymbol.getFields().get(fieldExp.id.name);
     }
 
     public String visit(ArrCreate arrCreate) {
