@@ -136,7 +136,8 @@ public class SymTabCreator implements AstVisitor<String> {
             this.scopesByDepth.set(currentDepth, this.scopesByDepth.get(currentDepth) + 1);
         }
         String newScopeId = base + "_" + this.scopesByDepth.get(currentDepth);
-        Scope scope = new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
+        Scope scope =
+                new LocalScope(newScopeId, this.currentScopeId, this.getImbricationLevel() + 1);
         this.symtab.put(newScopeId, scope);
         this.currentScopeId = newScopeId;
     }
@@ -274,20 +275,23 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(IfThenElse ifThenElse) {
         ifThenElse.condition.accept(this);
         String thenType = ifThenElse.thenExpr.accept(this);
-        if (!thenType.equals("void_TYPE")) {
-            this.semanticErrors.add("Then branch is of type " + thenType + " but should be void");
-        }
-        if (ifThenElse.elseExpr == null) {
-            return "void_TYPE";
-        } else {
+        if (ifThenElse.elseExpr != null) {
             String elseType = ifThenElse.elseExpr.accept(this);
-            if (!elseType.equals("void_TYPE")) {
-                this.semanticErrors
-                        .add("Else branch is of type " + elseType + " but should be void");
+            if (!thenType.equals(elseType)) {
+                this.semanticErrors.add("Type mismatch: then branch is of type " + thenType
+                        + " but else branch is of type " + elseType);
+                return "void_TYPE";
             }
             return thenType;
+        } else {
+            if (!thenType.equals("void_TYPE")) {
+                this.semanticErrors.add("Type mismatch: then branch is of type " + thenType
+                        + " but else branch is of type void");
+            }
         }
+        return "void_TYPE";
     }
+
 
     public String visit(WhileExp whileExp) {
         this.loopCounter++;
@@ -556,7 +560,8 @@ public class SymTabCreator implements AstVisitor<String> {
         if (recordType == null) {
             this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
         } else {
-            RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType.getRootType());
+            RecordTypeSymbol recordTypeSymbol =
+                    (RecordTypeSymbol) this.lookup(recordType.getRootType());
             ArrayList<FieldCreate> fields = recCreate.fields.fields;
             for (FieldCreate field : fields) {
                 Map<String, String> fieldsMap = recordTypeSymbol.getFields();
