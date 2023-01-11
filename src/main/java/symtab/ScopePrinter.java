@@ -29,19 +29,45 @@ public class ScopePrinter {
         this.printScope();
     }
 
+    public void printBottomTable() {
+        System.out.print("┗━");
+        for (int i = 0; i < cellsSizes.size() - 1; i++) {
+            System.out.print("━".repeat(cellsSizes.get(i) + 1) + "┻━");
+        }
+        System.out.print("━".repeat(cellsSizes.get(cellsSizes.size() - 1) + 1) + "┛\n");
+    }
+
+    public void printTopTable() {
+        System.out.print("┏━");
+        for (int i = 0; i < cellsSizes.size() - 1; i++) {
+            System.out.print("━".repeat(cellsSizes.get(i) + 1) + "┳━");
+        }
+        System.out.print("━".repeat(cellsSizes.get(cellsSizes.size() - 1) + 1) + "┓\n");
+    }
+
     public void printScope() {
         System.out.println("\nScope ID : " + this.scope.getScopeId());
         System.out.println("Parent ID : " + this.scope.getParentScope());
         System.out.println("Imbrication Level : " + this.scope.getImbricationLevel());
 
-        for (ArrayList<String> line : this.printTable) {
-            for (int i = 0; i < line.size(); i++) {
-                System.out.print(
-                        String.format("%-" + (cellsSizes.get(i) + 1) + "s", line.get(i)) + "┃ ");
-            }
+        if (this.scope.getSymbols().size() > 0) {
 
-            System.out.println();
+            printTopTable();
+
+            for (ArrayList<String> line : this.printTable) {
+                System.out.print("┃ ");
+                for (int i = 0; i < line.size(); i++) {
+                    System.out
+                            .print(String.format("%-" + (cellsSizes.get(i) + 1) + "s", line.get(i))
+                                    + "┃ ");
+                }
+
+                System.out.println();
+            }
+            printBottomTable();
         }
+
+
     }
 
 }
