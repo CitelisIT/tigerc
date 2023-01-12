@@ -241,7 +241,7 @@ public class SymTabCreator implements AstVisitor<String> {
         String rightType = notEq.right.accept(this);
         if (!leftType.equals(rightType)) {
             this.semanticErrors
-                    .add("Type mismatch: cannot apply operator != to operands of different types  "
+                    .add("Type mismatch: cannot apply operator <> to operands of different types  "
                             + leftType + " and " + rightType);
         }
         return "int_TYPE";
@@ -289,7 +289,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(SupEq supEq) {
         String leftType = supEq.left.accept(this);
-        String rightType = supEq.left.accept(this);
+        String rightType = supEq.right.accept(this);
         if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
             this.semanticErrors.add(
                     "Type mismatch: cannot apply operator >= to operands of type  " + leftType);
@@ -439,8 +439,9 @@ public class SymTabCreator implements AstVisitor<String> {
             return thenType;
         } else {
             if (!thenType.equals("void_TYPE")) {
-                this.semanticErrors.add("Type mismatch: then branch is of type " + thenType
-                        + " but else branch is of type void");
+                this.semanticErrors.add(
+                        "Conditional without else branch should be of type void but is of type "
+                                + thenType);
             }
         }
         return "void_TYPE";
