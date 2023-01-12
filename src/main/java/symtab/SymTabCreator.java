@@ -162,6 +162,9 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(Assign assign) {
         String expType = assign.expr.accept(this);
         String lvalueType = assign.lValue.accept(this);
+        if (lvalueType == null) {
+            return "void_TYPE";
+        }
 
         if (assign.lValue instanceof Id) {
             Id id = (Id) assign.lValue;
@@ -662,6 +665,10 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Id id) {
         Symbol symbol = this.lookup(id.name, "VAR");
+        if (symbol == null) {
+            this.semanticErrors.add("Undeclared variable : " + id.name);
+            return null;
+        }
         return symbol.getRootType();
     }
 
@@ -686,12 +693,18 @@ public class SymTabCreator implements AstVisitor<String> {
             this.semanticErrors.add("Subscript access to an array must be an integer");
         }
         String arrayType = subscript.lValue.accept(this);
+        if (arrayType == null) {
+            return null;
+        }
         ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(arrayType);
         return arrayTypeSymbol.getElementType();
     }
 
     public String visit(FieldExp fieldExp) {
         String recordType = fieldExp.lValue.accept(this);
+        if (recordType == null) {
+            return null;
+        }
         RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
         return recordTypeSymbol.getFields().get(fieldExp.id.name);
     }
