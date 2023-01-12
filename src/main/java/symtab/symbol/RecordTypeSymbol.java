@@ -25,7 +25,6 @@ public class RecordTypeSymbol extends TypeSymbol {
         fieldsTypeString = fieldsTypeString.substring(0, fieldsTypeString.length() - 1) + "}";
         line.add(fieldsTypeString);
         line.add("" + getDisplacement());
-        System.out.println(line);
         return line;
     }
 
