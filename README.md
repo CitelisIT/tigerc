@@ -25,3 +25,13 @@ Options:
 ```
 
 Example programs can be found under the `examples` directory.
+
+## Testing
+
+Tests can be found under the `examples/tests` directory. They are separated into semantic and syntactic tests, both having passing and failing examples.
+
+You can launch all the syntactic tests with the `TestingSyntaxic.sh` script, and all the semantic tests with the `TestingSemantic.sh` script.
+
+Complete programs examples can be found under the `examples/programs` directory.
+
+Finally, the `pandora.tig` program is designed to fail all the semantic tests we have implemented.
