@@ -638,8 +638,8 @@ public class SymTabCreator implements AstVisitor<String> {
             if (!argNames.add(arg.id.name)) {
                 this.semanticErrors.add("Duplicate argument name : " + arg.id.name);
             } else {
-            this.addSymbol(arg.id.name + "_VAR",
-                    new VarSymbol(arg.typeId.name + "_TYPE", argRootType, arg.id.name));
+                this.addSymbol(arg.id.name + "_VAR",
+                        new VarSymbol(arg.typeId.name + "_TYPE", argRootType, arg.id.name));
             }
         }
 
@@ -751,7 +751,7 @@ public class SymTabCreator implements AstVisitor<String> {
                     String fieldType = fieldsMap.get(field.id.name);
                     String declarationType = field.expr.accept(this);
                     if (!fieldType.equals(declarationType)) {
-                        System.err.println("Field " + field.id.name + " has type " + fieldType
+                        this.semanticErrors.add("Field " + field.id.name + " has type " + fieldType
                                 + " but is initialized with type " + declarationType);
                     }
                 }
