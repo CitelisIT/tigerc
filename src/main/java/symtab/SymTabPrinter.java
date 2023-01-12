@@ -10,7 +10,6 @@ public class SymTabPrinter {
 
     public SymTabPrinter(Map<String, Scope> symtab) {
         this.symtab = symtab;
-        this.print();
     }
 
     public void print() {

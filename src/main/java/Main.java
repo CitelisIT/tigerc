@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import org.antlr.v4.gui.TreeViewer;
@@ -6,6 +7,8 @@ import org.antlr.v4.runtime.RecognitionException;
 import ast.Ast;
 import errors.TigerChecker;
 import graphviz.GraphVizVisitor;
+import symtab.SymTabPrinter;
+import symtab.scope.Scope;
 
 public class Main {
 
@@ -53,6 +56,12 @@ public class Main {
                         ast.accept(graphViz);
 
                         graphViz.dumpGraph(outFile);
+                        break;
+
+                    case "--symtab":
+                        Map<String, Scope> symtab = programChecker.getSymTab();
+                        SymTabPrinter symTabPrinter = new SymTabPrinter(symtab);
+                        symTabPrinter.print();
                         break;
                 }
             } else {

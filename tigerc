@@ -77,7 +77,8 @@ esac
 case $TASK in
 --parse-tree) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL tree -PinFile=$TARGET -Pcolor=$COLOR ;;
 --ast) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL dot -PinFile=$TARGET -PoutFile=$OUTFILE -Pcolor=$COLOR ;;
---check-syntax)./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL syntax -PinFile=$TARGET -Pcolor=$COLOR ;; 
---check-semantics)./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL semantics -PinFile=$TARGET -Pcolor=$COLOR ;; 
+--check-syntax) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL syntax -PinFile=$TARGET -Pcolor=$COLOR ;;
+--check-semantics) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL semantics -PinFile=$TARGET -Pcolor=$COLOR ;;
+--symtab) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL symtab -PinFile=$TARGET -Pcolor=$COLOR ;;
 *) error "Invalid task $TASK" ;;
 esac

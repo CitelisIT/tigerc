@@ -164,3 +164,36 @@ tasks.register("semantics") {
         }
     } 
 }
+
+
+tasks.register("symtab") {
+    dependsOn "clean"
+    dependsOn "build"
+    tasks.findByName("build").mustRunAfter "clean"
+    doLast {
+        if (project.hasProperty("inFile")) {
+            def startTime = System.nanoTime()
+            def totalTime
+            logTask "Dumping symbol table for file ${inFile}"
+            logCmd "java -cp build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar Main ${inFile} --symtab"
+            def cmdOutput = new ByteArrayOutputStream()
+            def cmdError = new ByteArrayOutputStream()
+            exec {
+                commandLine "java", "-cp", "build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar", "Main", inFile, "--symtab",
+                standardOutput = cmdOutput
+                errorOutput = cmdError
+                ignoreExitValue = true
+            }
+            logCmdOutput(cmdOutput, cmdError)
+            if (cmdError.size() != 0) {
+                totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+                println "\n${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
+                return
+            }
+            logInfo "Program symbol table dumped"
+
+            totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+            println "\n${project.ext.ansiBold}${project.ext.ansiGreen}TASK SUCCESSFUL${project.ext.ansiReset} in ${totalTime}ms"
+        }
+    } 
+}
