@@ -1,7 +1,11 @@
 package symtab;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import symtab.scope.Scope;
 import symtab.symbol.Symbol;
@@ -29,6 +33,13 @@ public class ScopePrinter {
 
 
         }
+
+
+        List<String> symbolCatOrder = Arrays.asList("TYPE", "VAR", "FUNC");
+
+        Collections.sort(printTable,
+                (l1, l2) -> symbolCatOrder.indexOf(l1.get(0)) - symbolCatOrder.indexOf(l2.get(0)));
+
         if (cellsSizes.size() > 0) {
             colorSybolCat.put("VAR", "\033[32m"
                     + String.format("%-" + (cellsSizes.get(0) + 1) + "s", "VAR") + "\033[0m");
