@@ -1,0 +1,70 @@
+let
+    var N:int := 5
+
+    type rule = array of int
+    type rules = array of rule
+    var defaultRule:= rule[8] of 0
+    var RULES:= rules[2] of defaultRule
+
+    type cell = {etat:int,nb_voisin:int}
+    type cellLine = array of cell
+    type cellGrid = array of cellLine
+
+    var line := cellLine[N] of cell {etat=0,nb_voisin=0}
+    var Grid := cellGrid[N] of line
+
+    function max(x:int,y:int):int = (if x>=y then x else y)
+    function min(x:int,y:int):int = (if x<=y then x else y)
+    function valide(i:int,j:int):int = (min(i,j)>=0 & max(i,j)<N)
+    function maj_cell(grid: cellGrid,i:int,j:int) = (
+        let
+            var count:int := 0
+        in
+            for x := -1 to 1 do (
+                for y := -1 to 1 do (
+                    count := count + (valide(i+x,y+j) & grid[i+x][j+y].etat & (x|y))
+                )
+            );
+            grid[i][j].nb_voisin := count
+        end
+    )
+    function nextStep(grid: cellGrid) =(
+        for i := 0 to N-1 do (
+            for j := 0 to N-1 do (
+                if valide(i,j) then (
+                    maj_cell(grid,i,j)
+                )
+            )
+        );
+        for i := 0 to N-1 do (
+           for j := 0 to N-1 do (
+                grid[i][j].etat := RULES[grid[i][j].etat][grid[i][j].nb_voisin]
+           ) 
+        )
+    )
+    function printgrid(grid: cellGrid) = (
+        for i := 0 to N-1 do (
+            for j := 0 to N-1 do (
+                print(if grid[i][j].etat then "O" else " " )
+            );
+            print("\n")
+        )
+    )
+in
+    RULES[0][3]:=1;
+    RULES[1][2]:=1;
+    RULES[1][3]:=1;
+    Grid[0][1].etat:=1;
+    Grid[1][2].etat:=1;
+    Grid[2][0].etat:=1;
+    Grid[2][1].etat:=1;
+    Grid[2][2].etat:=1;
+
+    while 1 do (
+        nextStep(Grid);
+        printgrid(Grid)
+    )
+
+    
+
+end
