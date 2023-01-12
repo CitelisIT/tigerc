@@ -9,6 +9,7 @@ Tasks:
     --ast <out-path>        Generates a DOT representation of the input program's AST
     --check-syntax          Check the syntax of the input program
     --check-semantics       Check the semantics of the input program
+    --symtab                Dump the input program's symbol table
 
 Options:
     -h, --help              Show this message

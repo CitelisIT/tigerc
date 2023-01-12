@@ -15,6 +15,7 @@ Tâches:
     --ast <out-path>        Génère un fichier DOT représentant l'AST du programme en entrée
     --check-syntax          Vérifie la syntaxe du programme en entrée
     --check-semantics       Vérifie la sémantique du programme en entrée
+    --symtab                Affiche la table des symboles du programme en entrée
 
 Options:
     -h, --help              Montre ce message (en anglais)
