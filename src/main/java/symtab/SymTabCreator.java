@@ -701,7 +701,29 @@ public class SymTabCreator implements AstVisitor<String> {
         Symbol arrayTypeSymbol = this.lookup(arrayType, "TYPE");
         String sizeExpType = arrCreate.index.accept(this);
         String initializerExpType = arrCreate.of.accept(this);
-        return arrayTypeSymbol.getRootType();
+
+        if (arrayTypeSymbol == null) {
+            this.semanticErrors.add("Undeclared type : " + arrayType);
+            return null;
+        }
+        String rootType = arrayTypeSymbol.getRootType();
+        Symbol arrayRootSymbol = this.lookup(rootType);
+        if (!(arrayRootSymbol instanceof ArrayTypeSymbol)) {
+            this.semanticErrors.add("Type " + arrayType + " is not an array type");
+            return null;
+        }
+        if (!initializerExpType.equals(arrayRootSymbol.getType())) {
+            this.semanticErrors
+                    .add("Incompatible array initializer : the array was declared with type "
+                            + arrayType + ", but was initialized with type " + initializerExpType);
+            return null;
+        }
+        if (!sizeExpType.equals("int_TYPE")) {
+            this.semanticErrors
+                    .add("Array size must be of type int ,but is of type " + sizeExpType);
+        }
+
+        return rootType;
     }
 
     public String visit(FieldCreate fieldCreate) {
