@@ -256,9 +256,17 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 			int lineNumber = tok.getLine();
 			int columnNumber = tok.getCharPositionInLine();
 
-			Token argsTok = ctx.recValues.get(0).getStart();
-			int argsLineNumber = argsTok.getLine();
-			int argsColumnNumber = argsTok.getCharPositionInLine();
+			int argsLineNumber, argsColumnNumber;
+
+			if (ctx.recValues.size() != 0) {
+				Token argsTok = ctx.recValues.get(0).getStart();
+				argsLineNumber = argsTok.getLine();
+				argsColumnNumber = argsTok.getCharPositionInLine();
+			} else {
+				Token argsTok = ctx.isRecord;
+				argsLineNumber = argsTok.getLine();
+				argsColumnNumber = argsTok.getCharPositionInLine();
+			}
 
 			String typeIdName = ctx.id.getText();
 			int typeIdLineNumber = ctx.id.getLine();
