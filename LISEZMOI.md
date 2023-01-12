@@ -24,4 +24,12 @@ Options:
     --log-level=<value>     Met le niveau de trace de Gradle à une des options suivantes : quiet, warn, info, debug. Par défaut: quiet
 ```
 
-Des programmes d'exemple peuvent être trouvés dans le dossier `examples`.
+## Tests
+
+Les tests se trouvent dans le dossier `examples/tests`. Ils sont séparés en tests sémantiques et syntaxiques, chacun ayant des exemples passants et des exemples qui échouent.
+
+Vous pouvez lancer tous les tests syntaxiques avec le script `TestingSyntaxic.sh`, et tous les tests sémantiques avec le script `TestingSemantic.sh`.
+
+Des exemples de programmes complets se trouvent dans le dossier `examples/programs`.
+
+Enfin, le programme `pandora.tig` est conçu pour échouer tous les tests sémantiques que nous avons implémentés.
