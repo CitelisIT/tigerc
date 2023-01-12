@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.RecognitionException;
 import ast.Ast;
+import errors.ErrorReportingMode;
 import errors.TigerChecker;
 import graphviz.GraphVizVisitor;
 import symtab.SymTabPrinter;
@@ -23,7 +24,21 @@ public class Main {
         String mode = args[1];
         try {
 
-            TigerChecker programChecker = new TigerChecker(inFile);
+            ErrorReportingMode errorReportingMode;
+            switch (mode) {
+                case "--check-syntax":
+                    errorReportingMode = ErrorReportingMode.SYNTAX;
+                    break;
+
+                case "--check-semantics":
+                    errorReportingMode = ErrorReportingMode.SEMANTICS;
+                    break;
+                default:
+                    errorReportingMode = ErrorReportingMode.ALL;
+                    break;
+            }
+
+            TigerChecker programChecker = new TigerChecker(inFile, errorReportingMode);
             boolean hasErrors = programChecker.checkProgram();
 
             if (!hasErrors) {
@@ -65,14 +80,14 @@ public class Main {
                         break;
                 }
             } else {
-                switch (mode) {
-                    case "--check-syntax":
+                switch (errorReportingMode) {
+                    case SYNTAX:
                         programChecker.reportSyntaxErrors();
                         break;
-                    case "--check-semantic":
+                    case SEMANTICS:
                         programChecker.reportSemanticErrors();
                         break;
-                    default:
+                    case ALL:
                         programChecker.reportAllErrors();
                         break;
                 }

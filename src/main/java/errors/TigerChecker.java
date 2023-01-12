@@ -1,7 +1,9 @@
 package errors;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.antlr.v4.gui.TreeViewer;
@@ -19,16 +21,18 @@ import symtab.scope.Scope;
 public class TigerChecker {
 
     private String file;
-    private List<String> syntaxErrors;
-    private List<String> semanticErrors;
+    private List<String> syntaxErrors = new ArrayList<String>();
+    private List<String> semanticErrors = new ArrayList<String>();
     private tigerLexer lexer;
     private tigerParser parser;
     private ProgramContext program;
     private Ast ast;
-    private Map<String, Scope> symtab;
+    private Map<String, Scope> symtab = new HashMap<String, Scope>();
+    ErrorReportingMode errorReportingMode;
 
-    public TigerChecker(String file) {
+    public TigerChecker(String file, ErrorReportingMode errorReportingMode) {
         this.file = file;
+        this.errorReportingMode = errorReportingMode;
     }
 
     public boolean checkProgram() throws IOException {
@@ -44,7 +48,7 @@ public class TigerChecker {
 
         this.program = this.parser.program();
 
-        if (this.syntaxErrors.size() == 0) {
+        if (this.syntaxErrors.size() == 0 && this.errorReportingMode != ErrorReportingMode.SYNTAX) {
 
             AstCreator astCreator = new AstCreator();
             this.ast = this.program.accept(astCreator);
