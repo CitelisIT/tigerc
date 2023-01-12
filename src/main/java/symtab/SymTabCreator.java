@@ -412,7 +412,11 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(Neg neg) {
-        neg.expr.accept(this);
+        String negExprType = neg.expr.accept(this);
+        if (!negExprType.equals("int_TYPE")) {
+            this.semanticErrors.add("Type mismatch: cannot apply operator - to operand of type "
+                    + negExprType + " instead of type INT");
+        }
         return "int_TYPE";
     }
 
