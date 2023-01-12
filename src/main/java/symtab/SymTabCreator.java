@@ -54,6 +54,7 @@ import ast.TypeId;
 import ast.VarDecNoType;
 import ast.VarDecType;
 import ast.WhileExp;
+import errors.BreakChecker;
 import symtab.scope.GlobalScope;
 import symtab.scope.LocalScope;
 import symtab.scope.PredefinedScope;
@@ -70,7 +71,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
-    private int loopCounter = 0;
+    private BreakChecker breakStack = new BreakChecker();
     private Map<String, String> typeAliases = new HashMap<String, String>();
     private List<Integer> scopesByDepth = new ArrayList<Integer>();
     private Set<Symbol> loopVariables = new HashSet<Symbol>();
@@ -160,8 +161,10 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(Assign assign) {
+        breakStack.changeStatus(false);
         String expType = assign.expr.accept(this);
         String lvalueType = assign.lValue.accept(this);
+        breakStack.restoreStatus();
         if (lvalueType == null) {
             return "void_TYPE";
         }
@@ -444,18 +447,18 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(WhileExp whileExp) {
-        this.loopCounter++;
         String whileConditionType = whileExp.condition.accept(this);
         if (!whileConditionType.equals("int_TYPE")) {
             this.semanticErrors.add("While loop condition is of type " + whileConditionType
                     + " but should be of type int");
         }
+        breakStack.changeStatus(true);
         String whileBodyType = whileExp.doExpr.accept(this);
+        breakStack.restoreStatus();
         if (!whileBodyType.equals("void_TYPE")) {
             this.semanticErrors.add(
                     "While loop body is of type " + whileBodyType + " but should be of type void");
         }
-        this.loopCounter--;
         return "void_TYPE";
     }
 
@@ -467,8 +470,9 @@ public class SymTabCreator implements AstVisitor<String> {
             this.addSymbol(forExp.forId.name + "_VAR", forIdSymbol);
         }
         this.loopVariables.add(forIdSymbol);
-        this.loopCounter++;
+        breakStack.changeStatus(true);
         String forBodyType = forExp.doExpr.accept(this);
+        breakStack.restoreStatus();
         if (!forBodyType.equals("void_TYPE")) {
             this.semanticErrors
                     .add("For loop body is of type " + forBodyType + " but should be of type void");
@@ -489,15 +493,16 @@ public class SymTabCreator implements AstVisitor<String> {
                     + forVarValueType + " but should be of type int");
         }
         this.loopVariables.remove(forIdSymbol);
-        this.loopCounter--;
         this.closeScope();
         return "void_TYPE";
     }
 
     public String visit(LetDecls letDecls) {
+        breakStack.changeStatus(false);
         for (Ast decl : letDecls.decls) {
             decl.accept(this);
         }
+        breakStack.restoreStatus();
         return null;
     }
 
@@ -788,7 +793,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(BreakLiteral breakLiteral) {
         // Check if break is only used in a loop
-        if (this.loopCounter == 0) {
+        if (!breakStack.getStatus()) {
             this.semanticErrors.add("Break statement used outside a loop");
         }
         return "void_TYPE";
