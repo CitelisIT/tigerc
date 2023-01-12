@@ -632,10 +632,15 @@ public class SymTabCreator implements AstVisitor<String> {
         this.addSymbol(funDec.id.name + "_VAR", new FuncSymbol(funDec.returnTypeId.name + "_TYPE",
                 rootFunctionType, argTypes, funDec.id.name));
         this.openScope();
+        Set<String> argNames = new HashSet<String>();
         for (FieldDec arg : funDec.args.args) {
             String argRootType = this.resolveTypeAlias(arg.typeId.name + "_TYPE");
+            if (!argNames.add(arg.id.name)) {
+                this.semanticErrors.add("Duplicate argument name : " + arg.id.name);
+            } else {
             this.addSymbol(arg.id.name + "_VAR",
                     new VarSymbol(arg.typeId.name + "_TYPE", argRootType, arg.id.name));
+            }
         }
 
         if (this.lookup(funDec.returnTypeId.name, "TYPE") == null) {
