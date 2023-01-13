@@ -22,7 +22,7 @@ public class TigerChecker {
 
     private String file;
     private List<String> syntaxErrors = new ArrayList<String>();
-    private List<String> semanticErrors = new ArrayList<String>();
+    private ErrorList semanticErrors = new ErrorList();
     private tigerLexer lexer;
     private tigerParser parser;
     private ProgramContext program;
@@ -48,7 +48,7 @@ public class TigerChecker {
 
         this.program = this.parser.program();
 
-        if (this.syntaxErrors.size() == 0 && this.errorReportingMode != ErrorReportingMode.SYNTAX) {
+        if (this.syntaxErrors.isEmpty() && this.errorReportingMode != ErrorReportingMode.SYNTAX) {
 
             AstCreator astCreator = new AstCreator();
             this.ast = this.program.accept(astCreator);
@@ -58,7 +58,7 @@ public class TigerChecker {
             this.semanticErrors = symTabCreator.getSemanticErrors();
             this.symtab = symTabCreator.getSymTab();
 
-            if (this.semanticErrors.size() != 0) {
+            if (!this.semanticErrors.isEmpty()) {
                 return true;
             }
             return false;
@@ -74,9 +74,7 @@ public class TigerChecker {
     }
 
     public void reportSemanticErrors() {
-        for (String error : this.semanticErrors) {
-            System.err.println(error);
-        }
+        this.semanticErrors.print();
     }
 
     public void reportAllErrors() {
@@ -101,11 +99,11 @@ public class TigerChecker {
     }
 
     public boolean hasSyntaxErrors() {
-        return this.syntaxErrors.size() != 0;
+        return !this.syntaxErrors.isEmpty();
     }
 
     public boolean hasSemanticErrors() {
-        return this.semanticErrors.size() != 0;
+        return !this.semanticErrors.isEmpty();
     }
 
 }

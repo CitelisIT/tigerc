@@ -55,7 +55,7 @@ import ast.VarDecNoType;
 import ast.VarDecType;
 import ast.WhileExp;
 import errors.BreakChecker;
-import errors.ErrorStack;
+import errors.ErrorList;
 import errors.SemanticError;
 import symtab.scope.GlobalScope;
 import symtab.scope.LocalScope;
@@ -74,7 +74,7 @@ public class SymTabCreator implements AstVisitor<String> {
     private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
     private BreakChecker breakStack = new BreakChecker();
-    private ErrorStack semanticErrors = new ErrorStack();
+    private ErrorList semanticErrors = new ErrorList();
     private Map<String, String> typeAliases = new HashMap<String, String>();
     private List<Integer> scopesByDepth = new ArrayList<Integer>();
     private Set<Symbol> loopVariables = new HashSet<Symbol>();
@@ -128,7 +128,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     private void openScope() {
         String base = this.currentScopeId;
-        if (base == "global") {
+        if (base.equals("global")) {
             base = "local";
         }
         int currentDepth = this.getImbricationLevel();
@@ -158,6 +158,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Program program) {
         program.exp.accept(this);
+        semanticErrors.print();
         return null;
     }
 
@@ -814,8 +815,10 @@ public class SymTabCreator implements AstVisitor<String> {
         RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
         String fieldName = fieldExp.id.name;
         if (!recordTypeSymbol.getFields().containsKey(fieldName)) {
-            this.semanticErrors.add("Record type " + recordType + " does not contain field "
-                    + fieldName);
+            SemanticError typeMismatch =
+                    new SemanticError(fieldExp.lineNumber, fieldExp.columnNumber,
+                            "Record type " + recordType + " does not contain field " + fieldName);
+            this.semanticErrors.add(typeMismatch);
             return null;
         }
         return recordTypeSymbol.getFields().get(fieldExp.id.name);
@@ -925,7 +928,7 @@ public class SymTabCreator implements AstVisitor<String> {
         return "void_TYPE";
     }
 
-    public ErrorStack getSemanticErrors() {
+    public ErrorList getSemanticErrors() {
         return this.semanticErrors;
     }
 
