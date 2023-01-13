@@ -9,8 +9,8 @@ public class ArrCreate implements Ast {
     public TypeId typeId;
     public Ast index;
     public Ast of;
-    int lineNumber;
-    int columnNumber;
+    public int lineNumber;
+    public int columnNumber;
 
     public ArrCreate(TypeId typeId, Ast index, Ast of, int lineNumber, int columnNumber) {
         this.typeId = typeId;

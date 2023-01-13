@@ -10,10 +10,11 @@ public class ForExp implements Ast {
     public Ast startValue;
     public Ast endValue;
     public Ast doExpr;
-    int lineNumber;
-    int columnNumber;
+    public int lineNumber;
+    public int columnNumber;
 
-    public ForExp(Id forId, Ast startValue, Ast endValue, Ast doExpr, int lineNumber, int columnNumber) {
+    public ForExp(Id forId, Ast startValue, Ast endValue, Ast doExpr, int lineNumber,
+            int columnNumber) {
         this.forId = forId;
         this.startValue = startValue;
         this.endValue = endValue;

@@ -55,6 +55,8 @@ import ast.VarDecNoType;
 import ast.VarDecType;
 import ast.WhileExp;
 import errors.BreakChecker;
+import errors.ErrorStack;
+import errors.SemanticError;
 import symtab.scope.GlobalScope;
 import symtab.scope.LocalScope;
 import symtab.scope.PredefinedScope;
@@ -72,11 +74,10 @@ public class SymTabCreator implements AstVisitor<String> {
     private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
     private BreakChecker breakStack = new BreakChecker();
+    private ErrorStack semanticErrors = new ErrorStack();
     private Map<String, String> typeAliases = new HashMap<String, String>();
     private List<Integer> scopesByDepth = new ArrayList<Integer>();
     private Set<Symbol> loopVariables = new HashSet<Symbol>();
-
-    private List<String> semanticErrors = new ArrayList<String>();
 
     public SymTabCreator() {
         this.symtab.put("predefined", new PredefinedScope());
@@ -173,21 +174,28 @@ public class SymTabCreator implements AstVisitor<String> {
             Id id = (Id) assign.lValue;
             Symbol symbol = this.lookup(id.name, "VAR");
             if (symbol == null) {
-                this.semanticErrors.add("Variable " + id.name + " is not defined");
+                SemanticError undefinedName = new SemanticError(assign.lineNumber,
+                        assign.columnNumber, "Variable " + id.name + " is not defined");
+                this.semanticErrors.add(undefinedName);
             } else {
                 if (symbol.getCategory() != SymbolCat.VAR) {
-                    this.semanticErrors.add("Variable " + id.name + " cannot be assigned to");
+                    SemanticError notAssignable = new SemanticError(assign.lineNumber,
+                            assign.columnNumber, "Variable " + id.name + " cannot be assigned to");
+                    this.semanticErrors.add(notAssignable);
                 }
                 if (this.loopVariables.contains(symbol)) {
-                    this.semanticErrors.add("Variable " + id.name
-                            + " is a loop variable and cannot be assigned to");
+                    SemanticError isALoopVar =
+                            new SemanticError(assign.lineNumber, assign.columnNumber, "Variable "
+                                    + id.name + " is a loop variable and cannot be assigned to");
+                    this.semanticErrors.add(isALoopVar);
                 }
             }
         }
 
         if (!expType.equals(lvalueType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot assign " + expType + " to " + lvalueType);
+            SemanticError typeMismatch = new SemanticError(assign.lineNumber, assign.columnNumber,
+                    "Type mismatch: cannot assign " + expType + " to " + lvalueType);
+            this.semanticErrors.add(typeMismatch);
         }
 
         return "void_TYPE";
@@ -197,14 +205,18 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = or.left.accept(this);
         String rightType = or.right.accept(this);
         if (!leftType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator | to left operand: is of type "
-                            + leftType + " instead of type INT");
+            SemanticError bitwiseOperationTypeMismatch =
+                    new SemanticError(or.lineNumber, or.columnNumber,
+                            "Type mismatch: cannot apply operator | to left operand: is of type "
+                                    + leftType + " instead of type INT");
+            this.semanticErrors.add(bitwiseOperationTypeMismatch);
         }
         if (!rightType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator | to right operand: is of type "
-                            + rightType + " instead of type INT");
+            SemanticError bitwiseOperationTypeMismatch =
+                    new SemanticError(or.lineNumber, or.columnNumber,
+                            "Type mismatch: cannot apply operator | to right operand: is of type "
+                                    + rightType + " instead of type INT");
+            this.semanticErrors.add(bitwiseOperationTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -213,14 +225,18 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = and.left.accept(this);
         String rightType = and.right.accept(this);
         if (!leftType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator & to left operand: is of type "
-                            + leftType + " instead of type INT");
+            SemanticError bitwiseOperationTypeMismatch =
+                    new SemanticError(and.lineNumber, and.columnNumber,
+                            "Type mismatch: cannot apply operator & to left operand: is of type "
+                                    + leftType + " instead of type INT");
+            this.semanticErrors.add(bitwiseOperationTypeMismatch);
         }
         if (!rightType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator & to right operand: is of type "
-                            + rightType + " instead of type INT");
+            SemanticError bitwiseOperationTypeMismatch =
+                    new SemanticError(and.lineNumber, and.columnNumber,
+                            "Type mismatch: cannot apply operator & to right operand: is of type "
+                                    + rightType + " instead of type INT");
+            this.semanticErrors.add(bitwiseOperationTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -229,9 +245,10 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = eq.left.accept(this);
         String rightType = eq.right.accept(this);
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator = to operands of different types  "
+            SemanticError comparisonTypeMismatch = new SemanticError(eq.lineNumber, eq.columnNumber,
+                    "Type mismatch: cannot apply operator = to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -240,9 +257,11 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = notEq.left.accept(this);
         String rightType = notEq.right.accept(this);
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator <> to operands of different types  "
+            SemanticError comparisonTypeMismatch = new SemanticError(notEq.lineNumber,
+                    notEq.columnNumber,
+                    "Type mismatch: cannot apply operator <> to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -251,19 +270,25 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = infEq.left.accept(this);
         String rightType = infEq.right.accept(this);
         if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator <= to left operand of type "
-                            + leftType + " instead of type INT or STRING");
+            SemanticError comparisonTypeMismatch =
+                    new SemanticError(infEq.lineNumber, infEq.columnNumber,
+                            "Type mismatch: cannot apply operator <= to left operand of type "
+                                    + leftType + " instead of type INT or STRING");
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         if (!rightType.equals("int_TYPE") && !rightType.equals("string_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator <= to right operand of type  "
-                            + rightType + " instead of type INT or STRING");
+            SemanticError comparisonTypeMismatch =
+                    new SemanticError(infEq.lineNumber, infEq.columnNumber,
+                            "Type mismatch: cannot apply operator <= to right operand of type  "
+                                    + rightType + " instead of type INT or STRING");
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator <= to operands of different types  "
+            SemanticError comparisonTypeMismatch = new SemanticError(infEq.lineNumber,
+                    infEq.columnNumber,
+                    "Type mismatch: cannot apply operator <= to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -272,17 +297,25 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = inf.left.accept(this);
         String rightType = inf.right.accept(this);
         if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator < to operands of type  " + leftType);
+            SemanticError comparisonTypeMismatch =
+                    new SemanticError(inf.lineNumber, inf.columnNumber,
+                            "Type mismatch: cannot apply operator < to left operand of type "
+                                    + leftType + " instead of type INT or STRING");
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         if (!rightType.equals("int_TYPE") && !rightType.equals("string_TYPE")) {
-            this.semanticErrors.add(
-                    "Type mismatch: cannot apply operator < to operands of type  " + rightType);
+            SemanticError comparisonTypeMismatch =
+                    new SemanticError(inf.lineNumber, inf.columnNumber,
+                            "Type mismatch: cannot apply operator < to right operand of type  "
+                                    + rightType + " instead of type INT or STRING");
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator < to operands of different types  "
+            SemanticError comparisonTypeMismatch = new SemanticError(inf.lineNumber,
+                    inf.columnNumber,
+                    "Type mismatch: cannot apply operator < to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -291,17 +324,25 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = supEq.left.accept(this);
         String rightType = supEq.right.accept(this);
         if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
-            this.semanticErrors.add(
-                    "Type mismatch: cannot apply operator >= to operands of type  " + leftType);
+            SemanticError comparisonTypeMismatch =
+                    new SemanticError(supEq.lineNumber, supEq.columnNumber,
+                            "Type mismatch: cannot apply operator >= to left operand of type "
+                                    + leftType + " instead of type INT or STRING");
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         if (!rightType.equals("int_TYPE") && !rightType.equals("string_TYPE")) {
-            this.semanticErrors.add(
-                    "Type mismatch: cannot apply operator >= to operands of type  " + rightType);
+            SemanticError comparisonTypeMismatch =
+                    new SemanticError(supEq.lineNumber, supEq.columnNumber,
+                            "Type mismatch: cannot apply operator >= to right operand of type  "
+                                    + rightType + " instead of type INT or STRING");
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator >= to operands of different types  "
+            SemanticError comparisonTypeMismatch = new SemanticError(supEq.lineNumber,
+                    supEq.columnNumber,
+                    "Type mismatch: cannot apply operator >= to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -310,17 +351,25 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = sup.left.accept(this);
         String rightType = sup.right.accept(this);
         if (!leftType.equals("int_TYPE") && !leftType.equals("string_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator > to operands of type  " + leftType);
+            SemanticError comparisonTypeMismatch =
+                    new SemanticError(sup.lineNumber, sup.columnNumber,
+                            "Type mismatch: cannot apply operator > to left operand of type "
+                                    + leftType + " instead of type INT or STRING");
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         if (!rightType.equals("int_TYPE") && !rightType.equals("string_TYPE")) {
-            this.semanticErrors.add(
-                    "Type mismatch: cannot apply operator > to operands of type  " + rightType);
+            SemanticError comparisonTypeMismatch =
+                    new SemanticError(sup.lineNumber, sup.columnNumber,
+                            "Type mismatch: cannot apply operator > to right operand of type  "
+                                    + rightType + " instead of type INT or STRING");
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator > to operands of different types  "
+            SemanticError comparisonTypeMismatch = new SemanticError(sup.lineNumber,
+                    sup.columnNumber,
+                    "Type mismatch: cannot apply operator > to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(comparisonTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -329,19 +378,22 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = add.left.accept(this);
         String rightType = add.right.accept(this);
         if (!leftType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator + to left operand : is of type "
+            SemanticError operandTypeMismatch = new SemanticError(add.lineNumber, add.columnNumber,
+                    "Type mismatch: cannot apply operator + to left operand : is of type "
                             + leftType + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         if (!rightType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator + to right operand : is of type "
+            SemanticError operandTypeMismatch = new SemanticError(add.lineNumber, add.columnNumber,
+                    "Type mismatch: cannot apply operator + to right operand : is of type "
                             + rightType + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator + to operands of different types  "
+            SemanticError operandTypeMismatch = new SemanticError(add.lineNumber, add.columnNumber,
+                    "Type mismatch: cannot apply operator + to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(operandTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -350,19 +402,22 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = sub.left.accept(this);
         String rightType = sub.right.accept(this);
         if (!leftType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator - to left operand : is of type "
+            SemanticError operandTypeMismatch = new SemanticError(sub.lineNumber, sub.columnNumber,
+                    "Type mismatch: cannot apply operator - to left operand : is of type "
                             + leftType + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         if (!rightType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator - to right operand : is of type "
+            SemanticError operandTypeMismatch = new SemanticError(sub.lineNumber, sub.columnNumber,
+                    "Type mismatch: cannot apply operator - to right operand : is of type "
                             + rightType + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator - to operands of different types  "
+            SemanticError operandTypeMismatch = new SemanticError(sub.lineNumber, sub.columnNumber,
+                    "Type mismatch: cannot apply operator - to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(operandTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -371,19 +426,25 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = mult.left.accept(this);
         String rightType = mult.right.accept(this);
         if (!leftType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator * to left operand : is of type "
-                            + leftType + " instead of type INT");
+            SemanticError operandTypeMismatch =
+                    new SemanticError(mult.lineNumber, mult.columnNumber,
+                            "Type mismatch: cannot apply operator * to left operand : is of type "
+                                    + leftType + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         if (!rightType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator * to right operand : is of type "
-                            + rightType + " instead of type INT");
+            SemanticError operandTypeMismatch =
+                    new SemanticError(mult.lineNumber, mult.columnNumber,
+                            "Type mismatch: cannot apply operator * to right operand : is of type "
+                                    + rightType + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator * to operands of different types  "
+            SemanticError operandTypeMismatch = new SemanticError(mult.lineNumber,
+                    mult.columnNumber,
+                    "Type mismatch: cannot apply operator * to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(operandTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -392,19 +453,22 @@ public class SymTabCreator implements AstVisitor<String> {
         String leftType = div.left.accept(this);
         String rightType = div.right.accept(this);
         if (!leftType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator / to left operand : is of type "
+            SemanticError operandTypeMismatch = new SemanticError(div.lineNumber, div.columnNumber,
+                    "Type mismatch: cannot apply operator / to left operand : is of type "
                             + leftType + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         if (!rightType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator / to right operand : is of type "
+            SemanticError operandTypeMismatch = new SemanticError(div.lineNumber, div.columnNumber,
+                    "Type mismatch: cannot apply operator / to right operand : is of type "
                             + rightType + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         if (!leftType.equals(rightType)) {
-            this.semanticErrors
-                    .add("Type mismatch: cannot apply operator / to operands of different types  "
+            SemanticError operandTypeMismatch = new SemanticError(div.lineNumber, div.columnNumber,
+                    "Type mismatch: cannot apply operator / to operands of different types  "
                             + leftType + " and " + rightType);
+            this.semanticErrors.add(operandTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -420,8 +484,10 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(Neg neg) {
         String negExprType = neg.expr.accept(this);
         if (!negExprType.equals("int_TYPE")) {
-            this.semanticErrors.add("Type mismatch: cannot apply operator - to operand of type "
-                    + negExprType + " instead of type INT");
+            SemanticError operandTypeMismatch = new SemanticError(neg.lineNumber, neg.columnNumber,
+                    "Type mismatch: cannot apply operator - to operand of type " + negExprType
+                            + " instead of type INT");
+            this.semanticErrors.add(operandTypeMismatch);
         }
         return "int_TYPE";
     }
@@ -432,16 +498,20 @@ public class SymTabCreator implements AstVisitor<String> {
         if (ifThenElse.elseExpr != null) {
             String elseType = ifThenElse.elseExpr.accept(this);
             if (!thenType.equals(elseType)) {
-                this.semanticErrors.add("Type mismatch: then branch is of type " + thenType
-                        + " but else branch is of type " + elseType);
+                SemanticError branchTypeMismatch = new SemanticError(ifThenElse.lineNumber,
+                        ifThenElse.columnNumber, "Type mismatch: then branch is of type " + thenType
+                                + " but else branch is of type " + elseType);
+                this.semanticErrors.add(branchTypeMismatch);
                 return "void_TYPE";
             }
             return thenType;
         } else {
             if (!thenType.equals("void_TYPE")) {
-                this.semanticErrors.add(
-                        "Conditional without else branch should be of type void but is of type "
+                SemanticError branchTypeMismatch = new SemanticError(ifThenElse.lineNumber,
+                        ifThenElse.columnNumber,
+                        "Condition without else branch should be of type void but is of type "
                                 + thenType);
+                this.semanticErrors.add(branchTypeMismatch);
             }
         }
         return "void_TYPE";
@@ -450,15 +520,19 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(WhileExp whileExp) {
         String whileConditionType = whileExp.condition.accept(this);
         if (!whileConditionType.equals("int_TYPE")) {
-            this.semanticErrors.add("While loop condition is of type " + whileConditionType
-                    + " but should be of type int");
+            SemanticError conditionTypeMismatch = new SemanticError(whileExp.lineNumber,
+                    whileExp.columnNumber, "While loop condition is of type " + whileConditionType
+                            + " but should be of type int");
+            this.semanticErrors.add(conditionTypeMismatch);
         }
         breakStack.changeStatus(true);
         String whileBodyType = whileExp.doExpr.accept(this);
         breakStack.restoreStatus();
         if (!whileBodyType.equals("void_TYPE")) {
-            this.semanticErrors.add(
+            SemanticError bodyTypeMismatch = new SemanticError(whileExp.lineNumber,
+                    whileExp.columnNumber,
                     "While loop body is of type " + whileBodyType + " but should be of type void");
+            this.semanticErrors.add(bodyTypeMismatch);
         }
         return "void_TYPE";
     }
@@ -475,23 +549,31 @@ public class SymTabCreator implements AstVisitor<String> {
         String forBodyType = forExp.doExpr.accept(this);
         breakStack.restoreStatus();
         if (!forBodyType.equals("void_TYPE")) {
-            this.semanticErrors
-                    .add("For loop body is of type " + forBodyType + " but should be of type void");
+            SemanticError bodyTypeMismatch = new SemanticError(forExp.lineNumber,
+                    forExp.columnNumber,
+                    "For loop body is of type " + forBodyType + " but should be of type void");
+            this.semanticErrors.add(bodyTypeMismatch);
         }
         String forStartIndexType = forExp.startValue.accept(this);
         if (!forStartIndexType.equals("int_TYPE")) {
-            this.semanticErrors.add("For loop start index is of type " + forStartIndexType
-                    + " but should be of type int");
+            SemanticError indexTypeMismatch = new SemanticError(forExp.lineNumber,
+                    forExp.columnNumber, "For loop start index is of type " + forStartIndexType
+                            + " but should be of type int");
+            this.semanticErrors.add(indexTypeMismatch);
         }
         String forEndIndexType = forExp.endValue.accept(this);
         if (!forEndIndexType.equals("int_TYPE")) {
-            this.semanticErrors.add("For loop end index is of type " + forEndIndexType
-                    + " but should be of type int");
+            SemanticError indexTypeMismatch = new SemanticError(forExp.lineNumber,
+                    forExp.columnNumber, "For loop end index is of type " + forEndIndexType
+                            + " but should be of type int");
+            this.semanticErrors.add(indexTypeMismatch);
         }
         String forVarValueType = forExp.forId.accept(this);
         if (!forVarValueType.equals("int_TYPE")) {
-            this.semanticErrors.add("For loop variable " + forExp.forId.name + " is of type "
-                    + forVarValueType + " but should be of type int");
+            SemanticError varTypeMismatch = new SemanticError(forExp.lineNumber,
+                    forExp.columnNumber, "For loop variable " + forExp.forId.name + " is of type "
+                            + forVarValueType + " but should be of type int");
+            this.semanticErrors.add(varTypeMismatch);
         }
         this.loopVariables.remove(forIdSymbol);
         this.closeScope();
@@ -560,7 +642,9 @@ public class SymTabCreator implements AstVisitor<String> {
 
             Symbol arrTypeValueSymbol = lookup(arrTypeValue.name, "TYPE");
             if (arrTypeValueSymbol == null) {
-                this.semanticErrors.add("Undeclared type : " + arrTypeValue.name);
+                SemanticError undeclaredType = new SemanticError(typeDec.lineNumber,
+                        typeDec.columnNumber, "Undeclared type : " + arrTypeValue.name);
+                this.semanticErrors.add(undeclaredType);
             }
 
             String rootType = this.resolveTypeAlias(typeName + "_TYPE");
@@ -597,7 +681,9 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(VarDecType varDecType) {
         Symbol varDecTypeSymbol = this.lookup(varDecType.varTypeId.name, "TYPE");
         if (varDecTypeSymbol == null) {
-            this.semanticErrors.add("Undeclared type : " + varDecType.varTypeId.name);
+            SemanticError undeclaredType = new SemanticError(varDecType.lineNumber,
+                    varDecType.columnNumber, "Undeclared type : " + varDecType.varTypeId.name);
+            this.semanticErrors.add(undeclaredType);
             String varType = varDecType.varValue.accept(this);
             this.addSymbol(varDecType.varId.name + "_VAR",
                     new VarSymbol(varType, varType, varDecType.varId.name));
@@ -607,9 +693,12 @@ public class SymTabCreator implements AstVisitor<String> {
                     varDecType.varTypeId.name + "_TYPE", varDecRootType, varDecType.varId.name));
             String varType = varDecType.varValue.accept(this);
             if (!varType.equals(varDecRootType)) {
-                this.semanticErrors.add("Incompatible declaration type : the variable "
-                        + varDecType.varId.name + " must be a value of " + varDecType.varTypeId.name
-                        + " type, not " + varType + " type");
+                SemanticError varTypeMismatch = new SemanticError(varDecType.lineNumber,
+                        varDecType.columnNumber,
+                        "Incompatible declaration type : the variable " + varDecType.varId.name
+                                + " must be a value of " + varDecType.varTypeId.name + " type, not "
+                                + varType + " type");
+                this.semanticErrors.add(varTypeMismatch);
             }
         }
         // No type for declartations
@@ -645,7 +734,9 @@ public class SymTabCreator implements AstVisitor<String> {
         for (FieldDec arg : funDec.args.args) {
             String argRootType = this.resolveTypeAlias(arg.typeId.name + "_TYPE");
             if (!argNames.add(arg.id.name)) {
-                this.semanticErrors.add("Duplicate argument name : " + arg.id.name);
+                SemanticError duplicateArgName = new SemanticError(arg.lineNumber, arg.columnNumber,
+                        "Duplicate argument name : " + arg.id.name);
+                this.semanticErrors.add(duplicateArgName);
             } else {
                 this.addSymbol(arg.id.name + "_VAR",
                         new VarSymbol(arg.typeId.name + "_TYPE", argRootType, arg.id.name));
@@ -653,16 +744,21 @@ public class SymTabCreator implements AstVisitor<String> {
         }
 
         if (this.lookup(funDec.returnTypeId.name, "TYPE") == null) {
-            this.semanticErrors.add("Undeclared type : " + funDec.returnTypeId.name);
+            SemanticError undeclaredType = new SemanticError(funDec.lineNumber, funDec.columnNumber,
+                    "Undeclared type : " + funDec.returnTypeId.name);
+            this.semanticErrors.add(undeclaredType);
         }
 
         String returnType = funDec.body.accept(this);
         Symbol functionSymbol = this.lookup(funDec.id.name, "VAR");
 
         if (!functionSymbol.getRootType().equals(returnType)) {
-            this.semanticErrors.add("Incompatible return type : the function " + funDec.id.name
-                    + " must return value of " + functionSymbol.getRootType() + " type, not "
-                    + returnType + " type");
+            SemanticError incompatibleReturnType =
+                    new SemanticError(funDec.lineNumber, funDec.columnNumber,
+                            "Incompatible return type : the function " + funDec.id.name
+                                    + " must return value of " + functionSymbol.getRootType()
+                                    + " type, not " + returnType + " type");
+            this.semanticErrors.add(incompatibleReturnType);
         }
         // No type for declartations
         this.closeScope();
@@ -672,7 +768,9 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(Id id) {
         Symbol symbol = this.lookup(id.name, "VAR");
         if (symbol == null) {
-            this.semanticErrors.add("Undeclared variable : " + id.name);
+            SemanticError undeclaredVar = new SemanticError(id.lineNumber, id.columnNumber,
+                    "Undeclared variable : " + id.name);
+            this.semanticErrors.add(undeclaredVar);
             return null;
         }
         return symbol.getRootType();
@@ -696,7 +794,9 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(Subscript subscript) {
         String accessExprType = subscript.expr.accept(this);
         if (!accessExprType.equals("int_TYPE")) {
-            this.semanticErrors.add("Subscript access to an array must be an integer");
+            SemanticError typeMismatch = new SemanticError(subscript.lineNumber,
+                    subscript.columnNumber, "Subscript access to an array must be an integer");
+            this.semanticErrors.add(typeMismatch);
         }
         String arrayType = subscript.lValue.accept(this);
         if (arrayType == null) {
@@ -722,24 +822,33 @@ public class SymTabCreator implements AstVisitor<String> {
         String initializerExpType = arrCreate.of.accept(this);
 
         if (arrayTypeSymbol == null) {
-            this.semanticErrors.add("Undeclared type : " + arrayType);
+            SemanticError undeclaredType = new SemanticError(arrCreate.lineNumber,
+                    arrCreate.columnNumber, "Undeclared type : " + arrayType);
+            this.semanticErrors.add(undeclaredType);
             return null;
         }
         String rootType = arrayTypeSymbol.getRootType();
         Symbol arrayRootSymbol = this.lookup(rootType);
         if (!(arrayRootSymbol instanceof ArrayTypeSymbol)) {
-            this.semanticErrors.add("Type " + arrayType + " is not an array type");
+            SemanticError notAnArrayType = new SemanticError(arrCreate.lineNumber,
+                    arrCreate.columnNumber, "Type " + arrayType + " is not an array type");
+            this.semanticErrors.add(notAnArrayType);
             return null;
         }
         if (!initializerExpType.equals(arrayRootSymbol.getType())) {
-            this.semanticErrors
-                    .add("Incompatible array initializer : the array was declared with type "
-                            + arrayType + ", but was initialized with type " + initializerExpType);
+            SemanticError incompatibleInitializer =
+                    new SemanticError(arrCreate.lineNumber, arrCreate.columnNumber,
+                            "Incompatible array initializer : the array was declared with type "
+                                    + arrayType + ", but was initialized with type "
+                                    + initializerExpType);
+            this.semanticErrors.add(incompatibleInitializer);
             return null;
         }
         if (!sizeExpType.equals("int_TYPE")) {
-            this.semanticErrors
-                    .add("Array size must be of type int ,but is of type " + sizeExpType);
+            SemanticError sizeTypeMismatch =
+                    new SemanticError(arrCreate.lineNumber, arrCreate.columnNumber,
+                            "Array size must be of type int ,but is of type " + sizeExpType);
+            this.semanticErrors.add(sizeTypeMismatch);
         }
 
         return rootType;
@@ -756,7 +865,9 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(RecCreate recCreate) {
         Symbol recordType = this.lookup(recCreate.typeId.name, "TYPE");
         if (recordType == null) {
-            this.semanticErrors.add("Record type " + recCreate.typeId.name + " not found");
+            SemanticError undeclaredType = new SemanticError(recCreate.lineNumber,
+                    recCreate.columnNumber, "Undeclared type : " + recCreate.typeId.name);
+            this.semanticErrors.add(undeclaredType);
         } else {
             RecordTypeSymbol recordTypeSymbol =
                     (RecordTypeSymbol) this.lookup(recordType.getRootType());
@@ -764,14 +875,20 @@ public class SymTabCreator implements AstVisitor<String> {
             for (FieldCreate field : fields) {
                 Map<String, String> fieldsMap = recordTypeSymbol.getFields();
                 if (!fieldsMap.containsKey(field.id.name)) {
-                    this.semanticErrors.add("Field " + field.id.name + " not found in record type "
-                            + recCreate.typeId.name);
+                    SemanticError fieldNotFound = new SemanticError(field.lineNumber,
+                            field.columnNumber, "Field " + field.id.name
+                                    + " not found in record type " + recCreate.typeId.name);
+                    this.semanticErrors.add(fieldNotFound);
                 } else {
                     String fieldType = fieldsMap.get(field.id.name);
                     String declarationType = field.expr.accept(this);
                     if (!fieldType.equals(declarationType)) {
-                        this.semanticErrors.add("Field " + field.id.name + " has type " + fieldType
-                                + " but is initialized with type " + declarationType);
+                        SemanticError typeMismatch =
+                                new SemanticError(field.lineNumber, field.columnNumber,
+                                        "Field " + field.id.name + " has type " + fieldType
+                                                + " but is initialized with type "
+                                                + declarationType);
+                        this.semanticErrors.add(typeMismatch);
                     }
                 }
             }
@@ -795,12 +912,14 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(BreakLiteral breakLiteral) {
         // Check if break is only used in a loop
         if (!breakStack.getStatus()) {
-            this.semanticErrors.add("Break statement used outside a loop");
+            SemanticError breakOutsideLoop = new SemanticError(breakLiteral.lineNumber,
+                    breakLiteral.columnNumber, "Break statement used outside a loop");
+            this.semanticErrors.add(breakOutsideLoop);
         }
         return "void_TYPE";
     }
 
-    public List<String> getSemanticErrors() {
+    public ErrorStack getSemanticErrors() {
         return this.semanticErrors;
     }
 

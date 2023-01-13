@@ -191,7 +191,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitBreakLitteral(tigerParser.BreakLitteralContext ctx) {
-		return new BreakLiteral();
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new BreakLiteral(lineNumber, columnNumber);
 	}
 
 	@Override

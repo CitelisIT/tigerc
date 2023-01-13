@@ -9,8 +9,8 @@ public class IfThenElse implements Ast {
     public Ast condition;
     public Ast thenExpr;
     public Ast elseExpr;
-    int lineNumber;
-    int columnNumber;
+    public int lineNumber;
+    public int columnNumber;
 
     public IfThenElse(Ast condition, Ast thenExpr, Ast elseExpr, int lineNumber, int columnNumber) {
         this.condition = condition;
