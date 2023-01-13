@@ -5,32 +5,31 @@ import java.util.List;
 
 public class ErrorList {
 
-    private ArrayList<SemanticError> ErrorList;
+    private ArrayList<SemanticError> errorList;
 
     public ErrorList() {
-        ArrayList<SemanticError> ErrorList = new ArrayList<>();
-        this.ErrorList = ErrorList;
+        errorList = new ArrayList<>();
     }
 
     public void add(SemanticError error) {
-        ErrorList.add(error);
+        errorList.add(error);
     }
 
     public void print() {
-        for (SemanticError error : ErrorList) {
+        for (SemanticError error : errorList) {
             error.print();
         }
     }
 
     public int size() {
-        return ErrorList.size();
+        return errorList.size();
     }
 
     public boolean isEmpty() {
-        return ErrorList.isEmpty();
+        return errorList.isEmpty();
     }
 
     public List<SemanticError> getErrorList() {
-        return ErrorList;
+        return errorList;
     }
 }
