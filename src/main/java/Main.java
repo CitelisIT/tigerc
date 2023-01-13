@@ -85,6 +85,8 @@ public class Main {
                         programChecker.reportSyntaxErrors();
                         break;
                     case SEMANTICS:
+                        if (programChecker.hasSyntaxErrors())
+                            System.err.println("Syntax errors found, semantic analysis aborted. Use '--check-syntax' to see syntax errors.");
                         programChecker.reportSemanticErrors();
                         break;
                     case ALL:

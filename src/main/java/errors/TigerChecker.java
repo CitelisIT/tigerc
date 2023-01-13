@@ -100,4 +100,12 @@ public class TigerChecker {
         return this.symtab;
     }
 
+    public boolean hasSyntaxErrors() {
+        return this.syntaxErrors.size() != 0;
+    }
+
+    public boolean hasSemanticErrors() {
+        return this.semanticErrors.size() != 0;
+    }
+
 }

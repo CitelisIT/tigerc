@@ -812,6 +812,12 @@ public class SymTabCreator implements AstVisitor<String> {
             return null;
         }
         RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
+        String fieldName = fieldExp.id.name;
+        if (!recordTypeSymbol.getFields().containsKey(fieldName)) {
+            this.semanticErrors.add("Record type " + recordType + " does not contain field "
+                    + fieldName);
+            return null;
+        }
         return recordTypeSymbol.getFields().get(fieldExp.id.name);
     }
 
