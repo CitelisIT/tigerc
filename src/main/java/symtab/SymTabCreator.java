@@ -158,7 +158,6 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Program program) {
         program.exp.accept(this);
-        semanticErrors.print();
         return null;
     }
 
