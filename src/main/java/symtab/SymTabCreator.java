@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import ast.Add;
 import ast.And;
@@ -695,6 +696,19 @@ public class SymTabCreator implements AstVisitor<String> {
                     new VarSymbol(varType, varType, varDecType.varId.name));
         } else {
             String varDecRootType = varDecTypeSymbol.getRootType();
+            Symbol varDecNameSymbol = this.lookup(varDecType.varId.name, "VAR");
+            if (varDecNameSymbol != null) {
+                String alreadyDeclaredType = varDecNameSymbol.getType();
+                String alreadyDeclaredRootType = varDecNameSymbol.getRootType();
+                if (!alreadyDeclaredRootType.equals(varDecRootType)) {
+                    SemanticError varRedeclaration = new SemanticError(varDecType.lineNumber,
+                            varDecType.columnNumber,
+                            "Variable redeclaration : " + varDecType.varId.name
+                                    + " was already declared with type " + alreadyDeclaredType
+                                    + " and can't be redeclared with type " + varDecRootType);
+                    this.semanticErrors.add(varRedeclaration);
+                }
+            }
             this.addSymbol(varDecType.varId.name + "_VAR", new VarSymbol(
                     varDecType.varTypeId.name + "_TYPE", varDecRootType, varDecType.varId.name));
             String varType = varDecType.varValue.accept(this);
@@ -714,6 +728,19 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(VarDecNoType varDecNoType) {
         String varType = varDecNoType.varValue.accept(this);
         String rootType = this.resolveTypeAlias(varType);
+        Symbol varDecNameSymbol = this.lookup(varDecNoType.varId.name, "VAR");
+        if (varDecNameSymbol != null) {
+            String alreadyDeclaredVarType = varDecNameSymbol.getType();
+            String alreadyDeclaredRootType = this.resolveTypeAlias(alreadyDeclaredVarType);
+            if (!alreadyDeclaredRootType.equals(rootType)) {
+                SemanticError varNameAlreadyDeclared = new SemanticError(varDecNoType.lineNumber,
+                        varDecNoType.columnNumber,
+                        "Variable redeclaration : " + varDecNoType.varId.name
+                                + " was already declared with type " + alreadyDeclaredVarType
+                                + " and can't be redeclared with type " + varType);
+                this.semanticErrors.add(varNameAlreadyDeclared);
+            }
+        }
         this.addSymbol(varDecNoType.varId.name + "_VAR",
                 new VarSymbol(varType, rootType, varDecNoType.varId.name));
         // No type for declartations

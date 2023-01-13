@@ -1,5 +1,7 @@
 let
-	var a : int := 0
-	var a : int := 0
+	type caca = int
+	var a : caca := 0
+	var a := 3
 in
+	a <> 0
 end
