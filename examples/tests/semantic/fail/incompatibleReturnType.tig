@@ -1,0 +1,5 @@
+let 
+    function wrong_function_return_type() : int = 
+    "hello world"
+in 
+end 
