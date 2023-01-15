@@ -1,0 +1,17 @@
+let 
+    var a := 1
+    var b := 2
+in 
+    a + "coucou";
+    a = b;
+    a = "coucou";
+    b - "taylor";
+    a < b; 
+    a > "coucou"; 
+    "Swift" > "Taylor";
+    "Swift" < "Taylor";
+    "Swift" = "Taylor";
+    a <> b; 
+    a <> "coucou";
+    "Swift" >= "Taylor"
+end 
