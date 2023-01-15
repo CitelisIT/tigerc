@@ -1,0 +1,6 @@
+let 
+    var taylor := "taylor"
+in 
+    while taylor do 
+        taylor := "taylor"
+end 
