@@ -1,0 +1,8 @@
+let 
+    var taylor := "Taylor"
+in 
+    if taylor = "Taylor" then
+        "Taylor"
+    else
+        1
+end
