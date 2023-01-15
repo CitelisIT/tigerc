@@ -1,0 +1,5 @@
+let 
+    var saucisse : int := 1
+in 
+    undeclared_variable := "taylor"
+end 
