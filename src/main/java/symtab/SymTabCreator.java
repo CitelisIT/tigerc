@@ -639,19 +639,29 @@ public class SymTabCreator implements AstVisitor<String> {
 
         if (typeValue instanceof TypeId) {
             TypeId typeIdValue = (TypeId) typeValue;
+            Symbol typeIdValueSymbol = lookup(typeIdValue.name, "TYPE");
+
+            if (typeIdValueSymbol == null) {
+                SemanticError undeclaredType = new SemanticError(typeDec.lineNumber,
+                        typeDec.columnNumber, "Undeclared type : " + typeIdValue.name);
+                this.semanticErrors.add(undeclaredType);
+                return null;
+            }
             String rootType = this.resolveTypeAlias(typeIdValue.name + "_TYPE");
             this.addSymbol(typeName + "_TYPE",
                     new SimpleTypeSymbol(typeIdValue.name + "_TYPE", rootType, typeName));
             this.typeAliases.put(typeName + "_TYPE", typeIdValue.name + "_TYPE");
+
+
         }
         if (typeValue instanceof ArrType) {
             ArrType arrTypeValue = (ArrType) typeValue;
-
             Symbol arrTypeValueSymbol = lookup(arrTypeValue.name, "TYPE");
             if (arrTypeValueSymbol == null) {
                 SemanticError undeclaredType = new SemanticError(typeDec.lineNumber,
                         typeDec.columnNumber, "Undeclared type : " + arrTypeValue.name);
                 this.semanticErrors.add(undeclaredType);
+                return null;
             }
 
             String rootType = this.resolveTypeAlias(typeName + "_TYPE");
@@ -663,15 +673,26 @@ public class SymTabCreator implements AstVisitor<String> {
 
             RecType recTypeValue = (RecType) typeValue;
             Map<String, String> fields = new HashMap<String, String>();
+            boolean flag = false;
 
             for (FieldDec field : recTypeValue.fields) {
-                Symbol fieldTypeSimbol = this.lookup(field.typeId.name, "TYPE");
-                String fieldRootType = fieldTypeSimbol.getRootType();
+                Symbol fieldTypeSymbol = this.lookup(field.typeId.name, "TYPE");
+                if (fieldTypeSymbol == null) {
+                    SemanticError undeclaredType = new SemanticError(typeDec.lineNumber,
+                            typeDec.columnNumber, "Undeclared type : " + field.typeId.name);
+                    this.semanticErrors.add(undeclaredType);
+                    flag = true;
+                }
+
+                String fieldRootType = fieldTypeSymbol.getRootType();
                 fields.put(field.id.name, fieldRootType);
             }
+            if (!flag) {
+                this.addSymbol(typeName + "_TYPE",
+                        new RecordTypeSymbol(fields, typeName + "_TYPE", typeName));
+                return null;
+            }
 
-            this.addSymbol(typeName + "_TYPE",
-                    new RecordTypeSymbol(fields, typeName + "_TYPE", typeName));
         }
         // No type for declartations
         return null;
