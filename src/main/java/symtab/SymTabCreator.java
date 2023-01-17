@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import com.ibm.icu.impl.UResource.Array;
+
 import ast.Add;
 import ast.And;
 import ast.ArrCreate;

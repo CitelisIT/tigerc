@@ -1,6 +1,5 @@
 package symtab.scope;
 
-import java.util.ArrayList;
 import java.util.Map;
 import symtab.symbol.Symbol;
 
