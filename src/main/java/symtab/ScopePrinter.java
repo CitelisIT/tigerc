@@ -14,7 +14,7 @@ public class ScopePrinter {
     private final ArrayList<Integer> cellsSizes = new ArrayList<Integer>();
     private final ArrayList<ArrayList<String>> printTable = new ArrayList<ArrayList<String>>();
     private final HashMap<String, String> colorSybolCat = new HashMap<String, String>();
-    private String padding;
+    private final String padding;
 
     public ScopePrinter(Scope scope) {
         this.scope = scope;
