@@ -619,8 +619,7 @@ public class SymTabCreator implements AstVisitor<String> {
         callExp.args.accept(this);
         String functionId = callExp.id.name;
         FuncSymbol funcSymbol = (FuncSymbol) this.lookup(functionId, "VAR");
-        String callType = funcSymbol.getType();
-        return callType;
+        return funcSymbol.getType();
     }
 
     public String visit(FieldDec fieldDec) {

@@ -6,8 +6,7 @@ public class BreakChecker {
     private final Stack<Boolean> breakStack;
 
     public BreakChecker() {
-        Stack<Boolean> stack = new Stack<>();
-        this.breakStack = stack;
+        this.breakStack = new Stack<>();
         breakStack.push(false);
     }
 

@@ -57,9 +57,7 @@ public class TigerChecker {
             this.semanticErrors = symTabCreator.getSemanticErrors();
             this.symtab = symTabCreator.getSymTab();
 
-            if (!this.semanticErrors.isEmpty()) {
-                return true;
-            }
+            if (this.semanticErrors.isEmpty()) return true;
             return false;
         } else {
             return true;
@@ -102,7 +100,7 @@ public class TigerChecker {
     }
 
     public boolean hasSemanticErrors() {
-        return !this.semanticErrors.isEmpty();
+        return this.semanticErrors.isEmpty();
     }
 
 }
