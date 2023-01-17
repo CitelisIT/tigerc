@@ -6,10 +6,10 @@ public class TypeDec implements Ast {
         return visitor.visit(this);
     }
 
-    public TypeId typeId;
-    public Type typeValue;
-    public int lineNumber;
-    public int columnNumber;
+    public final TypeId typeId;
+    public final Type typeValue;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public TypeDec(TypeId typeId, Type typeValue, int lineNumber, int columnNumber) {
         this.typeId = typeId;

@@ -6,9 +6,9 @@ public class Id implements Ast {
         return visitor.visit(this);
     }
 
-    public String name;
-    public int lineNumber;
-    public int columnNumber;
+    public final String name;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public Id(String name, int lineNumber, int columnNumber) {
         this.name = name;

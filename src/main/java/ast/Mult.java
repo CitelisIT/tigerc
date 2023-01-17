@@ -6,10 +6,10 @@ public class Mult implements Ast {
         return visitor.visit(this);
     }
 
-    public Ast left;
-    public Ast right;
-    public int lineNumber;
-    public int columnNumber;
+    public final Ast left;
+    public final Ast right;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public Mult(Ast left, Ast right, int lineNumber, int columnNumber) {
         this.left = left;

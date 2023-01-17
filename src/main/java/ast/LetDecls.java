@@ -8,9 +8,9 @@ public class LetDecls implements Ast {
         return visitor.visit(this);
     }
 
-    public ArrayList<Ast> decls;
-    public int lineNumber;
-    public int columnNumber;
+    public final ArrayList<Ast> decls;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public LetDecls(ArrayList<Ast> decls, int lineNumber, int columnNumber) {
         this.decls = decls;

@@ -8,9 +8,9 @@ public class LetScope implements Ast {
         return visitor.visit(this);
     }
 
-    public ArrayList<Ast> exprs;
-    int lineNumber;
-    int columnNumber;
+    public final ArrayList<Ast> exprs;
+    final int lineNumber;
+    final int columnNumber;
 
     public LetScope(ArrayList<Ast> exprs, int lineNumber, int columnNumber) {
         this.exprs = exprs;

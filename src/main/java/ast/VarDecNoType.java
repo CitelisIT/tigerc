@@ -6,10 +6,10 @@ public class VarDecNoType implements Ast {
         return visitor.visit(this);
     }
 
-    public Id varId;
-    public Ast varValue;
-    public int lineNumber;
-    public int columnNumber;
+    public final Id varId;
+    public final Ast varValue;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public VarDecNoType(Id varId, Ast varValue, int lineNumber, int columnNumber) {
         this.varId = varId;

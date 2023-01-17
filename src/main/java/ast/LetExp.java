@@ -6,10 +6,10 @@ public class LetExp implements Ast {
         return visitor.visit(this);
     }
 
-    public LetDecls letDecls;
-    public LetScope letScope;
-    public int lineNumber;
-    public int columnNumber;
+    public final LetDecls letDecls;
+    public final LetScope letScope;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public LetExp(LetDecls letDecls, LetScope letScope, int lineNumber, int columnNumber) {
         this.letDecls = letDecls;

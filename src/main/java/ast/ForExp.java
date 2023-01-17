@@ -6,12 +6,12 @@ public class ForExp implements Ast {
         return visitor.visit(this);
     }
 
-    public Id forId;
-    public Ast startValue;
-    public Ast endValue;
-    public Ast doExpr;
-    public int lineNumber;
-    public int columnNumber;
+    public final Id forId;
+    public final Ast startValue;
+    public final Ast endValue;
+    public final Ast doExpr;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public ForExp(Id forId, Ast startValue, Ast endValue, Ast doExpr, int lineNumber,
             int columnNumber) {

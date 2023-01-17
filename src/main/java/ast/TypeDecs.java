@@ -8,9 +8,9 @@ public class TypeDecs implements Ast {
         return visitor.visit(this);
     }
 
-    public ArrayList<Ast> tydecs;
-    public int lineNumber;
-    public int columnNumber;
+    public final ArrayList<Ast> tydecs;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public TypeDecs(ArrayList<Ast> tydecs, int lineNumber, int columnNumber) {
         this.tydecs = tydecs;

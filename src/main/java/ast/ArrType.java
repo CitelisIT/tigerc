@@ -6,9 +6,9 @@ public class ArrType implements Type {
         return visitor.visit(this);
     }
 
-    public String name;
-    public int lineNumber;
-    public int columnNumber;
+    public final String name;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public ArrType(String name, int lineNumber, int columnNumber) {
         this.name = name;

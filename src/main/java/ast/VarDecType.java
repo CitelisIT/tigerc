@@ -6,11 +6,11 @@ public class VarDecType implements Ast {
         return visitor.visit(this);
     }
 
-    public Id varId;
-    public TypeId varTypeId;
-    public Ast varValue;
-    public int lineNumber;
-    public int columnNumber;
+    public final Id varId;
+    public final TypeId varTypeId;
+    public final Ast varValue;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public VarDecType(Id varId, TypeId varTypeId, Ast varValue, int lineNumber, int columnNumber) {
         this.varId = varId;

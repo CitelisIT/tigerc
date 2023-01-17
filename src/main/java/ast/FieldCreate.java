@@ -6,10 +6,10 @@ public class FieldCreate implements Ast {
         return visitor.visit(this);
     }
 
-    public Id id;
-    public Ast expr;
-    public int lineNumber;
-    public int columnNumber;
+    public final Id id;
+    public final Ast expr;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public FieldCreate(Id id, Ast expr, int lineNumber, int columnNumber) {
         this.id = id;

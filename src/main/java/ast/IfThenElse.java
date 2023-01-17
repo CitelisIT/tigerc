@@ -6,11 +6,11 @@ public class IfThenElse implements Ast {
         return visitor.visit(this);
     }
 
-    public Ast condition;
-    public Ast thenExpr;
-    public Ast elseExpr;
-    public int lineNumber;
-    public int columnNumber;
+    public final Ast condition;
+    public final Ast thenExpr;
+    public final Ast elseExpr;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public IfThenElse(Ast condition, Ast thenExpr, Ast elseExpr, int lineNumber, int columnNumber) {
         this.condition = condition;

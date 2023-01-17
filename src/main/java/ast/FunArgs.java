@@ -8,9 +8,9 @@ public class FunArgs implements Ast {
         return visitor.visit(this);
     }
 
-    public ArrayList<FieldDec> args;
-    int lineNumber;
-    int columnNumber;
+    public final ArrayList<FieldDec> args;
+    final int lineNumber;
+    final int columnNumber;
 
     public FunArgs(ArrayList<FieldDec> args, int lineNumber, int columnNumber) {
         this.args = args;

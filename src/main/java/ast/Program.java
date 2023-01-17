@@ -6,9 +6,9 @@ public class Program implements Ast {
         return visitor.visit(this);
     }
 
-    public Ast exp;
-    public int lineNumber;
-    public int columnNumber;
+    public final Ast exp;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public Program(Ast exp, int lineNumber, int columnNumber) {
         this.exp = exp;

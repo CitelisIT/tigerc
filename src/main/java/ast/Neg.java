@@ -6,9 +6,9 @@ public class Neg implements Ast {
         return visitor.visit(this);
     }
 
-    public Ast expr;
-    public int lineNumber;
-    public int columnNumber;
+    public final Ast expr;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public Neg(Ast expr, int lineNumber, int columnNumber) {
         this.expr = expr;

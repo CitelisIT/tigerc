@@ -9,8 +9,8 @@ public class SeqExp implements Ast {
     }
 
     public ArrayList<Ast> exprs = new ArrayList<Ast>();
-    public int lineNumber;
-    public int columnNumber;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public SeqExp(ArrayList<Ast> exprs, int lineNumber, int columnNumber) {
         this.exprs = exprs;

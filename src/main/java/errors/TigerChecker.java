@@ -27,7 +27,7 @@ public class TigerChecker {
     private ProgramContext program;
     private Ast ast;
     private Map<String, Scope> symtab = new HashMap<String, Scope>();
-    ErrorReportingMode errorReportingMode;
+    final ErrorReportingMode errorReportingMode;
 
     public TigerChecker(String file, ErrorReportingMode errorReportingMode) {
         this.file = file;

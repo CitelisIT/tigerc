@@ -6,12 +6,12 @@ public class FunDec implements Ast {
         return visitor.visit(this);
     }
 
-    public Id id;
-    public FunArgs args;
-    public TypeId returnTypeId;
-    public Ast body;
-    public int lineNumber;
-    public int columnNumber;
+    public final Id id;
+    public final FunArgs args;
+    public final TypeId returnTypeId;
+    public final Ast body;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public FunDec(Id id, FunArgs args, TypeId returnTypeId, Ast body, int lineNumber,
             int columnNumber) {

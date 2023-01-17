@@ -6,9 +6,9 @@ public class StringLiteral implements Ast {
         return visitor.visit(this);
     }
 
-    public String value;
-    public int lineNumber;
-    public int columnNumber;
+    public final String value;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public StringLiteral(String value, int lineNumber, int columnNumber) {
         this.value = value;

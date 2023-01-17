@@ -6,10 +6,10 @@ public class Subscript implements Ast {
         return visitor.visit(this);
     }
 
-    public Ast lValue;
-    public Ast expr;
-    public int lineNumber;
-    public int columnNumber;
+    public final Ast lValue;
+    public final Ast expr;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public Subscript(Ast lValue, Ast expr, int lineNumber, int columnNumber) {
         this.lValue = lValue;

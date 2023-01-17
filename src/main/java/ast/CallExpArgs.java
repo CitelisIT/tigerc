@@ -8,9 +8,9 @@ public class CallExpArgs implements Ast {
         return visitor.visit(this);
     }
 
-    public ArrayList<Ast> args;
-    public int lineNumber;
-    public int columnNumber;
+    public final ArrayList<Ast> args;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public CallExpArgs(ArrayList<Ast> args, int lineNumber, int columnNumber) {
         this.args = args;

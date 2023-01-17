@@ -8,9 +8,9 @@ public class RecCreateFields implements Ast {
         return visitor.visit(this);
     }
 
-    public ArrayList<FieldCreate> fields;
-    public int lineNumber;
-    public int columnNumber;
+    public final ArrayList<FieldCreate> fields;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public RecCreateFields(ArrayList<FieldCreate> fields, int lineNumber, int columnNumber) {
         this.fields = fields;

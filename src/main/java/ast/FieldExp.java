@@ -6,10 +6,10 @@ public class FieldExp implements Ast {
         return visitor.visit(this);
     }
 
-    public Ast lValue;
-    public Id id;
-    public int lineNumber;
-    public int columnNumber;
+    public final Ast lValue;
+    public final Id id;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public FieldExp(Ast lValue, Id id, int lineNumber, int columnNumber) {
         this.lValue = lValue;

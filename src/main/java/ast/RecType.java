@@ -8,9 +8,9 @@ public class RecType implements Type {
         return visitor.visit(this);
     }
 
-    public ArrayList<FieldDec> fields;
-    public int lineNumber;
-    public int columnNumber;
+    public final ArrayList<FieldDec> fields;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public RecType(ArrayList<FieldDec> fields, int lineNumber, int columnNumber) {
         this.fields = fields;

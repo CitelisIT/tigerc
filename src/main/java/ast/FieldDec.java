@@ -6,10 +6,10 @@ public class FieldDec implements Ast {
         return visitor.visit(this);
     }
 
-    public Id id;
-    public TypeId typeId;
-    public int lineNumber;
-    public int columnNumber;
+    public final Id id;
+    public final TypeId typeId;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public FieldDec(Id id, TypeId typeId, int lineNumber, int columnNumber) {
         this.id = id;

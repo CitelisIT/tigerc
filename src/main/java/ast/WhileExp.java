@@ -6,10 +6,10 @@ public class WhileExp implements Ast {
         return visitor.visit(this);
     }
 
-    public Ast condition;
-    public Ast doExpr;
-    public int lineNumber;
-    public int columnNumber;
+    public final Ast condition;
+    public final Ast doExpr;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public WhileExp(Ast condition, Ast doExpr, int lineNumber, int columnNumber) {
         this.condition = condition;

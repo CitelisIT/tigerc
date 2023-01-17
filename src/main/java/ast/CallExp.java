@@ -6,10 +6,10 @@ public class CallExp implements Ast {
         return visitor.visit(this);
     }
 
-    public Id id;
-    public CallExpArgs args;
-    public int lineNumber;
-    public int columnNumber;
+    public final Id id;
+    public final CallExpArgs args;
+    public final int lineNumber;
+    public final int columnNumber;
 
     public CallExp(Id id, CallExpArgs args, int lineNumber, int columnNumber) {
         this.id = id;
