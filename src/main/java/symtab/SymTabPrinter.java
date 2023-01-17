@@ -3,6 +3,8 @@ package symtab;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Objects;
+
 import symtab.scope.Scope;
 
 public class SymTabPrinter {
@@ -16,7 +18,7 @@ public class SymTabPrinter {
         ArrayList<Scope> scopes = new ArrayList<Scope>();
 
         for (String key : symtab.keySet()) {
-            if (key != "predefined") {
+            if (!Objects.equals(key, "predefined")) {
                 scopes.add(symtab.get(key));
             }
         }
