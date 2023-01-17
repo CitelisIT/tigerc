@@ -49,7 +49,8 @@ public class ScopePrinter {
             colorSybolCat.put("FUNC", "\033[95;1m"
                     + String.format("%-" + (cellsSizes.get(0) + 1) + "s", "FUNC") + "\033[0m");
         }
-        this.padding = "\033[" + (this.scope.getImbricationLevel() * 7) + "C";
+        // this.padding = "\033[" + (this.scope.getImbricationLevel() * 7) + "C";
+        this.padding = ".      ".repeat(this.scope.getImbricationLevel() + 1);
 
         this.printScope();
     }
@@ -71,7 +72,8 @@ public class ScopePrinter {
     }
 
     public void printScope() {
-        System.out.println("\n" + this.padding + "Scope ID : " + this.scope.getScopeId());
+        System.out.println(
+                this.padding + "\n" + this.padding + "Scope ID : " + this.scope.getScopeId());
         System.out.println(this.padding + "Parent ID : " + this.scope.getParentScope());
         System.out
                 .println(this.padding + "Imbrication Level : " + this.scope.getImbricationLevel());
