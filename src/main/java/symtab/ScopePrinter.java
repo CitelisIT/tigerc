@@ -11,10 +11,10 @@ import symtab.scope.Scope;
 import symtab.symbol.Symbol;
 
 public class ScopePrinter {
-    private Scope scope;
-    private ArrayList<Integer> cellsSizes = new ArrayList<Integer>();
-    private ArrayList<ArrayList<String>> printTable = new ArrayList<ArrayList<String>>();
-    private HashMap<String, String> colorSybolCat = new HashMap<String, String>();
+    private final Scope scope;
+    private final ArrayList<Integer> cellsSizes = new ArrayList<Integer>();
+    private final ArrayList<ArrayList<String>> printTable = new ArrayList<ArrayList<String>>();
+    private final HashMap<String, String> colorSybolCat = new HashMap<String, String>();
     private String padding;
 
     public ScopePrinter(Scope scope) {

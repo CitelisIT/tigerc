@@ -8,7 +8,7 @@ import org.antlr.v4.runtime.Recognizer;
 
 public class SyntaxErrorListener extends BaseErrorListener {
 
-    private List<String> syntaxErrors = new ArrayList<String>();
+    private final List<String> syntaxErrors = new ArrayList<String>();
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line,

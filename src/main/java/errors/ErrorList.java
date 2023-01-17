@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ErrorList {
 
-    private ArrayList<SemanticError> errorList;
+    private final ArrayList<SemanticError> errorList;
 
     public ErrorList() {
         errorList = new ArrayList<>();
@@ -26,7 +26,7 @@ public class ErrorList {
     }
 
     public boolean isEmpty() {
-        return errorList.isEmpty();
+        return !errorList.isEmpty();
     }
 
     public List<SemanticError> getErrorList() {

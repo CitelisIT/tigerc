@@ -2,93 +2,93 @@ package ast;
 
 public interface AstVisitor<T> {
 
-    public T visit(Program program);
+    T visit(Program program);
 
-    public T visit(Assign assign);
+    T visit(Assign assign);
 
-    public T visit(Or or);
+    T visit(Or or);
 
-    public T visit(And and);
+    T visit(And and);
 
-    public T visit(Eq eq);
+    T visit(Eq eq);
 
-    public T visit(NotEq notEq);
+    T visit(NotEq notEq);
 
-    public T visit(InfEq infEq);
+    T visit(InfEq infEq);
 
-    public T visit(Inf inf);
+    T visit(Inf inf);
 
-    public T visit(SupEq supEq);
+    T visit(SupEq supEq);
 
-    public T visit(Sup sup);
+    T visit(Sup sup);
 
-    public T visit(Add add);
+    T visit(Add add);
 
-    public T visit(Sub sub);
+    T visit(Sub sub);
 
-    public T visit(Mult mult);
+    T visit(Mult mult);
 
-    public T visit(Div div);
+    T visit(Div div);
 
-    public T visit(SeqExp seqExp);
+    T visit(SeqExp seqExp);
 
-    public T visit(Neg neg);
+    T visit(Neg neg);
 
-    public T visit(IfThenElse ifThenElse);
+    T visit(IfThenElse ifThenElse);
 
-    public T visit(WhileExp whileExp);
+    T visit(WhileExp whileExp);
 
-    public T visit(ForExp forExp);
+    T visit(ForExp forExp);
 
-    public T visit(LetDecls letDecls);
+    T visit(LetDecls letDecls);
 
-    public T visit(LetScope letScope);
+    T visit(LetScope letScope);
 
-    public T visit(LetExp letExp);
+    T visit(LetExp letExp);
 
-    public T visit(CallExpArgs callExpArgs);
+    T visit(CallExpArgs callExpArgs);
 
-    public T visit(CallExp callExp);
+    T visit(CallExp callExp);
 
-    public T visit(FieldDec fieldDec);
+    T visit(FieldDec fieldDec);
 
-    public T visit(TypeDec typeDec);
+    T visit(TypeDec typeDec);
 
-    public T visit(TypeDecs typeDecs);
+    T visit(TypeDecs typeDecs);
 
-    public T visit(VarDecType varDecType);
+    T visit(VarDecType varDecType);
 
-    public T visit(VarDecNoType varDecNoType);
+    T visit(VarDecNoType varDecNoType);
 
-    public T visit(FunArgs funArgs);
+    T visit(FunArgs funArgs);
 
-    public T visit(FunDec funDec);
+    T visit(FunDec funDec);
 
-    public T visit(Id id);
+    T visit(Id id);
 
-    public T visit(TypeId typeId);
+    T visit(TypeId typeId);
 
-    public T visit(ArrType arrType);
+    T visit(ArrType arrType);
 
-    public T visit(RecType recType);
+    T visit(RecType recType);
 
-    public T visit(Subscript subscript);
+    T visit(Subscript subscript);
 
-    public T visit(FieldExp fieldExp);
+    T visit(FieldExp fieldExp);
 
-    public T visit(ArrCreate arrCreate);
+    T visit(ArrCreate arrCreate);
 
-    public T visit(FieldCreate fieldCreate);
+    T visit(FieldCreate fieldCreate);
 
-    public T visit(RecCreateFields recCreateFields);
+    T visit(RecCreateFields recCreateFields);
 
-    public T visit(RecCreate recCreate);
+    T visit(RecCreate recCreate);
 
-    public T visit(IntLiteral intLitteral);
+    T visit(IntLiteral intLitteral);
 
-    public T visit(StringLiteral stringLiteral);
+    T visit(StringLiteral stringLiteral);
 
-    public T visit(NilLiteral nilLitteral);
+    T visit(NilLiteral nilLitteral);
 
-    public T visit(BreakLiteral breakLitteral);
+    T visit(BreakLiteral breakLitteral);
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ArrayTypeSymbol extends TypeSymbol {
 
-    private String type;
+    private final String type;
 
     public ArrayTypeSymbol(String elementType, String rootType, String name) {
         super(name, rootType);

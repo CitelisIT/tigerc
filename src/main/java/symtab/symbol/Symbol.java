@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 public interface Symbol {
 
-    public SymbolCat getCategory();
+    SymbolCat getCategory();
 
-    public int getDisplacement();
+    int getDisplacement();
 
-    public String getName();
+    String getName();
 
-    public String getType();
+    String getType();
 
-    public String getRootType();
+    String getRootType();
 
-    public ArrayList<String> getSymtabLine();
+    ArrayList<String> getSymtabLine();
 
     default String getPrintType() {
         return this.getType().equals(this.getRootType()) ? getType()

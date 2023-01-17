@@ -524,15 +524,14 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 		int argsNameLineNumber, argsNameColumnNumber;
 
+		Token argsNameTok;
 		if (ctx.argNames.size() > 0) {
-			Token argsNameTok = ctx.argNames.get(0);
-			argsNameLineNumber = argsNameTok.getLine();
-			argsNameColumnNumber = argsNameTok.getCharPositionInLine();
+			argsNameTok = ctx.argNames.get(0);
 		} else {
-			Token argsNameTok = ctx.callParen;
-			argsNameLineNumber = argsNameTok.getLine();
-			argsNameColumnNumber = argsNameTok.getCharPositionInLine();
+			argsNameTok = ctx.callParen;
 		}
+		argsNameLineNumber = argsNameTok.getLine();
+		argsNameColumnNumber = argsNameTok.getCharPositionInLine();
 
 		FunArgs args = new FunArgs(funArgsFields, argsNameLineNumber, argsNameColumnNumber);
 

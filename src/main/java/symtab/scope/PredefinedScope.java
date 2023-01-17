@@ -10,22 +10,21 @@ import symtab.symbol.TypeSymbol;
 
 public class PredefinedScope implements Scope {
 
-        private String scopeId = "predefined";
-        private String parentScopeId = "";
-        private int imbricationLevel = -1;
-
-        private Map<String, Symbol> symbols = new HashMap<String, Symbol>();
+        private final Map<String, Symbol> symbols = new HashMap<String, Symbol>();
 
         public String getScopeId() {
-                return this.scopeId;
+                String scopeId = "predefined";
+                return scopeId;
         }
 
         public String getParentScope() {
-                return this.parentScopeId;
+                String parentScopeId = "";
+                return parentScopeId;
         }
 
         public int getImbricationLevel() {
-                return this.imbricationLevel;
+                int imbricationLevel = -1;
+                return imbricationLevel;
         }
 
         public Map<String, Symbol> getSymbols() {
