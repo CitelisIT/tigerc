@@ -1,9 +1,7 @@
 package symtab.scope;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
+
 import symtab.symbol.Symbol;
 import symtab.symbol.FuncSymbol;
 import symtab.symbol.TypeSymbol;
@@ -44,19 +42,19 @@ public class PredefinedScope implements Scope {
 
                 // Predefined functions
                 this.addSymbol("print_VAR", new FuncSymbol("void_TYPE", "void_TYPE",
-                                new ArrayList<String>(Arrays.asList("string_TYPE")), "print"));
+                                new ArrayList<String>(List.of("string_TYPE")), "print"));
                 this.addSymbol("printi_VAR", new FuncSymbol("void_TYPE", "void_TYPE",
-                                new ArrayList<String>(Arrays.asList("int_TYPE")), "printi"));
+                                new ArrayList<String>(List.of("int_TYPE")), "printi"));
                 this.addSymbol("flush_VAR", new FuncSymbol("void_TYPE", "void_TYPE",
                                 new ArrayList<String>(), "flush"));
                 this.addSymbol("getchar_VAR", new FuncSymbol("string_TYPE", "string_TYPE",
                                 new ArrayList<String>(), "getchar"));
                 this.addSymbol("ord_VAR", new FuncSymbol("int_TYPE", "int_TYPE",
-                                new ArrayList<String>(Arrays.asList("string_TYPE")), "ord"));
+                                new ArrayList<String>(List.of("string_TYPE")), "ord"));
                 this.addSymbol("chr_VAR", new FuncSymbol("string_TYPE", "string_TYPE",
-                                new ArrayList<String>(Arrays.asList("int_TYPE")), "chr"));
+                                new ArrayList<String>(List.of("int_TYPE")), "chr"));
                 this.addSymbol("size_VAR", new FuncSymbol("int_TYPE", "int_TYPE",
-                                new ArrayList<String>(Arrays.asList("string_TYPE")), "size"));
+                                new ArrayList<String>(List.of("string_TYPE")), "size"));
                 this.addSymbol("substring_VAR",
                                 new FuncSymbol("string_TYPE", "string_TYPE",
                                                 new ArrayList<String>(Arrays.asList("string_TYPE",
@@ -67,9 +65,9 @@ public class PredefinedScope implements Scope {
                                                 Arrays.asList("string_TYPE", "string_TYPE")),
                                                 "concat"));
                 this.addSymbol("not_VAR", new FuncSymbol("int_TYPE", "int_TYPE",
-                                new ArrayList<String>(Arrays.asList("int_TYPE")), "not"));
+                                new ArrayList<String>(List.of("int_TYPE")), "not"));
                 this.addSymbol("exit_VAR", new FuncSymbol("void_TYPE", "void_TYPE",
-                                new ArrayList<String>(Arrays.asList("int_TYPE")), "exit"));
+                                new ArrayList<String>(List.of("int_TYPE")), "exit"));
         }
 
 }

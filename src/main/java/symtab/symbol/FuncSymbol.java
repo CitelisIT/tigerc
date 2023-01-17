@@ -22,13 +22,13 @@ public class FuncSymbol implements Symbol {
         ArrayList<String> line = new ArrayList<String>();
         line.add(getCategory().toString());
         line.add(getName());
-        String argsTypeString = "( ";
+        StringBuilder argsTypeString = new StringBuilder("( ");
         for (String typeString : argTypes) {
-            argsTypeString += typeString + ",";
+            argsTypeString.append(typeString).append(",");
         }
-        argsTypeString = argsTypeString.substring(0, argsTypeString.length() - 1) + " ) -> "
-                + getPrintType();
-        line.add(argsTypeString);
+        argsTypeString = new StringBuilder(argsTypeString.substring(0, argsTypeString.length() - 1) + " ) -> "
+                + getPrintType());
+        line.add(argsTypeString.toString());
         line.add("" + getDisplacement());
         return line;
     }

@@ -18,12 +18,12 @@ public class RecordTypeSymbol extends TypeSymbol {
         ArrayList<String> line = new ArrayList<String>();
         line.add(getCategory().toString());
         line.add(getName());
-        String fieldsTypeString = "{";
+        StringBuilder fieldsTypeString = new StringBuilder("{");
         for (String key : getFields().keySet()) {
-            fieldsTypeString += " " + key + " : " + getFieldType(key) + ";";
+            fieldsTypeString.append(" ").append(key).append(" : ").append(getFieldType(key)).append(";");
         }
-        fieldsTypeString = fieldsTypeString.substring(0, fieldsTypeString.length() - 1) + "}";
-        line.add(fieldsTypeString);
+        fieldsTypeString = new StringBuilder(fieldsTypeString.substring(0, fieldsTypeString.length() - 1) + "}");
+        line.add(fieldsTypeString.toString());
         line.add("" + getDisplacement());
         return line;
     }
