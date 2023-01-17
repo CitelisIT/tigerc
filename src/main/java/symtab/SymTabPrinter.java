@@ -14,11 +14,14 @@ public class SymTabPrinter {
 
     public void print() {
         ArrayList<Scope> scopes = new ArrayList<Scope>();
+
         for (String key : symtab.keySet()) {
-            scopes.add(symtab.get(key));
+            if (key != "predefined") {
+                scopes.add(symtab.get(key));
+            }
         }
         scopes.sort(Comparator.comparing(Scope::getScopeId));
-
+        scopes.add(0, symtab.get("predefined"));
         // scopes.forEach(scope -> scope.print());
         scopes.forEach(scope -> new ScopePrinter(scope));
 
