@@ -8,7 +8,7 @@ public class FuncSymbol implements Symbol {
     private final String type;
     private final String rootType;
     private final String name;
-    private List<String> argTypes = new ArrayList<String>();
+    private List<String> argTypes;
     private int displacement;
 
     public FuncSymbol(String type, String rootType, List<String> argTypes, String name) {

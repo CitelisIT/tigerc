@@ -8,7 +8,7 @@ public class SeqExp implements Ast {
         return visitor.visit(this);
     }
 
-    public ArrayList<Ast> exprs = new ArrayList<Ast>();
+    public ArrayList<Ast> exprs;
     public final int lineNumber;
     public final int columnNumber;
 

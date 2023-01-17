@@ -8,7 +8,7 @@ import java.util.Objects;
 import symtab.scope.Scope;
 
 public class SymTabPrinter {
-    private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
+    private Map<String, Scope> symtab;
 
     public SymTabPrinter(Map<String, Scope> symtab) {
         this.symtab = symtab;
