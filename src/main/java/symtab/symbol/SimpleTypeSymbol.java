@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class SimpleTypeSymbol extends TypeSymbol {
 
-    private String aliasedType;
+    private final String aliasedType;
 
     public SimpleTypeSymbol(String aliasedType, String rootType, String name) {
         super(name, rootType);

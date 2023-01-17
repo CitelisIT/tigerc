@@ -6,24 +6,23 @@ import symtab.symbol.Symbol;
 
 public class GlobalScope implements Scope {
 
-    private String scopeId = "global";
-    private String parentScopeId = "predefined";
-    private int imbricationLevel = 0;
-
-    private Map<String, Symbol> symbols = new HashMap<String, Symbol>();
+    private final Map<String, Symbol> symbols = new HashMap<String, Symbol>();
 
     private int maxDisplacement = 0;
 
     public String getScopeId() {
-        return this.scopeId;
+        String scopeId = "global";
+        return scopeId;
     }
 
     public String getParentScope() {
-        return this.parentScopeId;
+        String parentScopeId = "predefined";
+        return parentScopeId;
     }
 
     public int getImbricationLevel() {
-        return this.imbricationLevel;
+        int imbricationLevel = 0;
+        return imbricationLevel;
     }
 
     public Map<String, Symbol> getSymbols() {

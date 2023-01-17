@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import com.ibm.icu.impl.UResource.Array;
 import ast.Add;
 import ast.And;
 import ast.ArrCreate;
@@ -72,13 +73,13 @@ import symtab.symbol.VarSymbol;
 
 public class SymTabCreator implements AstVisitor<String> {
 
-    private Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
+    private final Map<String, Scope> symtab = new java.util.HashMap<String, Scope>();
     private String currentScopeId;
-    private BreakChecker breakStack = new BreakChecker();
-    private ErrorList semanticErrors = new ErrorList();
-    private Map<String, String> typeAliases = new HashMap<String, String>();
-    private List<Integer> scopesByDepth = new ArrayList<Integer>();
-    private Set<Symbol> loopVariables = new HashSet<Symbol>();
+    private final BreakChecker breakStack = new BreakChecker();
+    private final ErrorList semanticErrors = new ErrorList();
+    private final Map<String, String> typeAliases = new HashMap<String, String>();
+    private final List<Integer> scopesByDepth = new ArrayList<Integer>();
+    private final Set<Symbol> loopVariables = new HashSet<Symbol>();
 
     public SymTabCreator() {
         this.symtab.put("predefined", new PredefinedScope());

@@ -6,11 +6,11 @@ import symtab.symbol.Symbol;
 
 public class LocalScope implements Scope {
 
-    private String scopeId;
-    private String parentScopeId;
-    private int imbricationLevel;
+    private final String scopeId;
+    private final String parentScopeId;
+    private final int imbricationLevel;
 
-    private Map<String, Symbol> symbols = new HashMap<String, Symbol>();
+    private final Map<String, Symbol> symbols = new HashMap<String, Symbol>();
 
     private int maxDisplacement = 0;
 

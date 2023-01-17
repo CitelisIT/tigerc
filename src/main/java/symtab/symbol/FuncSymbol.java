@@ -5,9 +5,9 @@ import java.util.List;
 
 public class FuncSymbol implements Symbol {
 
-    private String type;
-    private String rootType;
-    private String name;
+    private final String type;
+    private final String rootType;
+    private final String name;
     private List<String> argTypes = new ArrayList<String>();
     private int displacement;
 

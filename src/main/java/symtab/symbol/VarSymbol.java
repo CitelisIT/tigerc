@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class VarSymbol implements Symbol {
 
-    private String name;
-    private String type;
-    private String rootType;
+    private final String name;
+    private final String type;
+    private final String rootType;
     private int displacement;
 
     public VarSymbol(String type, String rootType, String name) {

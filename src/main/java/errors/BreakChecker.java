@@ -3,7 +3,7 @@ package errors;
 import java.util.Stack;
 
 public class BreakChecker {
-    private Stack<Boolean> breakStack;
+    private final Stack<Boolean> breakStack;
 
     public BreakChecker() {
         Stack<Boolean> stack = new Stack<>();

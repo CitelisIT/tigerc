@@ -6,7 +6,7 @@ import java.util.Set;
 
 public class RecordTypeSymbol extends TypeSymbol {
 
-    private Map<String, String> fields;
+    private final Map<String, String> fields;
     // private String name;
 
     public RecordTypeSymbol(Map<String, String> fields, String rootType, String name) {

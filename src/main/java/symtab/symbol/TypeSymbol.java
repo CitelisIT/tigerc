@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class TypeSymbol implements Symbol {
 
-    private String name;
-    private String rootType;
+    private final String name;
+    private final String rootType;
 
     public TypeSymbol(String name, String rootType) {
         this.name = name;

@@ -6,16 +6,16 @@ import symtab.symbol.Symbol;
 
 public interface Scope {
 
-    public String getScopeId();
+    String getScopeId();
 
-    public String getParentScope();
+    String getParentScope();
 
-    public int getImbricationLevel();
+    int getImbricationLevel();
 
-    public Map<String, Symbol> getSymbols();
+    Map<String, Symbol> getSymbols();
 
-    public Symbol getSymbol(String name);
+    Symbol getSymbol(String name);
 
-    public void addSymbol(String name, Symbol symbol);
+    void addSymbol(String name, Symbol symbol);
 
 }

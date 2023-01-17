@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ErrorList {
 
-    private ArrayList<SemanticError> errorList;
+    private final ArrayList<SemanticError> errorList;
 
     public ErrorList() {
         errorList = new ArrayList<>();

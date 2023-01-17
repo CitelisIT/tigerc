@@ -20,10 +20,9 @@ import symtab.scope.Scope;
 
 public class TigerChecker {
 
-    private String file;
+    private final String file;
     private List<String> syntaxErrors = new ArrayList<String>();
     private ErrorList semanticErrors = new ErrorList();
-    private tigerLexer lexer;
     private tigerParser parser;
     private ProgramContext program;
     private Ast ast;
@@ -37,7 +36,7 @@ public class TigerChecker {
 
     public boolean checkProgram() throws IOException {
         CharStream input = CharStreams.fromFileName(this.file);
-        this.lexer = new tigerLexer(input);
+        tigerLexer lexer = new tigerLexer(input);
 
         CommonTokenStream stream = new CommonTokenStream(lexer);
         this.parser = new tigerParser(stream);
