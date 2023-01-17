@@ -13,18 +13,15 @@ public class PredefinedScope implements Scope {
         private final Map<String, Symbol> symbols = new HashMap<String, Symbol>();
 
         public String getScopeId() {
-                String scopeId = "predefined";
-                return scopeId;
+                return "predefined";
         }
 
         public String getParentScope() {
-                String parentScopeId = "";
-                return parentScopeId;
+                return "";
         }
 
         public int getImbricationLevel() {
-                int imbricationLevel = -1;
-                return imbricationLevel;
+                return -1;
         }
 
         public Map<String, Symbol> getSymbols() {

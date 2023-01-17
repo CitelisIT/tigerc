@@ -11,18 +11,15 @@ public class GlobalScope implements Scope {
     private int maxDisplacement = 0;
 
     public String getScopeId() {
-        String scopeId = "global";
-        return scopeId;
+        return "global";
     }
 
     public String getParentScope() {
-        String parentScopeId = "predefined";
-        return parentScopeId;
+        return "predefined";
     }
 
     public int getImbricationLevel() {
-        int imbricationLevel = 0;
-        return imbricationLevel;
+        return 0;
     }
 
     public Map<String, Symbol> getSymbols() {
