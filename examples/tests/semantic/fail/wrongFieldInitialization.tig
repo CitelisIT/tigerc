@@ -1,0 +1,6 @@
+let 
+    type error = int 
+    type error_type = {error : error}
+    var wrong_record_creation := error_type {error = "Swift"} 
+in 
+end

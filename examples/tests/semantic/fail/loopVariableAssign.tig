@@ -1,0 +1,5 @@
+let 
+    var taylor := "Taylor"
+in 
+    for index := 1 to 4 do (index := 3)
+end 

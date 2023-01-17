@@ -1,0 +1,7 @@
+let 
+    type int_record_type = {int : int}
+    var int_record := int_record_type {recorded_int = 3}
+in 
+    int_record.int := 4;
+    int_record.not_int
+end

@@ -1,0 +1,6 @@
+let 
+    var taylor := "Taylor" 
+in 
+    for index := "nope" to "nope" do (taylor := "nope")
+
+end

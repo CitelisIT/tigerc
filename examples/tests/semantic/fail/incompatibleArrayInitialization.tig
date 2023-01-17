@@ -1,0 +1,5 @@
+let 
+    type wrong_array_type = array of int
+    var wrong_array_creation := wrong_array_type [1] of "hello"
+in 
+end 
