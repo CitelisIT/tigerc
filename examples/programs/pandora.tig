@@ -14,6 +14,8 @@ let
     var nope_record := nope_record_type {nope = nope_int}
     var wrong_record_creation := nope_record_type {nope = nope_string}
     var wrong_array_creation := nope_array_type [nope_int] of nope_string
+    function dummy_function(int_arg: int, string_arg: string) : void =
+        ()
 in
     undeclared_variable := "nope";
     nope_int := "nope";
@@ -28,5 +30,6 @@ in
     nope_array < nope_record;
     nope_array["nope"];
     nope_record.not_nope;
-    nope_string()
+    nope_string();
+    dummy_function(nope_string, nope_string)
 end
