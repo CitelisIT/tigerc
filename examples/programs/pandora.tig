@@ -13,6 +13,7 @@ let
     type nope_array_type = array of nope
     var nope_array := nope_array_type [nope_int] of nope_int
     type nope_record_type = {nope : nope}
+    type multiple_nope_record_type = {nope : nope, nope : nope}
     var nope_record := nope_record_type {nope = nope_int}
     var wrong_record_creation := nope_record_type {nope = nope_string}
     var wrong_array_creation := nope_array_type [nope_int] of nope_string

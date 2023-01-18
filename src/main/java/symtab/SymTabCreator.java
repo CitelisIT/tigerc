@@ -726,7 +726,15 @@ public class SymTabCreator implements AstVisitor<String> {
                 }
 
                 String fieldRootType = fieldTypeSymbol.getRootType();
-                fields.put(field.id.name, fieldRootType);
+                if (fields.containsKey(field.id.name)) {
+                    SemanticError fieldRedeclaration = new SemanticError(typeDec.lineNumber,
+                            typeDec.columnNumber,
+                            "Field redeclaration : the " + field.id.name + " field already exist");
+                    this.semanticErrors.add(fieldRedeclaration);
+                    flag = true;
+                } else {
+                    fields.put(field.id.name, fieldRootType);
+                }
             }
             if (!flag) {
                 this.addSymbol(typeName + "_TYPE",
@@ -932,9 +940,8 @@ public class SymTabCreator implements AstVisitor<String> {
         Symbol recordTypeSymbol = this.lookup(recordType);
         TypeSymbol rootTypeSymbol = (TypeSymbol) this.lookup(recordTypeSymbol.getRootType());
         if (!(rootTypeSymbol instanceof RecordTypeSymbol)) {
-            SemanticError typeMismatch =
-                    new SemanticError(fieldExp.lineNumber, fieldExp.columnNumber,
-                            "Expression is not a record");
+            SemanticError typeMismatch = new SemanticError(fieldExp.lineNumber,
+                    fieldExp.columnNumber, "Expression is not a record");
             this.semanticErrors.add(typeMismatch);
             return null;
         }
