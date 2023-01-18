@@ -186,7 +186,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitNilLitteral(tigerParser.NilLitteralContext ctx) {
-		return new NilLiteral();
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new NilLiteral(lineNumber, columnNumber);
 	}
 
 	@Override

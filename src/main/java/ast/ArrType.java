@@ -15,4 +15,12 @@ public class ArrType implements Type {
         this.lineNumber = lineNumber;
         this.columnNumber = columnNumber;
     }
+
+    public int getLineNumber() {
+        return this.lineNumber;
+    }
+
+    public int getColumnNumber() {
+        return this.columnNumber;
+    }
 }

@@ -629,6 +629,23 @@ public class SymTabCreator implements AstVisitor<String> {
             this.semanticErrors.add(notAFunction);
             return null;
         }
+        FuncSymbol castFuncSymbol = (FuncSymbol) funcSymbol;
+        List<String> funcArgsTypes = castFuncSymbol.getArgTypes();
+        for (Ast arg: callExp.args.args) {
+            String argType = arg.accept(this);
+            if (argType == null) {
+                SemanticError argTypeMismatch = new SemanticError(callExp.lineNumber,
+                        callExp.columnNumber, "Argument type mismatch");
+                this.semanticErrors.add(argTypeMismatch);
+                return null;
+            }
+            if (!funcArgsTypes.contains(argType)) {
+                SemanticError argTypeMismatch = new SemanticError(callExp.lineNumber,
+                        callExp.columnNumber, "Argument type mismatch");
+                this.semanticErrors.add(argTypeMismatch);
+                return null;
+            }
+        }
         return funcSymbol.getType();
     }
 
