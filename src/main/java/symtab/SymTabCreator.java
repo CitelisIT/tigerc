@@ -825,6 +825,12 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(FunDec funDec) {
+        if (this.lookup(funDec.id.name, "VAR") != null) {
+            SemanticError funRedeclaration = new SemanticError(funDec.lineNumber,
+                    funDec.columnNumber,
+                    "Function redeclaration : the " + funDec.id.name + " function already exist");
+            this.semanticErrors.add(funRedeclaration);
+        }
         ArrayList<String> argTypes = new ArrayList<String>();
         for (FieldDec arg : funDec.args.args) {
             Symbol argTypeSymbol = this.lookup(arg.typeId.name, "TYPE");

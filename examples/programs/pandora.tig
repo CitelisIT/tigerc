@@ -19,6 +19,8 @@ let
     var wrong_array_creation := nope_array_type [nope_int] of nope_string
     function dummy_function(int_arg: int, string_arg: string) : void =
         ()
+    function dummy_function() : void =
+        ()
 in
     undeclared_variable := "nope";
     nope_int := "nope";
