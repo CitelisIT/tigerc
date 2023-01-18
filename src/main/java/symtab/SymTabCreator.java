@@ -79,6 +79,7 @@ public class SymTabCreator implements AstVisitor<String> {
     private final Map<String, String> typeAliases = new HashMap<String, String>();
     private final List<Integer> scopesByDepth = new ArrayList<Integer>();
     private final Set<Symbol> loopVariables = new HashSet<Symbol>();
+    private final List<String> decList = new ArrayList<String>();
 
     public SymTabCreator() {
         this.symtab.put("predefined", new PredefinedScope());
@@ -749,9 +750,13 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(TypeDecs typeDecs) {
+        for (TypeDec dec : typeDecs.tydecs) {
+            decList.add(dec.typeId.name);
+        }
         for (Ast typdec : typeDecs.tydecs) {
             typdec.accept(this);
         }
+        decList.clear();
         // No type for declartations
         return null;
     }
