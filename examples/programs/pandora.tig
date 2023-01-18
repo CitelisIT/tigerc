@@ -6,6 +6,7 @@ let
     function duplicate_argument_name(duplicate_argument : int, duplicate_argument : int) : void =
         ()
     var nope_string := "nope"
+    var nope_string := 1
     var nope_int := 1
     type nope = int
     type nope = string
