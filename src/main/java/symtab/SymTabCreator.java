@@ -616,7 +616,19 @@ public class SymTabCreator implements AstVisitor<String> {
         callExp.id.accept(this);
         callExp.args.accept(this);
         String functionId = callExp.id.name;
-        FuncSymbol funcSymbol = (FuncSymbol) this.lookup(functionId, "VAR");
+        Symbol funcSymbol = this.lookup(functionId, "VAR");
+        if (funcSymbol == null) {
+            SemanticError functionNotDeclared = new SemanticError(callExp.lineNumber,
+                    callExp.columnNumber, "Function " + functionId + " is not declared");
+            this.semanticErrors.add(functionNotDeclared);
+            return null;
+        }
+        if (funcSymbol.getCategory() != SymbolCat.FUNC) {
+            SemanticError notAFunction = new SemanticError(callExp.lineNumber, callExp.columnNumber,
+                    "Variable " + functionId + " is not callable");
+            this.semanticErrors.add(notAFunction);
+            return null;
+        }
         return funcSymbol.getType();
     }
 
