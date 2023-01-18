@@ -923,7 +923,7 @@ public class SymTabCreator implements AstVisitor<String> {
 
         if (!(typeSymbol instanceof ArrayTypeSymbol)) {
             SemanticError wrongArraySubscript = new SemanticError(subscript.lineNumber,
-                    subscript.columnNumber, "Expression is not subsccriptable");
+                    subscript.columnNumber, "Expression is not subscriptable");
             this.semanticErrors.add(wrongArraySubscript);
             return null;
         }
