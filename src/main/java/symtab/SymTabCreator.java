@@ -905,7 +905,7 @@ public class SymTabCreator implements AstVisitor<String> {
             return null;
         }
         Symbol lvalueSymbol = this.lookup(arrayType);
-        TypeSymbol typeSymbol = (TypeSymbol) this.lookup(lvalueSymbol.getRootType()); 
+        TypeSymbol typeSymbol = (TypeSymbol) this.lookup(lvalueSymbol.getRootType());
 
         if (!(typeSymbol instanceof ArrayTypeSymbol)) {
             SemanticError wrongArraySubscript = new SemanticError(subscript.lineNumber,
@@ -929,16 +929,25 @@ public class SymTabCreator implements AstVisitor<String> {
         if (recordType == null) {
             return null;
         }
-        RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
+        Symbol recordTypeSymbol = this.lookup(recordType);
+        TypeSymbol rootTypeSymbol = (TypeSymbol) this.lookup(recordTypeSymbol.getRootType());
+        if (!(rootTypeSymbol instanceof RecordTypeSymbol)) {
+            SemanticError typeMismatch =
+                    new SemanticError(fieldExp.lineNumber, fieldExp.columnNumber,
+                            "Expression is not a record");
+            this.semanticErrors.add(typeMismatch);
+            return null;
+        }
+        RecordTypeSymbol castTypeSymbol = (RecordTypeSymbol) rootTypeSymbol;
         String fieldName = fieldExp.id.name;
-        if (!recordTypeSymbol.getFields().containsKey(fieldName)) {
+        if (!castTypeSymbol.getFields().containsKey(fieldName)) {
             SemanticError typeMismatch =
                     new SemanticError(fieldExp.lineNumber, fieldExp.columnNumber,
                             "Record type " + recordType + " does not contain field " + fieldName);
             this.semanticErrors.add(typeMismatch);
             return null;
         }
-        return recordTypeSymbol.getFields().get(fieldExp.id.name);
+        return castTypeSymbol.getFields().get(fieldExp.id.name);
     }
 
     public String visit(ArrCreate arrCreate) {

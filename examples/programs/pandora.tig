@@ -33,5 +33,6 @@ in
     nope_string();
     dummy_function(nope_string, nope_string);
     dummy_function();
-    nope_int[1]
+    nope_int[1];
+    nope_int.nope
 end
