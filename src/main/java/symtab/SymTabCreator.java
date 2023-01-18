@@ -633,7 +633,6 @@ public class SymTabCreator implements AstVisitor<String> {
         boolean hasTypeMismatch = false;
         List<String> funcArgsTypes = castFuncSymbol.getArgTypes();
         if (funcArgsTypes.size() != callExp.args.args.size()) {
-            System.out.println(funcArgsTypes.size() + " " + callExp.args.args.size());
             SemanticError argCountMismatch = new SemanticError(callExp.lineNumber,
                     callExp.columnNumber, "Argument count mismatch");
             this.semanticErrors.add(argCountMismatch);
@@ -650,7 +649,6 @@ public class SymTabCreator implements AstVisitor<String> {
                     hasTypeMismatch = true;
                 }
                 if (!argType.equals(funcArgsTypes.get(i))) {
-                    System.out.println(argType + " " + funcArgsTypes.get(i));
                     SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
                             callExp.getColumnNumber(), "Argument type mismatch");
                     this.semanticErrors.add(argTypeMismatch);

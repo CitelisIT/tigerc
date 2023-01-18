@@ -31,5 +31,6 @@ in
     nope_array["nope"];
     nope_record.not_nope;
     nope_string();
-    dummy_function(nope_string, nope_string)
+    dummy_function(nope_string, nope_string);
+    dummy_function()
 end
