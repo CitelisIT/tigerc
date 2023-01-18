@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import javax.print.attribute.standard.NumberUp;
 import ast.Add;
 import ast.And;
 import ast.ArrCreate;
@@ -847,15 +847,26 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Subscript subscript) {
         String accessExprType = subscript.expr.accept(this);
+
+        String arrayType = subscript.lValue.accept(this);
+        if (arrayType == null) {
+            return null;
+        }
+        Symbol lvalueSymbol = this.lookup(arrayType);
+
+        if (!(lvalueSymbol instanceof ArrayTypeSymbol)) {
+            SemanticError wrongArraySubscript = new SemanticError(subscript.lineNumber,
+                    subscript.columnNumber, "only array symbol can be subscribt");
+            this.semanticErrors.add(wrongArraySubscript);
+            return null;
+        }
+
         if (!accessExprType.equals("int_TYPE")) {
             SemanticError typeMismatch = new SemanticError(subscript.lineNumber,
                     subscript.columnNumber, "Subscript access to an array must be an integer");
             this.semanticErrors.add(typeMismatch);
         }
-        String arrayType = subscript.lValue.accept(this);
-        if (arrayType == null) {
-            return null;
-        }
+
         ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(arrayType);
         return arrayTypeSymbol.getElementType();
     }
