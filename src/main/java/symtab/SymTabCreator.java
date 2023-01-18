@@ -632,19 +632,30 @@ public class SymTabCreator implements AstVisitor<String> {
         FuncSymbol castFuncSymbol = (FuncSymbol) funcSymbol;
         boolean hasTypeMismatch = false;
         List<String> funcArgsTypes = castFuncSymbol.getArgTypes();
-        for (Ast arg : callExp.args.args) {
-            String argType = arg.accept(this);
-            if (argType == null) {
-                SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
-                        arg.getColumnNumber(), "Argument type mismatch");
-                this.semanticErrors.add(argTypeMismatch);
-                hasTypeMismatch = true;
-            }
-            if (!argType.equals(funcArgsTypes.get(callExp.args.args.indexOf(arg)))) {
-                SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
-                        callExp.getColumnNumber(), "Argument type mismatch");
-                this.semanticErrors.add(argTypeMismatch);
-                hasTypeMismatch = true;
+        if (funcArgsTypes.size() != callExp.args.args.size()) {
+            System.out.println(funcArgsTypes.size() + " " + callExp.args.args.size());
+            SemanticError argCountMismatch = new SemanticError(callExp.lineNumber,
+                    callExp.columnNumber, "Argument count mismatch");
+            this.semanticErrors.add(argCountMismatch);
+            hasTypeMismatch = true;
+        }
+        if (funcArgsTypes.size() != 0) {
+            for (int i = 0; i < callExp.args.args.size(); i++) {
+                Ast arg = callExp.args.args.get(i);
+                String argType = arg.accept(this);
+                if (argType == null) {
+                    SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
+                            arg.getColumnNumber(), "Argument type mismatch");
+                    this.semanticErrors.add(argTypeMismatch);
+                    hasTypeMismatch = true;
+                }
+                if (!argType.equals(funcArgsTypes.get(i))) {
+                    System.out.println(argType + " " + funcArgsTypes.get(i));
+                    SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
+                            callExp.getColumnNumber(), "Argument type mismatch");
+                    this.semanticErrors.add(argTypeMismatch);
+                    hasTypeMismatch = true;
+                }
             }
         }
         if (hasTypeMismatch)
@@ -809,7 +820,15 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(FunDec funDec) {
         ArrayList<String> argTypes = new ArrayList<String>();
         for (FieldDec arg : funDec.args.args) {
-            argTypes.add(arg.typeId.name);
+            Symbol argTypeSymbol = this.lookup(arg.typeId.name, "TYPE");
+            if (argTypeSymbol == null) {
+                SemanticError undeclaredType = new SemanticError(arg.lineNumber, arg.columnNumber,
+                        "Undeclared type : " + arg.typeId.name);
+                this.semanticErrors.add(undeclaredType);
+            } else {
+                String argRootType = argTypeSymbol.getRootType();
+                argTypes.add(argRootType);
+            }
         }
         String rootFunctionType = this.resolveTypeAlias(funDec.returnTypeId.name + "_TYPE");
         this.addSymbol(funDec.id.name + "_VAR", new FuncSymbol(funDec.returnTypeId.name + "_TYPE",
