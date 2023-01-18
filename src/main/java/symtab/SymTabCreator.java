@@ -723,17 +723,18 @@ public class SymTabCreator implements AstVisitor<String> {
                             typeDec.columnNumber, "Undeclared type : " + field.typeId.name);
                     this.semanticErrors.add(undeclaredType);
                     flag = true;
-                }
-
-                String fieldRootType = fieldTypeSymbol.getRootType();
-                if (fields.containsKey(field.id.name)) {
-                    SemanticError fieldRedeclaration = new SemanticError(typeDec.lineNumber,
-                            typeDec.columnNumber,
-                            "Field redeclaration : the " + field.id.name + " field already exist");
-                    this.semanticErrors.add(fieldRedeclaration);
-                    flag = true;
                 } else {
-                    fields.put(field.id.name, fieldRootType);
+
+                    String fieldRootType = fieldTypeSymbol.getRootType();
+                    if (fields.containsKey(field.id.name)) {
+                        SemanticError fieldRedeclaration = new SemanticError(typeDec.lineNumber,
+                                typeDec.columnNumber, "Field redeclaration : the " + field.id.name
+                                        + " field already exist");
+                        this.semanticErrors.add(fieldRedeclaration);
+                        flag = true;
+                    } else {
+                        fields.put(field.id.name, fieldRootType);
+                    }
                 }
             }
             if (!flag) {
