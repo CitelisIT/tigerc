@@ -67,6 +67,7 @@ import symtab.symbol.RecordTypeSymbol;
 import symtab.symbol.SimpleTypeSymbol;
 import symtab.symbol.Symbol;
 import symtab.symbol.SymbolCat;
+import symtab.symbol.TypeSymbol;
 import symtab.symbol.VarSymbol;
 
 public class SymTabCreator implements AstVisitor<String> {
@@ -898,13 +899,17 @@ public class SymTabCreator implements AstVisitor<String> {
 
         String arrayType = subscript.lValue.accept(this);
         if (arrayType == null) {
+            SemanticError unknownType = new SemanticError(subscript.lineNumber,
+                    subscript.columnNumber, "Type of LValue can't be infered");
+            this.semanticErrors.add(unknownType);
             return null;
         }
         Symbol lvalueSymbol = this.lookup(arrayType);
+        TypeSymbol typeSymbol = (TypeSymbol) this.lookup(lvalueSymbol.getRootType()); 
 
-        if (!(lvalueSymbol instanceof ArrayTypeSymbol)) {
+        if (!(typeSymbol instanceof ArrayTypeSymbol)) {
             SemanticError wrongArraySubscript = new SemanticError(subscript.lineNumber,
-                    subscript.columnNumber, "only array symbol can be subscribt");
+                    subscript.columnNumber, "Expression is not subsccriptable");
             this.semanticErrors.add(wrongArraySubscript);
             return null;
         }
