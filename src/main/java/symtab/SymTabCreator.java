@@ -630,7 +630,8 @@ public class SymTabCreator implements AstVisitor<String> {
         String typeName = typeDec.typeId.name;
         Type typeValue = typeDec.typeValue;
 
-        if (this.lookup(typeName, "_TYPE") != null) {
+        if (this.symtab.get(this.currentScopeId).getSymbol(typeName + "_TYPE") != null
+                || this.symtab.get("predefined").getSymbol(typeName + "_TYPE") != null) {
             this.semanticErrors.add(new SemanticError(typeDec.lineNumber, typeDec.columnNumber,
                     "Type redeclaration : the " + typeName + " type already exist"));
             return null;
