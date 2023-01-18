@@ -684,8 +684,15 @@ public class GraphVizVisitor implements AstVisitor<String> {
 
     @Override
     public String visit(TypeDecs typeDecs) {
-        // TODO Auto-generated method stub
-        return null;
+        String nodeIdentifier = this.nextState();
+
+        this.addNode(nodeIdentifier, "Type Declarations");
+
+        for (TypeDec typeDec : typeDecs.tydecs) {
+            String typeDecId = typeDec.accept(this);
+            this.addTransition(nodeIdentifier, typeDecId);
+        }
+        return nodeIdentifier;
     }
 
 }

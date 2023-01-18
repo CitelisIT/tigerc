@@ -8,11 +8,11 @@ public class TypeDecs implements Ast {
         return visitor.visit(this);
     }
 
-    public final ArrayList<Ast> tydecs;
+    public final ArrayList<TypeDec> tydecs;
     public final int lineNumber;
     public final int columnNumber;
 
-    public TypeDecs(ArrayList<Ast> tydecs, int lineNumber, int columnNumber) {
+    public TypeDecs(ArrayList<TypeDec> tydecs, int lineNumber, int columnNumber) {
         this.tydecs = tydecs;
         this.lineNumber = lineNumber;
         this.columnNumber = columnNumber;
