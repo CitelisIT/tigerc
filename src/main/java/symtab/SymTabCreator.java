@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import ast.Add;
 import ast.And;
 import ast.ArrCreate;
@@ -68,6 +67,7 @@ import symtab.symbol.RecordTypeSymbol;
 import symtab.symbol.SimpleTypeSymbol;
 import symtab.symbol.Symbol;
 import symtab.symbol.SymbolCat;
+import symtab.symbol.TypeSymbol;
 import symtab.symbol.VarSymbol;
 
 public class SymTabCreator implements AstVisitor<String> {
@@ -79,6 +79,7 @@ public class SymTabCreator implements AstVisitor<String> {
     private final Map<String, String> typeAliases = new HashMap<String, String>();
     private final List<Integer> scopesByDepth = new ArrayList<Integer>();
     private final Set<Symbol> loopVariables = new HashSet<Symbol>();
+    private final List<String> decList = new ArrayList<String>();
 
     public SymTabCreator() {
         this.symtab.put("predefined", new PredefinedScope());
@@ -617,7 +618,48 @@ public class SymTabCreator implements AstVisitor<String> {
         callExp.id.accept(this);
         callExp.args.accept(this);
         String functionId = callExp.id.name;
-        FuncSymbol funcSymbol = (FuncSymbol) this.lookup(functionId, "VAR");
+        Symbol funcSymbol = this.lookup(functionId, "VAR");
+        if (funcSymbol == null) {
+            SemanticError functionNotDeclared = new SemanticError(callExp.lineNumber,
+                    callExp.columnNumber, "Function " + functionId + " is not declared");
+            this.semanticErrors.add(functionNotDeclared);
+            return null;
+        }
+        if (funcSymbol.getCategory() != SymbolCat.FUNC) {
+            SemanticError notAFunction = new SemanticError(callExp.lineNumber, callExp.columnNumber,
+                    "Variable " + functionId + " is not callable");
+            this.semanticErrors.add(notAFunction);
+            return null;
+        }
+        FuncSymbol castFuncSymbol = (FuncSymbol) funcSymbol;
+        boolean hasTypeMismatch = false;
+        List<String> funcArgsTypes = castFuncSymbol.getArgTypes();
+        if (funcArgsTypes.size() != callExp.args.args.size()) {
+            SemanticError argCountMismatch = new SemanticError(callExp.lineNumber,
+                    callExp.columnNumber, "Argument count mismatch");
+            this.semanticErrors.add(argCountMismatch);
+            hasTypeMismatch = true;
+        }
+        if (funcArgsTypes.size() != 0) {
+            for (int i = 0; i < callExp.args.args.size(); i++) {
+                Ast arg = callExp.args.args.get(i);
+                String argType = arg.accept(this);
+                if (argType == null) {
+                    SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
+                            arg.getColumnNumber(), "Argument type mismatch");
+                    this.semanticErrors.add(argTypeMismatch);
+                    hasTypeMismatch = true;
+                }
+                if (!argType.equals(funcArgsTypes.get(i))) {
+                    SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
+                            callExp.getColumnNumber(), "Argument type mismatch");
+                    this.semanticErrors.add(argTypeMismatch);
+                    hasTypeMismatch = true;
+                }
+            }
+        }
+        if (hasTypeMismatch)
+            return null;
         return funcSymbol.getType();
     }
 
@@ -630,7 +672,8 @@ public class SymTabCreator implements AstVisitor<String> {
         String typeName = typeDec.typeId.name;
         Type typeValue = typeDec.typeValue;
 
-        if (this.lookup(typeName, "_TYPE") != null) {
+        if (this.symtab.get(this.currentScopeId).getSymbol(typeName + "_TYPE") != null
+                || this.symtab.get("predefined").getSymbol(typeName + "_TYPE") != null) {
             this.semanticErrors.add(new SemanticError(typeDec.lineNumber, typeDec.columnNumber,
                     "Type redeclaration : the " + typeName + " type already exist"));
             return null;
@@ -681,10 +724,19 @@ public class SymTabCreator implements AstVisitor<String> {
                             typeDec.columnNumber, "Undeclared type : " + field.typeId.name);
                     this.semanticErrors.add(undeclaredType);
                     flag = true;
-                }
+                } else {
 
-                String fieldRootType = fieldTypeSymbol.getRootType();
-                fields.put(field.id.name, fieldRootType);
+                    String fieldRootType = fieldTypeSymbol.getRootType();
+                    if (fields.containsKey(field.id.name)) {
+                        SemanticError fieldRedeclaration = new SemanticError(typeDec.lineNumber,
+                                typeDec.columnNumber, "Field redeclaration : the " + field.id.name
+                                        + " field already exist");
+                        this.semanticErrors.add(fieldRedeclaration);
+                        flag = true;
+                    } else {
+                        fields.put(field.id.name, fieldRootType);
+                    }
+                }
             }
             if (!flag) {
                 this.addSymbol(typeName + "_TYPE",
@@ -698,9 +750,13 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(TypeDecs typeDecs) {
+        for (TypeDec dec : typeDecs.tydecs) {
+            decList.add(dec.typeId.name);
+        }
         for (Ast typdec : typeDecs.tydecs) {
             typdec.accept(this);
         }
+        decList.clear();
         // No type for declartations
         return null;
     }
@@ -775,9 +831,23 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(FunDec funDec) {
+        if (this.lookup(funDec.id.name, "VAR") != null) {
+            SemanticError funRedeclaration = new SemanticError(funDec.lineNumber,
+                    funDec.columnNumber,
+                    "Function redeclaration : the " + funDec.id.name + " function already exist");
+            this.semanticErrors.add(funRedeclaration);
+        }
         ArrayList<String> argTypes = new ArrayList<String>();
         for (FieldDec arg : funDec.args.args) {
-            argTypes.add(arg.typeId.name);
+            Symbol argTypeSymbol = this.lookup(arg.typeId.name, "TYPE");
+            if (argTypeSymbol == null) {
+                SemanticError undeclaredType = new SemanticError(arg.lineNumber, arg.columnNumber,
+                        "Undeclared type : " + arg.typeId.name);
+                this.semanticErrors.add(undeclaredType);
+            } else {
+                String argRootType = argTypeSymbol.getRootType();
+                argTypes.add(argRootType);
+            }
         }
         String rootFunctionType = this.resolveTypeAlias(funDec.returnTypeId.name + "_TYPE");
         this.addSymbol(funDec.id.name + "_VAR", new FuncSymbol(funDec.returnTypeId.name + "_TYPE",
@@ -846,15 +916,30 @@ public class SymTabCreator implements AstVisitor<String> {
 
     public String visit(Subscript subscript) {
         String accessExprType = subscript.expr.accept(this);
+
+        String arrayType = subscript.lValue.accept(this);
+        if (arrayType == null) {
+            SemanticError unknownType = new SemanticError(subscript.lineNumber,
+                    subscript.columnNumber, "Type of LValue can't be infered");
+            this.semanticErrors.add(unknownType);
+            return null;
+        }
+        Symbol lvalueSymbol = this.lookup(arrayType);
+        TypeSymbol typeSymbol = (TypeSymbol) this.lookup(lvalueSymbol.getRootType());
+
+        if (!(typeSymbol instanceof ArrayTypeSymbol)) {
+            SemanticError wrongArraySubscript = new SemanticError(subscript.lineNumber,
+                    subscript.columnNumber, "Expression is not subscriptable");
+            this.semanticErrors.add(wrongArraySubscript);
+            return null;
+        }
+
         if (!accessExprType.equals("int_TYPE")) {
             SemanticError typeMismatch = new SemanticError(subscript.lineNumber,
                     subscript.columnNumber, "Subscript access to an array must be an integer");
             this.semanticErrors.add(typeMismatch);
         }
-        String arrayType = subscript.lValue.accept(this);
-        if (arrayType == null) {
-            return null;
-        }
+
         ArrayTypeSymbol arrayTypeSymbol = (ArrayTypeSymbol) this.lookup(arrayType);
         return arrayTypeSymbol.getElementType();
     }
@@ -864,16 +949,24 @@ public class SymTabCreator implements AstVisitor<String> {
         if (recordType == null) {
             return null;
         }
-        RecordTypeSymbol recordTypeSymbol = (RecordTypeSymbol) this.lookup(recordType);
+        Symbol recordTypeSymbol = this.lookup(recordType);
+        TypeSymbol rootTypeSymbol = (TypeSymbol) this.lookup(recordTypeSymbol.getRootType());
+        if (!(rootTypeSymbol instanceof RecordTypeSymbol)) {
+            SemanticError typeMismatch = new SemanticError(fieldExp.lineNumber,
+                    fieldExp.columnNumber, "Expression is not a record");
+            this.semanticErrors.add(typeMismatch);
+            return null;
+        }
+        RecordTypeSymbol castTypeSymbol = (RecordTypeSymbol) rootTypeSymbol;
         String fieldName = fieldExp.id.name;
-        if (!recordTypeSymbol.getFields().containsKey(fieldName)) {
+        if (!castTypeSymbol.getFields().containsKey(fieldName)) {
             SemanticError typeMismatch =
                     new SemanticError(fieldExp.lineNumber, fieldExp.columnNumber,
                             "Record type " + recordType + " does not contain field " + fieldName);
             this.semanticErrors.add(typeMismatch);
             return null;
         }
-        return recordTypeSymbol.getFields().get(fieldExp.id.name);
+        return castTypeSymbol.getFields().get(fieldExp.id.name);
     }
 
     public String visit(ArrCreate arrCreate) {

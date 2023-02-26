@@ -6,14 +6,21 @@ let
     function duplicate_argument_name(duplicate_argument : int, duplicate_argument : int) : void =
         ()
     var nope_string := "nope"
+    var nope_string := 1
     var nope_int := 1
     type nope = int
+    type nope = string
     type nope_array_type = array of nope
     var nope_array := nope_array_type [nope_int] of nope_int
     type nope_record_type = {nope : nope}
+    type multiple_nope_record_type = {nope : nope, nope : nope}
     var nope_record := nope_record_type {nope = nope_int}
     var wrong_record_creation := nope_record_type {nope = nope_string}
     var wrong_array_creation := nope_array_type [nope_int] of nope_string
+    function dummy_function(int_arg: int, string_arg: string) : void =
+        ()
+    function dummy_function() : void =
+        ()
 in
     undeclared_variable := "nope";
     nope_int := "nope";
@@ -27,5 +34,10 @@ in
     "nope" = nope_int;
     nope_array < nope_record;
     nope_array["nope"];
-    nope_record.not_nope
+    nope_record.not_nope;
+    nope_string();
+    dummy_function(nope_string, nope_string);
+    dummy_function();
+    nope_int[1];
+    nope_int.nope
 end

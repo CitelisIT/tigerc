@@ -186,7 +186,10 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitNilLitteral(tigerParser.NilLitteralContext ctx) {
-		return new NilLiteral();
+		Token tok = ctx.getStart();
+		int lineNumber = tok.getLine();
+		int columnNumber = tok.getCharPositionInLine();
+		return new NilLiteral(lineNumber, columnNumber);
 	}
 
 	@Override
@@ -453,9 +456,9 @@ public class AstCreator extends tigerBaseVisitor<Ast> {
 
 	@Override
 	public Ast visitTypeDecs(tigerParser.TypeDecsContext ctx) {
-		ArrayList<Ast> typeDecs = new ArrayList<Ast>();
+		ArrayList<TypeDec> typeDecs = new ArrayList<TypeDec>();
 		for (tigerParser.TypeDecContext typeDec : ctx.tydecs) {
-			typeDecs.add(typeDec.accept(this));
+			typeDecs.add((TypeDec) typeDec.accept(this));
 		}
 		Token tok = ctx.getStart();
 		int lineNumber = tok.getLine();

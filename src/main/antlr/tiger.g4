@@ -55,11 +55,11 @@ forExp: 'for' forId=ID ':=' startValue=exp 'to' endValue=exp 'do' doExp=exp;
 
 letExp: 'let' (decls+=dec)+ inToken='in' (inExprs+=exp (';' inExprs+=exp)*)? 'end';
 
-dec: typeDec | varDec | funDec;
+dec: typeDecs | varDec | funDec;
 
 typeDec: 'type' typeId=ID '=' typeValue=type;
 
-typeDecs: (tydecs+=typeDec)*;
+typeDecs: (tydecs+=typeDec)+;
 
 varDec: 'var' varId=ID ( ':' typeId=ID )? ':=' varValue=exp;
 

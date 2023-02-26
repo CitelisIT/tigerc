@@ -18,4 +18,11 @@ public class FunArgs implements Ast {
         this.columnNumber = columnNumber;
     }
 
+    public int getLineNumber() {
+        return this.lineNumber;
+    }
+
+    public int getColumnNumber() {
+        return this.columnNumber;
+    }
 }
