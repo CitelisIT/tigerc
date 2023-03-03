@@ -1,9 +1,16 @@
 package codegen;
 
+import java.util.Map;
 import ast.AstVisitor;
-
+import symtab.scope.Scope;
 
 public class codegenVisitor implements AstVisitor<String> {
+
+    public codegenVisitor(Map<String, Scope> symtab) {
+        // TODO
+    }
+
+
 
     public String visit(ast.Program program) {
         // TODO
