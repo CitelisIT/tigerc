@@ -6,11 +6,41 @@ import symtab.scope.Scope;
 
 public class codegenVisitor implements AstVisitor<String> {
 
+    public String IncludeSection;
+    public String DataSection;
+    public String TextSection;
+    public String FuncSection;
+    public Map<String, Scope> TDS;
+
+
+
     public codegenVisitor(Map<String, Scope> symtab) {
-        // TODO
+        this.DataSection = ".data\n\n";
+        this.TextSection = ".text\n\n.global _start\n\n_start:\n\n";
+        this.IncludeSection = ".include     \"Base_function.s\"";
+        this.TDS = symtab;
     }
 
+    public String infixValueCodeGen(ast.Ast left, ast.Ast right) {
+        String leftValueCode;
+        String rightValueCode;
 
+        if (left instanceof ast.IntLiteral) {
+            ast.IntLiteral leftInt = (ast.IntLiteral) left;
+            leftValueCode = "MOV     R8,#" + leftInt.value + "\n";
+        } else {
+            left.accept(this);
+            leftValueCode = "POP     {R8}\n";
+        }
+        if (right instanceof ast.IntLiteral) {
+            ast.IntLiteral rightInt = (ast.IntLiteral) right;
+            rightValueCode = "MOV     R9,#" + rightInt.value + "\n";
+        } else {
+            right.accept(this);
+            rightValueCode = "POP     {R9}\n";
+        }
+        return rightValueCode + leftValueCode;
+    }
 
     public String visit(ast.Program program) {
         // TODO
@@ -63,32 +93,58 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Add add) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(add.left, add.right);
+        this.TextSection += "ADD     R8,R8,R9\n";
+        this.TextSection += "PUSH       {R8}\n";
         return null;
     }
 
     public String visit(ast.Sub sub) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(sub.left, sub.right);
+        this.TextSection += "SUB     R8,R8,R9\n";
+        this.TextSection += "PUSH       {R8}\n";
         return null;
     }
 
     public String visit(ast.Mult mult) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(mult.left, mult.right);
+        this.TextSection += "MUL     R8,R8,R9\n";
+        this.TextSection += "PUSH       {R8}\n";
         return null;
     }
 
     public String visit(ast.Div div) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(div.left, div.right);
+        this.TextSection += "SDIV     R8,R8,R9\n";
+        this.TextSection += "PUSH       {R8}\n";
         return null;
     }
 
     public String visit(ast.SeqExp seqExp) {
-        // TODO
+        for (ast.Ast exp : seqExp.exprs) {
+            this.TextSection += "\n";
+            exp.accept(this);
+        }
         return null;
     }
 
     public String visit(ast.Neg neg) {
-        // TODO
+        String exprValueCode;
+
+        if (neg.expr instanceof ast.IntLiteral) {
+            ast.IntLiteral intValue = (ast.IntLiteral) neg.expr;
+            exprValueCode = "MOV     R8,#" + intValue.value + "\n";
+        } else {
+            neg.expr.accept(this);
+            exprValueCode = "POP     {R8}\n";
+        }
+        this.TextSection += exprValueCode;
+        this.TextSection += "MOV    R9,#0\n";
+        this.TextSection += "SUB    R8,R9,R8\n";
         return null;
     }
 
@@ -104,6 +160,7 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.ForExp forExp) {
         // TODO
+
         return null;
     }
 
