@@ -12,7 +12,7 @@ public class codegenVisitor implements AstVisitor<String> {
     public String FuncSection;
     public Map<String, Scope> TDS;
 
-
+    public int currentWhileLoop = 0;
 
     public codegenVisitor(Map<String, Scope> symtab) {
         this.DataSection = ".data\n\n";
@@ -30,6 +30,7 @@ public class codegenVisitor implements AstVisitor<String> {
             leftValueCode = "MOV     R8,#" + leftInt.value + "\n";
         } else {
             left.accept(this);
+            this.TextSection += "PUSH       {R8}\n";
             leftValueCode = "POP     {R8}\n";
         }
         if (right instanceof ast.IntLiteral) {
@@ -37,13 +38,21 @@ public class codegenVisitor implements AstVisitor<String> {
             rightValueCode = "MOV     R9,#" + rightInt.value + "\n";
         } else {
             right.accept(this);
+            this.TextSection += "PUSH       {R8}\n";
             rightValueCode = "POP     {R9}\n";
         }
         return rightValueCode + leftValueCode;
     }
 
     public String visit(ast.Program program) {
-        // TODO
+        program.exp.accept(this);
+
+        this.TextSection += "\n@  EXIT WITH 0 VALUE\n";
+        this.TextSection += "MOV      R8,#0\n";
+        this.TextSection += "PUSH     {R8}\n";
+        this.TextSection += "BL     exit\n";
+        System.out.println(
+                this.IncludeSection + this.DataSection + this.TextSection + this.FuncSection);
         return null;
     }
 
@@ -53,22 +62,38 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Or or) {
-        // TODO
+        or.left.accept(this);
+        this.TextSection += "CMP      R8,#0\n";
+        this.TextSection += "BNE      OR_SKIP_" + or.lineNumber + "_" + or.columnNumber + "\n";
+        or.right.accept(this);
+        this.TextSection += "OR_SKIP_" + or.lineNumber + "_" + or.columnNumber + ":\n";
         return null;
     }
 
     public String visit(ast.And and) {
-        // TODO
+        and.left.accept(this);
+        this.TextSection += "CMP      R8,#0\n";
+        this.TextSection += "BEQ      AND_SKIP_" + and.lineNumber + "_" + and.columnNumber + "\n";
+        and.right.accept(this);
+        this.TextSection += "AND_SKIP_" + and.lineNumber + "_" + and.columnNumber + ":\n";
         return null;
     }
 
     public String visit(ast.Eq eq) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(eq.left, eq.right);
+        this.TextSection += "CMP     R8,R9\n";
+        this.TextSection += "MOVeq   R8,#1\n";
+        this.TextSection += "MOVne   R8,#0\n";
         return null;
     }
 
     public String visit(ast.NotEq notEq) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(notEq.left, notEq.right);
+        this.TextSection += "CMP     R8,R9\n";
+        this.TextSection += "MOVeq   R8,#0\n";
+        this.TextSection += "MOVne   R8,#1\n";
         return null;
     }
 
@@ -96,7 +121,6 @@ public class codegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         this.TextSection += infixValueCodeGen(add.left, add.right);
         this.TextSection += "ADD     R8,R8,R9\n";
-        this.TextSection += "PUSH       {R8}\n";
         return null;
     }
 
@@ -104,7 +128,6 @@ public class codegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         this.TextSection += infixValueCodeGen(sub.left, sub.right);
         this.TextSection += "SUB     R8,R8,R9\n";
-        this.TextSection += "PUSH       {R8}\n";
         return null;
     }
 
@@ -112,7 +135,6 @@ public class codegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         this.TextSection += infixValueCodeGen(mult.left, mult.right);
         this.TextSection += "MUL     R8,R8,R9\n";
-        this.TextSection += "PUSH       {R8}\n";
         return null;
     }
 
@@ -120,7 +142,6 @@ public class codegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         this.TextSection += infixValueCodeGen(div.left, div.right);
         this.TextSection += "SDIV     R8,R8,R9\n";
-        this.TextSection += "PUSH       {R8}\n";
         return null;
     }
 
@@ -133,16 +154,10 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Neg neg) {
-        String exprValueCode;
 
-        if (neg.expr instanceof ast.IntLiteral) {
-            ast.IntLiteral intValue = (ast.IntLiteral) neg.expr;
-            exprValueCode = "MOV     R8,#" + intValue.value + "\n";
-        } else {
-            neg.expr.accept(this);
-            exprValueCode = "POP     {R8}\n";
-        }
-        this.TextSection += exprValueCode;
+
+        neg.expr.accept(this);
+
         this.TextSection += "MOV    R9,#0\n";
         this.TextSection += "SUB    R8,R9,R8\n";
         return null;
@@ -276,12 +291,15 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.IntLiteral intLiteral) {
-        // TODO
+        this.TextSection += "MOV      R8,#" + intLiteral.value + "\n";
         return null;
     }
 
     public String visit(ast.StringLiteral stringLiteral) {
-        // TODO
+        this.DataSection += "STRING_" + stringLiteral.lineNumber + "_" + stringLiteral.columnNumber
+                + ": .asciz \"" + stringLiteral.value + "\"\n";
+        this.TextSection += "LDR      R8,=STRING_" + stringLiteral.lineNumber + "_"
+                + stringLiteral.columnNumber + "\n";
         return null;
     }
 
@@ -291,7 +309,7 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.BreakLiteral breakLiteral) {
-        // TODO
+        this.TextSection += "B      END_LOOP_" + this.currentWhileLoop + "\n";
         return null;
     }
 
