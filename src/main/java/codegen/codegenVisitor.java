@@ -57,7 +57,6 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Assign assign) {
-        // TODO
         return null;
     }
 
@@ -154,10 +153,7 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Neg neg) {
-
-
         neg.expr.accept(this);
-
         this.TextSection += "MOV    R9,#0\n";
         this.TextSection += "SUB    R8,R9,R8\n";
         return null;
@@ -169,13 +165,15 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.WhileExp whileExp) {
-        // TODO
-        return null;
-    }
-
-    public String visit(ast.ForExp forExp) {
-        // TODO
-
+        this.currentWhileLoop += 1;
+        this.TextSection += "LOOP_" + this.currentWhileLoop + ":\n";
+        whileExp.condition.accept(this);
+        this.TextSection += "CMP      R8,#0";
+        this.TextSection += "BEQ      END_LOOP_" + this.currentWhileLoop + "\n";
+        whileExp.doExpr.accept(this);
+        this.TextSection += "B        LOOP_" + this.currentWhileLoop + "\n";
+        this.TextSection += "END_LOOP_" + this.currentWhileLoop + ":\n";
+        this.currentWhileLoop -= 1;
         return null;
     }
 
@@ -195,7 +193,10 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.CallExpArgs callExpArgs) {
-        // TODO
+        for (ast.Ast arg : callExpArgs.args) {
+            arg.accept(this);
+            this.TextSection += "PUSH     {R8}\n";
+        }
         return null;
     }
 
@@ -205,17 +206,6 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.FieldDec fieldDec) {
-        // TODO
-        return null;
-    }
-
-
-    public String visit(ast.TypeDec typeDec) {
-        // TODO
-        return null;
-    }
-
-    public String visit(ast.TypeDecs typeDecs) {
         // TODO
         return null;
     }
@@ -255,11 +245,6 @@ public class codegenVisitor implements AstVisitor<String> {
         return null;
     }
 
-    public String visit(ast.RecType recType) {
-        // TODO
-        return null;
-    }
-
     public String visit(ast.Subscript subscript) {
         // TODO
         return null;
@@ -271,21 +256,6 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.ArrCreate arrCreate) {
-        // TODO
-        return null;
-    }
-
-    public String visit(ast.FieldCreate fieldCreate) {
-        // TODO
-        return null;
-    }
-
-    public String visit(ast.RecCreateFields recCreateFields) {
-        // TODO
-        return null;
-    }
-
-    public String visit(ast.RecCreate recCreate) {
         // TODO
         return null;
     }
