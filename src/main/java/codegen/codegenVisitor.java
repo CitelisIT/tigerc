@@ -353,4 +353,38 @@ public class codegenVisitor implements AstVisitor<String> {
         return null;
     }
 
+    public String visit(ast.RecCreate recCreate) {
+        // TODO
+        return null;
+    }
+
+    public String visit(ast.RecCreateFields recCreateFields) {
+        // TODO
+        return null;
+    }
+
+    public String visit(ast.FieldCreate fieldCreate) {
+        // TODO
+        return null;
+    }
+
+    public String visit(ast.RecType reType) {
+        // TODO
+        return null;
+    }
+
+    public String visit(ast.TypeDecs typeDecs) {
+        // TODO
+        return null;
+    }
+
+    public String visit(ast.TypeDec typeDec) {
+        // TODO
+        return null;
+    }
+
+    public String visit(ast.ForExp forExp) {
+        // TODO
+        return null;
+    }
 }
