@@ -2,10 +2,18 @@ package desugaring;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 import ast.*;
+import symtab.scope.Scope;
 
 public class Desugarer implements AstVisitor<Ast> {
+
+    public Map<String, Scope> symtab;
+
+    public Desugarer(Map<String, Scope> symtab) {
+        this.symtab = symtab;
+    }
 
     public Ast visit(Program program) {
         int lineNumber = program.getLineNumber();
