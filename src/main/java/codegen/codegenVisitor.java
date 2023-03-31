@@ -337,6 +337,7 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.BreakLiteral breakLiteral) {
         this.TextSection += "\tB      END_LOOP_" + this.currentWhileLoop + "\n";
+        this.currentWhileLoop -= 1;
         return null;
     }
 
