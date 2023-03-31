@@ -25,10 +25,16 @@ public class codegenVisitor implements AstVisitor<String> {
     public int currentWhileLoop = 0;
 
     public codegenVisitor(Map<String, Scope> symtab) {
-        this.DataSection = ".data\n\n";
-        this.TextSection = ".text\n\n.global _start\n\n_start:\n\n";
-        this.IncludeSection = ".include     \"Base_function.s\"";
         this.TDS = symtab;
+        int ImbLvlMax = -1;
+        for (String key : symtab.keySet()) {
+            int ImbLvl = symtab.get(key).getImbricationLevel();
+            ImbLvlMax = ImbLvlMax < ImbLvl ? ImbLvl : ImbLvlMax;
+        }
+        this.DataSection = ".data\n\n\tDISPLAY: .space " + 4 * ImbLvlMax + "\n";
+        this.TextSection = ".text\n\n.global _start\n\n_start:\n\n";
+        this.TextSection += "\tLDR R10,=DISPLAY\n";
+        this.IncludeSection = ".include     \"Base_function.s\"";
     }
 
     public String infixValueCodeGen(ast.Ast left, ast.Ast right) {
@@ -56,7 +62,6 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.Program program) {
         program.exp.accept(this);
-
         this.TextSection += "\n@  EXIT WITH 0 VALUE\n";
         this.TextSection += "\tMOV      R8,#0\n";
         this.TextSection += "\tPUSH     {R8}\n";
@@ -359,8 +364,8 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.StringLiteral stringLiteral) {
-        this.DataSection += "STRING_" + stringLiteral.lineNumber + "_" + stringLiteral.columnNumber
-                + ": .asciz \"" + stringLiteral.value + "\"\n";
+        this.DataSection += "\tSTRING_" + stringLiteral.lineNumber + "_"
+                + stringLiteral.columnNumber + ": .asciz \"" + stringLiteral.value + "\"\n";
         this.TextSection += "\tLDR      R8,=STRING_" + stringLiteral.lineNumber + "_"
                 + stringLiteral.columnNumber + "\n";
         return null;
