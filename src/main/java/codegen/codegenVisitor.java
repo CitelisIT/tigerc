@@ -111,22 +111,42 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.InfEq infEq) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(infEq.left, infEq.right);
+        // TODO disjonction de cas string
+        this.TextSection += "\tCMP     R8,R9\n";
+        this.TextSection += "\tMOVle   R8,#1\n";
+        this.TextSection += "\tMOVgt   R8,#0\n";
         return null;
     }
 
     public String visit(ast.Inf inf) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(inf.left, inf.right);
+        // TODO disjonction de cas string
+        this.TextSection += "\tCMP     R8,R9\n";
+        this.TextSection += "\tMOVlt   R8,#1\n";
+        this.TextSection += "\tMOVge   R8,#0\n";
         return null;
     }
 
     public String visit(ast.SupEq supEq) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(supEq.left, supEq.right);
+        // TODO disjonction de cas string
+        this.TextSection += "\tCMP     R8,R9\n";
+        this.TextSection += "\tMOVge   R8,#1\n";
+        this.TextSection += "\tMOVlt   R8,#0\n";
         return null;
     }
 
     public String visit(ast.Sup sup) {
-        // TODO
+        this.TextSection += "\n";
+        this.TextSection += infixValueCodeGen(sup.left, sup.right);
+        // TODO disjonction de cas string
+        this.TextSection += "\tCMP     R8,R9\n";
+        this.TextSection += "\tMOVgt   R8,#1\n";
+        this.TextSection += "\tMOVle   R8,#0\n";
         return null;
     }
 
