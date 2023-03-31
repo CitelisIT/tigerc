@@ -174,7 +174,22 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.IfThenElse ifThenElse) {
-        // TODO
+        ifThenElse.condition.accept(this);
+        this.TextSection += "\tCMP      R8,#1";
+        this.TextSection +=
+                "\tBEQ      IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+        this.TextSection +=
+                "\tBNE      ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+        this.TextSection += "IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
+        ifThenElse.thenExpr.accept(this);
+        this.TextSection += "ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
+        this.TextSection +=
+                "\tB        END_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+        ifThenElse.elseExpr.accept(this);
+        this.TextSection +=
+                "\tB        END_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+        this.TextSection +=
+                "END_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
         return null;
     }
 
@@ -325,33 +340,13 @@ public class codegenVisitor implements AstVisitor<String> {
         return null;
     }
 
-    public String visit(ForExp forExp) {
-        return null;
-    }
 
-    public String visit(TypeDec typeDec) {
-        return null;
-    }
-
-    public String visit(TypeDecs typeDecs) {
-        return null;
-    }
-
-    public String visit(RecType recType) {
-        return null;
-    }
 
     public String visit(FieldCreate fieldCreate) {
         return null;
     }
 
-    public String visit(RecCreateFields recCreateFields) {
-        return null;
-    }
 
-    public String visit(RecCreate recCreate) {
-        return null;
-    }
 
     public String visit(ast.RecCreate recCreate) {
         // TODO
@@ -359,11 +354,6 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.RecCreateFields recCreateFields) {
-        // TODO
-        return null;
-    }
-
-    public String visit(ast.FieldCreate fieldCreate) {
         // TODO
         return null;
     }
