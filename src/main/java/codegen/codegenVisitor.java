@@ -71,6 +71,7 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Assign assign) {
+        // TODO
         return null;
     }
 
@@ -271,7 +272,10 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.CallExp callExp) {
-        // TODO
+        callExp.args.accept(this);
+        this.TextSection += "\tBL     " + callExp.id.name + "\n";
+        int nbArgs = callExp.args.args.size();
+        this.TextSection += "\tADD      R13,R13,#" + 4 * nbArgs + "\n";
         return null;
     }
 
@@ -296,11 +300,20 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.FunDec funDec) {
-        this.TextSection += "" + funDec.id + ":\n";
+        String saveR8 = funDec.returnTypeId.name == "void" ? "\tPUSH        {R8}\n" : "";
+        String chargeR8 = funDec.returnTypeId.name == "void" ? "\tPOP        {R8}\n" : "";
+        this.TextSection += "" + funDec.id.name + ":\n";
         this.TextSection += "\tPUSH        {R11,LR}\n";
         this.TextSection += "\tMOV         R11,R13\n";
+
         // TODO : empiler le chainage statique et MAJ le DISPLAY
+
+        this.TextSection += saveR8;
         funDec.body.accept(this);
+        this.TextSection += chargeR8;
+
+        // TODO : dépiler le chainage statique et MAJ le DISPLAY
+
         this.TextSection += "\tMOV         R13,R11\n";
         this.TextSection += "\tPOP         {R11,PC}\n";
 
