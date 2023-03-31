@@ -78,18 +78,19 @@ public class codegenVisitor implements AstVisitor<String> {
     public String visit(ast.Or or) {
         or.left.accept(this);
         this.TextSection += "\tCMP      R8,#0\n";
-        this.TextSection += "\tBNE      OR_SKIP_" + or.lineNumber + "_" + or.columnNumber + "\n";
+        this.TextSection += "\tBNE      _OR_SKIP_" + or.lineNumber + "_" + or.columnNumber + "\n";
         or.right.accept(this);
-        this.TextSection += "OR_SKIP_" + or.lineNumber + "_" + or.columnNumber + ":\n";
+        this.TextSection += "_OR_SKIP_" + or.lineNumber + "_" + or.columnNumber + ":\n";
         return null;
     }
 
     public String visit(ast.And and) {
         and.left.accept(this);
         this.TextSection += "\tCMP      R8,#0\n";
-        this.TextSection += "\tBEQ      AND_SKIP_" + and.lineNumber + "_" + and.columnNumber + "\n";
+        this.TextSection +=
+                "\tBEQ      _AND_SKIP_" + and.lineNumber + "_" + and.columnNumber + "\n";
         and.right.accept(this);
-        this.TextSection += "AND_SKIP_" + and.lineNumber + "_" + and.columnNumber + ":\n";
+        this.TextSection += "_AND_SKIP_" + and.lineNumber + "_" + and.columnNumber + ":\n";
         return null;
     }
 
@@ -198,31 +199,32 @@ public class codegenVisitor implements AstVisitor<String> {
         ifThenElse.condition.accept(this);
         this.TextSection += "\tCMP      R8,#1";
         this.TextSection +=
-                "\tBEQ      IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+                "\tBEQ      _IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
         this.TextSection +=
-                "\tBNE      ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
-        this.TextSection += "IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
+                "\tBNE      _ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+        this.TextSection += "_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
         ifThenElse.thenExpr.accept(this);
-        this.TextSection += "ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
         this.TextSection +=
-                "\tB        END_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+                "_ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
+        this.TextSection += "\tB        _END_IF_" + ifThenElse.lineNumber + "_"
+                + ifThenElse.columnNumber + "\n";
         ifThenElse.elseExpr.accept(this);
+        this.TextSection += "\tB        _END_IF_" + ifThenElse.lineNumber + "_"
+                + ifThenElse.columnNumber + "\n";
         this.TextSection +=
-                "\tB        END_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
-        this.TextSection +=
-                "END_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
+                "_END_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
         return null;
     }
 
     public String visit(ast.WhileExp whileExp) {
         this.currentWhileLoop += 1;
-        this.TextSection += "LOOP_" + this.currentWhileLoop + ":\n";
+        this.TextSection += "_LOOP_" + this.currentWhileLoop + ":\n";
         whileExp.condition.accept(this);
         this.TextSection += "\tCMP      R8,#0";
-        this.TextSection += "\tBEQ      END_LOOP_" + this.currentWhileLoop + "\n";
+        this.TextSection += "\tBEQ      _END_LOOP_" + this.currentWhileLoop + "\n";
         whileExp.doExpr.accept(this);
         this.TextSection += "\tB        LOOP_" + this.currentWhileLoop + "\n";
-        this.TextSection += "END_LOOP_" + this.currentWhileLoop + ":\n";
+        this.TextSection += "_END_LOOP_" + this.currentWhileLoop + ":\n";
         this.currentWhileLoop -= 1;
         return null;
     }
@@ -302,6 +304,7 @@ public class codegenVisitor implements AstVisitor<String> {
     public String visit(ast.FunDec funDec) {
         String saveR8 = funDec.returnTypeId.name == "void" ? "\tPUSH        {R8}\n" : "";
         String chargeR8 = funDec.returnTypeId.name == "void" ? "\tPOP        {R8}\n" : "";
+
         this.TextSection += "" + funDec.id.name + ":\n";
         this.TextSection += "\tPUSH        {R11,LR}\n";
         this.TextSection += "\tMOV         R11,R13\n";
@@ -369,7 +372,7 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.BreakLiteral breakLiteral) {
-        this.TextSection += "\tB      END_LOOP_" + this.currentWhileLoop + "\n";
+        this.TextSection += "\tB      _END_LOOP_" + this.currentWhileLoop + "\n";
         this.currentWhileLoop -= 1;
         return null;
     }
