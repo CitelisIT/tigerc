@@ -2,6 +2,7 @@ package codegen;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.PriorityQueue;
 import ast.Ast;
 import ast.AstVisitor;
 import ast.FieldCreate;
@@ -20,7 +21,7 @@ public class codegenVisitor implements AstVisitor<String> {
     public String DataSection;
     public String TextSection;
     public Map<String, Scope> TDS;
-    public ArrayList<ast.Ast> funDecList;
+    public PriorityQueue<ast.Ast> funDecQueue;
 
     public int currentWhileLoop = 0;
 
@@ -68,9 +69,10 @@ public class codegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tBL     exit\n\n";
         this.TextSection += "\n\n@ Function Section \n";
 
-        for (ast.Ast fundec : this.funDecList) {
-            fundec.accept(this);
+        while (this.funDecQueue.size() > 0) {
+            funDecQueue.poll().accept(this);
         }
+
         System.out.println(this.IncludeSection + this.DataSection + this.TextSection);
         return null;
     }
@@ -237,7 +239,7 @@ public class codegenVisitor implements AstVisitor<String> {
     public String visit(ast.LetDecls letDecls) {
         for (ast.Ast dec : letDecls.decls) {
             if (dec instanceof FunDec) {
-                this.funDecList.add(dec);
+                this.funDecQueue.add(dec);
             } else {
                 dec.accept(this);
             }
