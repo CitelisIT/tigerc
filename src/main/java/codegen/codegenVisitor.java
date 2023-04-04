@@ -183,6 +183,8 @@ public class codegenVisitor implements AstVisitor<String> {
     public String visit(ast.Div div) {
         this.TextSection += "\n";
         this.TextSection += infixValueCodeGen(div.left, div.right);
+        this.TextSection += "\tCMP      R9,#0\n";
+        this.TextSection += "\tBEQ      ERROR_divide_by_zero\n";
         this.TextSection += "\tSDIV     R8,R8,R9\n";
         return null;
     }
@@ -225,14 +227,14 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.WhileExp whileExp) {
         this.currentWhileLoop += 1;
+        int id = this.currentWhileLoop;
         this.TextSection += "_LOOP_" + this.currentWhileLoop + ":\n";
         whileExp.condition.accept(this);
         this.TextSection += "\tCMP      R8,#0";
         this.TextSection += "\tBEQ      _END_LOOP_" + this.currentWhileLoop + "\n";
         whileExp.doExpr.accept(this);
         this.TextSection += "\tB        LOOP_" + this.currentWhileLoop + "\n";
-        this.TextSection += "_END_LOOP_" + this.currentWhileLoop + ":\n";
-        this.currentWhileLoop -= 1;
+        this.TextSection += "_END_LOOP_" + id + ":\n";
         return null;
     }
 
@@ -258,13 +260,14 @@ public class codegenVisitor implements AstVisitor<String> {
     public String visit(ast.LetExp letExp) {
         this.TextSection += "\tPUSH        {R11}\n";
         this.TextSection += "\tMOV         R11,R13\n";
-        letExp.letDecls.accept(this);
+        // TODO : empiler le chainage statique et MAJ le DISPLAY
         this.TextSection += "\n@ empile les registres de travail \n\tPUSH       {R0-R7}\n";
 
+        letExp.letDecls.accept(this);
         letExp.letScope.accept(this);
 
         this.TextSection += "\n@ dépile les registres de travail \n\tPOP        {R0-R7}\n";
-
+        // TODO : dépiler le chainage statique et MAJ le DISPLAY
         this.TextSection += "\tMOV         R13,R11\n";
         this.TextSection += "\tPOP         {R11}\n";
 
@@ -309,8 +312,8 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.FunDec funDec) {
-        String saveR8 = funDec.returnTypeId.name == "void" ? "\tPUSH        {R8}\n" : "";
-        String chargeR8 = funDec.returnTypeId.name == "void" ? "\tPOP        {R8}\n" : "";
+        // String saveR8 = funDec.returnTypeId.name == "void" ? "\tPUSH {R8}\n" : "";
+        // String chargeR8 = funDec.returnTypeId.name == "void" ? "\tPOP {R8}\n" : "";
 
         this.TextSection += "" + funDec.id.name + ":\n";
         this.TextSection += "\tPUSH        {R11,LR}\n";
@@ -318,9 +321,9 @@ public class codegenVisitor implements AstVisitor<String> {
 
         // TODO : empiler le chainage statique et MAJ le DISPLAY
 
-        this.TextSection += saveR8;
+        // this.TextSection += saveR8;
         funDec.body.accept(this);
-        this.TextSection += chargeR8;
+        // this.TextSection += chargeR8;
 
         // TODO : dépiler le chainage statique et MAJ le DISPLAY
 
@@ -356,7 +359,27 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.ArrCreate arrCreate) {
-        // TODO
+
+        this.TextSection += "\tPUSH       {R0,R1,R2}\n";
+        arrCreate.of.accept(this);
+        this.TextSection += "\tMOV       R0,R8\n";
+        arrCreate.index.accept(this);
+        this.TextSection += "\tADD       R1,R8,#1\n";
+        this.TextSection += "\tPUSH       {R1}\n";
+        this.TextSection += "\tBL        malloc\n\n";
+        this.TextSection += "\tSUB       R1,R1,#1\n";
+        this.TextSection += "\tSTR       R1,[R8]\n";
+        this.TextSection += "\tMOV       R2,#0\n\n";
+
+        // REMPLISSAGE avec R0 :
+        this.TextSection +=
+                "\t_FILL_ARR_LOOP_" + arrCreate.lineNumber + "_" + arrCreate.columnNumber + ":\n";
+        this.TextSection += "\tADD       R2,#1\n";
+        this.TextSection += "\tSTR       R0,[R8,R2,LSL #2]\n";
+        this.TextSection += "\tCMP       R2,R1\n";
+        this.TextSection += "\tBNE       _FILL_ARR_LOOP_" + arrCreate.lineNumber + "_"
+                + arrCreate.columnNumber + "\n\n";
+        this.TextSection += "\tPOP       {R0,R1,R2}\n";
         return null;
     }
 
@@ -374,7 +397,6 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.NilLiteral nilLiteral) {
-        // TODO
         return null;
     }
 
@@ -387,13 +409,16 @@ public class codegenVisitor implements AstVisitor<String> {
 
 
     public String visit(FieldCreate fieldCreate) {
+        // TODO
         return null;
     }
 
 
 
     public String visit(ast.RecCreate recCreate) {
+        this.TextSection += "\tPUSH       {R0,R1,R2}\n";
         // TODO
+        this.TextSection += "\tPOP        {R0,R1,R2}\n";
         return null;
     }
 
@@ -403,22 +428,18 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.RecType reType) {
-        // TODO
         return null;
     }
 
     public String visit(ast.TypeDecs typeDecs) {
-        // TODO
         return null;
     }
 
     public String visit(ast.TypeDec typeDec) {
-        // TODO
         return null;
     }
 
     public String visit(ast.ForExp forExp) {
-        // TODO
         return null;
     }
 }
