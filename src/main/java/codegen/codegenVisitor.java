@@ -349,12 +349,32 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Subscript subscript) {
-        // TODO
+        this.TextSection += "\tPUSH        {R0,R1}\n";
+
+        // Recupere l'adresse de la lvalue dans R8
+        subscript.lValue.accept(this);
+        this.TextSection += "\tPUSH        {R8}\n";
+
+        subscript.expr.accept(this);
+        this.TextSection += "\tPOP        {R0}\n";
+
+        this.TextSection += "\tMOV        R1,R8\n";
+        this.TextSection += "\tCMP        R1,#0\n";
+        this.TextSection += "\tBlt        _ERROR_index_out_of_range\n";
+
+        // Recuperarion de la taille du array dans R8
+        this.TextSection += "\tLDR        R8,[R0],#4\n";
+
+        // Comparaison de l'indice dans R1 avec la taille dans R8
+        this.TextSection += "\tCMP        R1,R8\n";
+        this.TextSection += "\tBge        _ERROR_index_out_of_range\n";
+
+        this.TextSection += "\tLDR        R8,[R0,R1,LSL #2]\n";
+        this.TextSection += "\tPOP        {R0,R1}\n";
         return null;
     }
 
     public String visit(ast.FieldExp fieldExp) {
-        // TODO
         return null;
     }
 
@@ -409,7 +429,6 @@ public class codegenVisitor implements AstVisitor<String> {
 
 
     public String visit(FieldCreate fieldCreate) {
-        // TODO
         return null;
     }
 
@@ -434,7 +453,6 @@ public class codegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.RecCreateFields recCreateFields) {
-        // TODO
         return null;
     }
 
