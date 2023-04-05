@@ -1,6 +1,7 @@
 package codegen;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.PriorityQueue;
 import ast.Ast;
@@ -21,7 +22,7 @@ public class codegenVisitor implements AstVisitor<String> {
     public String DataSection;
     public String TextSection;
     public Map<String, Scope> TDS;
-    public PriorityQueue<ast.Ast> funDecQueue;
+    public LinkedList<ast.Ast> funDecQueue = new LinkedList<ast.Ast>();
 
     public int currentWhileLoop = 0;
 
@@ -35,7 +36,7 @@ public class codegenVisitor implements AstVisitor<String> {
         this.DataSection = ".data\n\n\tDISPLAY: .space " + 4 * ImbLvlMax + "\n";
         this.TextSection = ".text\n\n.global _start\n\n_start:\n\n";
         this.TextSection += "\tLDR R10,=DISPLAY\n";
-        this.IncludeSection = ".include     \"Base_function.s\"";
+        this.IncludeSection = ".include     \"Base_function.s\"\n";
     }
 
     public String infixValueCodeGen(ast.Ast left, ast.Ast right) {
@@ -67,9 +68,10 @@ public class codegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tMOV      R8,#0\n";
         this.TextSection += "\tPUSH     {R8}\n";
         this.TextSection += "\tBL     exit\n\n";
-        this.TextSection += "\n\n@ Function Section \n";
+        this.TextSection += "\n____________________________\n@ Function Section \n\n";
 
         while (this.funDecQueue.size() > 0) {
+            this.TextSection += "\n";
             funDecQueue.poll().accept(this);
         }
 
@@ -206,11 +208,11 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.IfThenElse ifThenElse) {
         ifThenElse.condition.accept(this);
-        this.TextSection += "\tCMP      R8,#1";
+        this.TextSection += "\tCMP      R8,#0\n";
         this.TextSection +=
-                "\tBEQ      _IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+                "\tBNE      _IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
         this.TextSection +=
-                "\tBNE      _ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
+                "\tBEQ      _ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
         this.TextSection += "_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
         ifThenElse.thenExpr.accept(this);
         this.TextSection +=
@@ -230,7 +232,7 @@ public class codegenVisitor implements AstVisitor<String> {
         int id = this.currentWhileLoop;
         this.TextSection += "_LOOP_" + this.currentWhileLoop + ":\n";
         whileExp.condition.accept(this);
-        this.TextSection += "\tCMP      R8,#0";
+        this.TextSection += "\tCMP      R8,#0\n";
         this.TextSection += "\tBEQ      _END_LOOP_" + this.currentWhileLoop + "\n";
         whileExp.doExpr.accept(this);
         this.TextSection += "\tB        LOOP_" + this.currentWhileLoop + "\n";
