@@ -311,6 +311,7 @@ public class SymTabCreator implements AstVisitor<String> {
                             + leftType + " and " + rightType);
             this.semanticErrors.add(comparisonTypeMismatch);
         }
+        infEq.type = leftType;
         return "int_TYPE";
     }
 
@@ -338,6 +339,7 @@ public class SymTabCreator implements AstVisitor<String> {
                             + leftType + " and " + rightType);
             this.semanticErrors.add(comparisonTypeMismatch);
         }
+        inf.type = leftType;
         return "int_TYPE";
     }
 
@@ -365,6 +367,7 @@ public class SymTabCreator implements AstVisitor<String> {
                             + leftType + " and " + rightType);
             this.semanticErrors.add(comparisonTypeMismatch);
         }
+        supEq.type = leftType;
         return "int_TYPE";
     }
 
@@ -392,6 +395,7 @@ public class SymTabCreator implements AstVisitor<String> {
                             + leftType + " and " + rightType);
             this.semanticErrors.add(comparisonTypeMismatch);
         }
+        sup.type = leftType;
         return "int_TYPE";
     }
 
