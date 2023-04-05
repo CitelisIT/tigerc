@@ -197,3 +197,35 @@ tasks.register("symtab") {
         }
     } 
 }
+
+tasks.register("codegen") {
+    dependsOn "clean"
+    dependsOn "build"
+    tasks.findByName("build").mustRunAfter "clean"
+    doLast {
+        if (project.hasProperty("inFile") && project.hasProperty("outFile")) {
+            def startTime = System.nanoTime()
+            def totalTime
+            logTask "Generating code for program ${inFile}"
+            logCmd "java -cp build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar Main ${inFile} --compile ${outFile}"
+            def cmdOutput = new ByteArrayOutputStream()
+            def cmdError = new ByteArrayOutputStream()
+            exec {
+                commandLine "java", "-cp", "build/classes/java/main/:build/libs/:lib/antlr-4.9.2-complete.jar", "Main", inFile, "--compile", outFile
+                standardOutput = cmdOutput
+                errorOutput = cmdError
+                ignoreExitValue = true
+            }
+            logCmdOutput(cmdOutput, cmdError)
+            if (cmdError.size() != 0) {
+                totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+                println "\n${project.ext.ansiBold}${project.ext.ansiRed}TASK FAILED${project.ext.ansiReset} in ${totalTime}ms"
+                return
+            }
+            logInfo "Program compiled successfully"
+
+            totalTime = TimeUnit.MILLISECONDS.convert(System.nanoTime() - startTime, TimeUnit.NANOSECONDS);
+            println "\n${project.ext.ansiBold}${project.ext.ansiGreen}TASK SUCCESSFUL${project.ext.ansiReset} in ${totalTime}ms"
+        }
+    } 
+}
