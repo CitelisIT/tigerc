@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.RecognitionException;
 import ast.Ast;
+import codegen.CodegenVisitor;
 import errors.ErrorReportingMode;
 import errors.TigerChecker;
 import graphviz.GraphVizVisitor;
@@ -77,6 +78,21 @@ public class Main {
                         Map<String, Scope> symtab = programChecker.getSymTab();
                         SymTabPrinter symTabPrinter = new SymTabPrinter(symtab);
                         symTabPrinter.print();
+                        break;
+
+                    case "--compile":
+                        if (args.length < 3) {
+                            System.out.println(
+                                    "Error: '--compile' option expects a path for the output file.");
+                            return;
+                        } else {
+                            outFile = args[2];
+                        }
+                        symtab = programChecker.getSymTab();
+                        CodegenVisitor codegenVisitor = new CodegenVisitor(symtab);
+                        ast = programChecker.getAst();
+                        ast.accept(codegenVisitor);
+                        codegenVisitor.dumpOutput(outFile);
                         break;
                 }
             } else {
