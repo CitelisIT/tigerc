@@ -9,10 +9,11 @@ public class VarSymbol implements Symbol {
     private final String rootType;
     private int displacement;
 
-    public VarSymbol(String type, String rootType, String name) {
+    public VarSymbol(String type, String rootType, String name, int displacement) {
         this.type = type;
         this.rootType = rootType;
         this.name = name;
+        this.displacement = displacement;
     }
 
     public ArrayList<String> getSymtabLine() {

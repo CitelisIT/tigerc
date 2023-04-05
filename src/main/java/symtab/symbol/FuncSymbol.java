@@ -26,8 +26,8 @@ public class FuncSymbol implements Symbol {
         for (String typeString : argTypes) {
             argsTypeString.append(typeString).append(",");
         }
-        argsTypeString = new StringBuilder(argsTypeString.substring(0, argsTypeString.length() - 1) + " ) -> "
-                + getPrintType());
+        argsTypeString = new StringBuilder(argsTypeString.substring(0, argsTypeString.length() - 1)
+                + " ) -> " + getPrintType());
         line.add(argsTypeString.toString());
         line.add("" + getDisplacement());
         return line;

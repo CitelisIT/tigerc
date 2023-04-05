@@ -158,6 +158,25 @@ public class SymTabCreator implements AstVisitor<String> {
         return resolvedType;
     }
 
+    private int getScopeDisplacement() {
+        Scope scope = this.symtab.get(this.currentScopeId);
+        if (scope instanceof LocalScope) {
+            return ((LocalScope) scope).getMaxDisplacement();
+        } else if (scope instanceof GlobalScope) {
+            return ((GlobalScope) scope).getMaxDisplacement();
+        }
+        return 0;
+    }
+
+    private void addScopeDisplacement(int displacement) {
+        Scope scope = this.symtab.get(this.currentScopeId);
+        if (scope instanceof LocalScope) {
+            ((LocalScope) scope).addDisplacement(displacement);
+        } else if (scope instanceof GlobalScope) {
+            ((GlobalScope) scope).addDisplacement(displacement);
+        }
+    }
+
     public String visit(Program program) {
         program.exp.accept(this);
         return null;
@@ -543,7 +562,10 @@ public class SymTabCreator implements AstVisitor<String> {
         this.openScope();
         Symbol forIdSymbol = this.lookup(forExp.forId.name, "VAR");
         if (forIdSymbol == null) {
-            forIdSymbol = new VarSymbol("int_TYPE", "int_TYPE", forExp.forId.name);
+            int scopeDisplacement = this.getScopeDisplacement();
+            addScopeDisplacement(1);
+            forIdSymbol =
+                    new VarSymbol("int_TYPE", "int_TYPE", forExp.forId.name, scopeDisplacement + 1);
             this.addSymbol(forExp.forId.name + "_VAR", forIdSymbol);
         }
         this.loopVariables.add(forIdSymbol);
@@ -768,8 +790,10 @@ public class SymTabCreator implements AstVisitor<String> {
                     varDecType.columnNumber, "Undeclared type : " + varDecType.varTypeId.name);
             this.semanticErrors.add(undeclaredType);
             String varType = varDecType.varValue.accept(this);
+            int scopeDisplacement = getScopeDisplacement();
+            addScopeDisplacement(1);
             this.addSymbol(varDecType.varId.name + "_VAR",
-                    new VarSymbol(varType, varType, varDecType.varId.name));
+                    new VarSymbol(varType, varType, varDecType.varId.name, scopeDisplacement + 1));
         } else {
             String varDecRootType = varDecTypeSymbol.getRootType();
             Symbol varDecNameSymbol = this.lookup(varDecType.varId.name, "VAR");
@@ -785,8 +809,11 @@ public class SymTabCreator implements AstVisitor<String> {
                     this.semanticErrors.add(varRedeclaration);
                 }
             }
-            this.addSymbol(varDecType.varId.name + "_VAR", new VarSymbol(
-                    varDecType.varTypeId.name + "_TYPE", varDecRootType, varDecType.varId.name));
+            int scopeDisplacement = getScopeDisplacement();
+            addScopeDisplacement(1);
+            this.addSymbol(varDecType.varId.name + "_VAR",
+                    new VarSymbol(varDecType.varTypeId.name + "_TYPE", varDecRootType,
+                            varDecType.varId.name, scopeDisplacement + 1));
             String varType = varDecType.varValue.accept(this);
             if (!varType.equals(varDecRootType)) {
                 SemanticError varTypeMismatch = new SemanticError(varDecType.lineNumber,
@@ -817,8 +844,10 @@ public class SymTabCreator implements AstVisitor<String> {
                 this.semanticErrors.add(varNameAlreadyDeclared);
             }
         }
+        int scopeDisplacement = getScopeDisplacement();
+        addScopeDisplacement(1);
         this.addSymbol(varDecNoType.varId.name + "_VAR",
-                new VarSymbol(varType, rootType, varDecNoType.varId.name));
+                new VarSymbol(varType, rootType, varDecNoType.varId.name, scopeDisplacement + 1));
         // No type for declartations
         return null;
     }
@@ -854,6 +883,7 @@ public class SymTabCreator implements AstVisitor<String> {
                 rootFunctionType, argTypes, funDec.id.name));
         this.openScope();
         Set<String> argNames = new HashSet<String>();
+        int amountOfArgs = funDec.args.args.size();
         for (FieldDec arg : funDec.args.args) {
             String argRootType = this.resolveTypeAlias(arg.typeId.name + "_TYPE");
             if (!argNames.add(arg.id.name)) {
@@ -861,8 +891,11 @@ public class SymTabCreator implements AstVisitor<String> {
                         "Duplicate argument name : " + arg.id.name);
                 this.semanticErrors.add(duplicateArgName);
             } else {
-                this.addSymbol(arg.id.name + "_VAR",
-                        new VarSymbol(arg.typeId.name + "_TYPE", argRootType, arg.id.name));
+                int scopeDisplacement = getScopeDisplacement();
+                addScopeDisplacement(-1);
+                this.addSymbol(arg.id.name + "_VAR", new VarSymbol(arg.typeId.name + "_TYPE",
+                        argRootType, arg.id.name, -amountOfArgs));
+                amountOfArgs--;
             }
         }
 
