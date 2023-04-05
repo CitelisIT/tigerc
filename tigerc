@@ -10,6 +10,7 @@ Tasks:
     --check-syntax          Check the syntax of the input program
     --check-semantics       Check the semantics of the input program
     --symtab                Dump the input program's symbol table
+    --compile               Compile the input program
 
 Options:
     -h, --help              Show this message
@@ -48,6 +49,11 @@ if [[ "$TASK" == "--ast" ]]; then
     shift
 fi
 
+if [[ "$TASK" == "--compile" ]]; then
+    OUTFILE=$1
+    shift
+fi
+
 # Parse optional options
 while [[ "$#" -gt 0 ]]; do
     case $1 in
@@ -81,5 +87,6 @@ case $TASK in
 --check-syntax) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL syntax -PinFile=$TARGET -Pcolor=$COLOR ;;
 --check-semantics) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL semantics -PinFile=$TARGET -Pcolor=$COLOR ;;
 --symtab) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL symtab -PinFile=$TARGET -Pcolor=$COLOR ;;
+--compile) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL codegen -PinFile=$TARGET -PoutFile=$OUTFILE -Pcolor=$COLOR ;;
 *) error "Invalid task $TASK" ;;
 esac
