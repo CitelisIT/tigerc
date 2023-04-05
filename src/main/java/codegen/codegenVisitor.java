@@ -417,8 +417,19 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.RecCreate recCreate) {
         this.TextSection += "\tPUSH       {R0,R1,R2}\n";
-        // TODO
-        this.TextSection += "\tPOP        {R0,R1,R2}\n";
+        ArrayList<ast.FieldCreate> fields = recCreate.fields.fields;
+        this.TextSection += "\tMOV          R0,#" + (fields.size() + 1) + "\n";
+        this.TextSection += "\tPUSH         {R0}\n";
+        this.TextSection += "\tBL           malloc\n";
+        this.TextSection += "\tMOV          R0,R8\n";
+        for (int i = 0; i < fields.size(); i++) {
+            fields.get(i).expr.accept(this);
+            this.TextSection += "\tSTR          R8,[R0,#" + (i + 1) + "]\n";
+        }
+        this.TextSection += "\tMOV          R8,#" + fields.size() + "\n";
+        this.TextSection += "\tSTR          R8,[R0]\n";
+        this.TextSection += "\tMOV          R8,R0\n";
+        this.TextSection += "\tPOP          {R0,R1,R2}\n";
         return null;
     }
 
