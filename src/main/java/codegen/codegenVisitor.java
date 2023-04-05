@@ -105,7 +105,8 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.Eq eq) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(eq.left, eq.right);
+        String infixValueCode = infixValueCodeGen(eq.left, eq.right);
+        this.TextSection += infixValueCode;
         this.TextSection += "\tCMP     R8,R9\n";
         this.TextSection += "\tMOVeq   R8,#1\n";
         this.TextSection += "\tMOVne   R8,#0\n";
@@ -114,7 +115,8 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.NotEq notEq) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(notEq.left, notEq.right);
+        String infixValueCode = infixValueCodeGen(notEq.left, notEq.right);
+        this.TextSection += infixValueCode;
         this.TextSection += "\tCMP     R8,R9\n";
         this.TextSection += "\tMOVeq   R8,#0\n";
         this.TextSection += "\tMOVne   R8,#1\n";
@@ -123,7 +125,8 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.InfEq infEq) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(infEq.left, infEq.right);
+        String infixValueCode = infixValueCodeGen(infEq.left, infEq.right);
+        this.TextSection += infixValueCode;
         // TODO disjonction de cas string
         this.TextSection += "\tCMP     R8,R9\n";
         this.TextSection += "\tMOVle   R8,#1\n";
@@ -133,7 +136,8 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.Inf inf) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(inf.left, inf.right);
+        String infixValueCode = infixValueCodeGen(inf.left, inf.right);
+        this.TextSection += infixValueCode;
         // TODO disjonction de cas string
         this.TextSection += "\tCMP     R8,R9\n";
         this.TextSection += "\tMOVlt   R8,#1\n";
@@ -143,7 +147,8 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.SupEq supEq) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(supEq.left, supEq.right);
+        String infixValueCode = infixValueCodeGen(supEq.left, supEq.right);
+        this.TextSection += infixValueCode;
         // TODO disjonction de cas string
         this.TextSection += "\tCMP     R8,R9\n";
         this.TextSection += "\tMOVge   R8,#1\n";
@@ -153,7 +158,8 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.Sup sup) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(sup.left, sup.right);
+        String infixValueCode = infixValueCodeGen(sup.left, sup.right);
+        this.TextSection += infixValueCode;
         // TODO disjonction de cas string
         this.TextSection += "\tCMP     R8,R9\n";
         this.TextSection += "\tMOVgt   R8,#1\n";
@@ -163,28 +169,32 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.Add add) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(add.left, add.right);
+        String infixValueCode = infixValueCodeGen(add.left, add.right);
+        this.TextSection += infixValueCode;
         this.TextSection += "\tADD     R8,R8,R9\n";
         return null;
     }
 
     public String visit(ast.Sub sub) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(sub.left, sub.right);
+        String infixValueCode = infixValueCodeGen(sub.left, sub.right);
+        this.TextSection += infixValueCode;
         this.TextSection += "\tSUB     R8,R8,R9\n";
         return null;
     }
 
     public String visit(ast.Mult mult) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(mult.left, mult.right);
+        String infixValueCode = infixValueCodeGen(mult.left, mult.right);
+        this.TextSection += infixValueCode;
         this.TextSection += "\tMUL     R8,R8,R9\n";
         return null;
     }
 
     public String visit(ast.Div div) {
         this.TextSection += "\n";
-        this.TextSection += infixValueCodeGen(div.left, div.right);
+        String infixValueCode = infixValueCodeGen(div.left, div.right);
+        this.TextSection += infixValueCode;
         this.TextSection += "\tCMP      R9,#0\n";
         this.TextSection += "\tBEQ      ERROR_divide_by_zero\n";
         this.TextSection += "\tSDIV     R8,R8,R9\n";
