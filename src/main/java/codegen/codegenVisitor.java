@@ -1,5 +1,7 @@
 package codegen;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
@@ -37,6 +39,17 @@ public class codegenVisitor implements AstVisitor<String> {
         this.TextSection = ".text\n\n.global _start\n\n_start:\n\n";
         this.TextSection += "\tLDR R10,=DISPLAY\n";
         this.IncludeSection = ".include     \"Base_function.s\"\n";
+    }
+
+    public void dumpOutput(String filepath) throws IOException {
+
+        FileOutputStream output = new FileOutputStream(filepath);
+
+        String compiledText = this.IncludeSection + "\n" + this.DataSection + "\n" + this.TextSection;
+        byte[] compiledBytes = compiledText.getBytes();
+
+        output.write(compiledBytes);
+        output.close();
     }
 
     public String infixValueCodeGen(ast.Ast left, ast.Ast right) {
