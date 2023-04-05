@@ -18,7 +18,7 @@ import ast.TypeDec;
 import ast.TypeDecs;
 import symtab.scope.Scope;
 
-public class codegenVisitor implements AstVisitor<String> {
+public class CodegenVisitor implements AstVisitor<String> {
 
     public String IncludeSection;
     public String DataSection;
@@ -28,7 +28,7 @@ public class codegenVisitor implements AstVisitor<String> {
 
     public int currentWhileLoop = 0;
 
-    public codegenVisitor(Map<String, Scope> symtab) {
+    public CodegenVisitor(Map<String, Scope> symtab) {
         this.TDS = symtab;
         int ImbLvlMax = -1;
         for (String key : symtab.keySet()) {
