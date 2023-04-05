@@ -68,7 +68,7 @@ public class codegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tMOV      R8,#0\n";
         this.TextSection += "\tPUSH     {R8}\n";
         this.TextSection += "\tBL     exit\n\n";
-        this.TextSection += "\n____________________________\n@ Function Section \n\n";
+        this.TextSection += "\n@____________________________\n@ Function Section \n\n";
 
         while (this.funDecQueue.size() > 0) {
             this.TextSection += "\n";
