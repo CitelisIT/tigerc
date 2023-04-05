@@ -88,7 +88,6 @@ public class CodegenVisitor implements AstVisitor<String> {
             funDecQueue.poll().accept(this);
         }
 
-        System.out.println(this.IncludeSection + this.DataSection + this.TextSection);
         return null;
     }
 
