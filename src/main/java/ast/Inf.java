@@ -10,6 +10,7 @@ public class Inf implements Ast {
     public final Ast right;
     public final int lineNumber;
     public final int columnNumber;
+    public String type;
 
     public Inf(Ast left, Ast right, int lineNumber, int columnNumber) {
         this.left = left;
