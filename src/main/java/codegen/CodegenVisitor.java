@@ -157,8 +157,14 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(inf.left, inf.right);
         this.TextSection += infixValueCode;
-        // TODO disjonction de cas string
-        this.TextSection += "\tCMP     R8,R9\n";
+        if (inf.type == "string_TYPE") {
+            this.TextSection += "\tPUSH     {R8,R9}\n";
+            this.TextSection += "\tBL       strcmp\n";
+            this.TextSection += "\tADD       R13,R13,#8\n";
+            this.TextSection += "\tCMP     R8,#0\n";
+        } else {
+            this.TextSection += "\tCMP     R8,R9\n";
+        }
         this.TextSection += "\tMOVlt   R8,#1\n";
         this.TextSection += "\tMOVge   R8,#0\n";
         return null;
@@ -168,8 +174,14 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(supEq.left, supEq.right);
         this.TextSection += infixValueCode;
-        // TODO disjonction de cas string
-        this.TextSection += "\tCMP     R8,R9\n";
+        if (supEq.type == "string_TYPE") {
+            this.TextSection += "\tPUSH     {R8,R9}\n";
+            this.TextSection += "\tBL       strcmp\n";
+            this.TextSection += "\tADD       R13,R13,#8\n";
+            this.TextSection += "\tCMP     R8,#0\n";
+        } else {
+            this.TextSection += "\tCMP     R8,R9\n";
+        }
         this.TextSection += "\tMOVge   R8,#1\n";
         this.TextSection += "\tMOVlt   R8,#0\n";
         return null;
@@ -179,8 +191,14 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(sup.left, sup.right);
         this.TextSection += infixValueCode;
-        // TODO disjonction de cas string
-        this.TextSection += "\tCMP     R8,R9\n";
+        if (sup.type == "string_TYPE") {
+            this.TextSection += "\tPUSH     {R8,R9}\n";
+            this.TextSection += "\tBL       strcmp\n";
+            this.TextSection += "\tADD       R13,R13,#8\n";
+            this.TextSection += "\tCMP     R8,#0\n";
+        } else {
+            this.TextSection += "\tCMP     R8,R9\n";
+        }
         this.TextSection += "\tMOVgt   R8,#1\n";
         this.TextSection += "\tMOVle   R8,#0\n";
         return null;
