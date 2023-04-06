@@ -16,7 +16,7 @@ Tasks:
     --check-syntax          Check the syntax of the input program
     --check-semantics       Check the semantics of the input program
     --symtab                Dump the input program's symbol table
-
+    --compile               Compile the input program
 Options:
     -h, --help              Show this message
     --color                 Turns on colored output (default=true)
