@@ -45,7 +45,8 @@ public class CodegenVisitor implements AstVisitor<String> {
 
         FileOutputStream output = new FileOutputStream(filepath);
 
-        String compiledText = this.IncludeSection + "\n" + this.DataSection + "\n" + this.TextSection;
+        String compiledText =
+                this.IncludeSection + "\n" + this.DataSection + "\n" + this.TextSection;
         byte[] compiledBytes = compiledText.getBytes();
 
         output.write(compiledBytes);
@@ -139,8 +140,14 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(infEq.left, infEq.right);
         this.TextSection += infixValueCode;
-        // TODO disjonction de cas string
-        this.TextSection += "\tCMP     R8,R9\n";
+        if (infEq.type == "string_TYPE") {
+            this.TextSection += "\tPUSH     {R8,R9}\n";
+            this.TextSection += "\tBL       strcmp\n";
+            this.TextSection += "\tADD       R13,#8\n";
+            this.TextSection += "\tCMP     R8,#0\n";
+        } else {
+            this.TextSection += "\tCMP     R8,R9\n";
+        }
         this.TextSection += "\tMOVle   R8,#1\n";
         this.TextSection += "\tMOVgt   R8,#0\n";
         return null;
@@ -434,7 +441,7 @@ public class CodegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.StringLiteral stringLiteral) {
         this.DataSection += "\tSTRING_" + stringLiteral.lineNumber + "_"
-                + stringLiteral.columnNumber + ": .asciz \"" + stringLiteral.value + "\"\n";
+                + stringLiteral.columnNumber + ": .asciz " + stringLiteral.value + "\n";
         this.TextSection += "\tLDR      R8,=STRING_" + stringLiteral.lineNumber + "_"
                 + stringLiteral.columnNumber + "\n";
         return null;
