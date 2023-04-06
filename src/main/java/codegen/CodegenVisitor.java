@@ -143,7 +143,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         if (infEq.type == "string_TYPE") {
             this.TextSection += "\tPUSH     {R8,R9}\n";
             this.TextSection += "\tBL       strcmp\n";
-            this.TextSection += "\tADD       R13,#8\n";
+            this.TextSection += "\tADD       R13,R13,#8\n";
             this.TextSection += "\tCMP     R8,#0\n";
         } else {
             this.TextSection += "\tCMP     R8,R9\n";
@@ -418,6 +418,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tADD       R1,R8,#1\n";
         this.TextSection += "\tPUSH       {R1}\n";
         this.TextSection += "\tBL        malloc\n\n";
+        this.TextSection += "\tADD       R13,R13,#4\n";
         this.TextSection += "\tSUB       R1,R1,#1\n";
         this.TextSection += "\tSTR       R1,[R8]\n";
         this.TextSection += "\tMOV       R2,#0\n\n";
@@ -471,6 +472,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tMOV          R0,#" + (fields.size() + 1) + "\n";
         this.TextSection += "\tPUSH         {R0}\n";
         this.TextSection += "\tBL           malloc\n";
+        this.TextSection += "\tADD       R13,R13,#4\n";
         this.TextSection += "\tMOV          R0,R8\n";
         for (int i = 0; i < fields.size(); i++) {
             fields.get(i).expr.accept(this);
