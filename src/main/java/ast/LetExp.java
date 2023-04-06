@@ -10,6 +10,7 @@ public class LetExp implements Ast {
     public final LetScope letScope;
     public final int lineNumber;
     public final int columnNumber;
+    public String ScopeID;
 
     public LetExp(LetDecls letDecls, LetScope letScope, int lineNumber, int columnNumber) {
         this.letDecls = letDecls;

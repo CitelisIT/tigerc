@@ -12,6 +12,7 @@ public class ForExp implements Ast {
     public final Ast doExpr;
     public final int lineNumber;
     public final int columnNumber;
+    public String ScopeID;
 
     public ForExp(Id forId, Ast startValue, Ast endValue, Ast doExpr, int lineNumber,
             int columnNumber) {

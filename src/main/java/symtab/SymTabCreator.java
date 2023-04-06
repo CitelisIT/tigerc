@@ -603,6 +603,7 @@ public class SymTabCreator implements AstVisitor<String> {
                             + forVarValueType + " but should be of type int");
             this.semanticErrors.add(varTypeMismatch);
         }
+        forExp.ScopeID = this.currentScopeId;
         this.loopVariables.remove(forIdSymbol);
         this.closeScope();
         return "void_TYPE";
@@ -629,6 +630,7 @@ public class SymTabCreator implements AstVisitor<String> {
         this.openScope();
         letExp.letDecls.accept(this);
         String scopeExpType = letExp.letScope.accept(this);
+        letExp.ScopeID = currentScopeId;
         this.closeScope();
         return scopeExpType;
     }
@@ -921,6 +923,7 @@ public class SymTabCreator implements AstVisitor<String> {
             this.semanticErrors.add(incompatibleReturnType);
         }
         // No type for declartations
+        funDec.ScopeID = this.currentScopeId;
         this.closeScope();
         return null;
     }

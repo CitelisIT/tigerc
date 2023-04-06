@@ -9,6 +9,7 @@ public class Id implements Ast {
     public final String name;
     public final int lineNumber;
     public final int columnNumber;
+    public String scopeId;
 
     public Id(String name, int lineNumber, int columnNumber) {
         this.name = name;

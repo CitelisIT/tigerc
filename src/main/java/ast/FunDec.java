@@ -12,6 +12,7 @@ public class FunDec implements Ast {
     public final Ast body;
     public final int lineNumber;
     public final int columnNumber;
+    public String ScopeID;
 
     public FunDec(Id id, FunArgs args, TypeId returnTypeId, Ast body, int lineNumber,
             int columnNumber) {
