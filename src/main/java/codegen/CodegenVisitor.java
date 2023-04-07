@@ -11,12 +11,16 @@ import ast.AstVisitor;
 import ast.FieldCreate;
 import ast.ForExp;
 import ast.FunDec;
+import ast.Id;
 import ast.RecCreate;
 import ast.RecCreateFields;
 import ast.RecType;
+import ast.Subscript;
 import ast.TypeDec;
 import ast.TypeDecs;
+import ast.VarDecNoType;
 import symtab.scope.Scope;
+import symtab.symbol.Symbol;
 
 public class CodegenVisitor implements AstVisitor<String> {
 
@@ -35,7 +39,7 @@ public class CodegenVisitor implements AstVisitor<String> {
             int ImbLvl = symtab.get(key).getImbricationLevel();
             ImbLvlMax = ImbLvlMax < ImbLvl ? ImbLvl : ImbLvlMax;
         }
-        this.DataSection = ".data\n\n\tDISPLAY: .space " + 4 * ImbLvlMax + "\n";
+        this.DataSection = ".data\n\n\tDISPLAY: .space " + 4 * (ImbLvlMax + 1) + "\n";
         this.TextSection = ".text\n\n.global _start\n\n_start:\n\n";
         this.TextSection += "\tLDR R10,=DISPLAY\n";
         this.IncludeSection = ".include     \"Base_function.s\"\n";
@@ -51,6 +55,17 @@ public class CodegenVisitor implements AstVisitor<String> {
 
         output.write(compiledBytes);
         output.close();
+    }
+
+    public String searchScope(String currentScopeId, String symbolname) {
+        System.out.println(TDS);
+        Scope Scope = this.TDS.get(currentScopeId);
+        Symbol symbol = Scope.getSymbol(symbolname);
+        if (symbol == null) {
+            return searchScope(Scope.getParentScope(), symbolname);
+        } else {
+            return currentScopeId;
+        }
     }
 
     public String infixValueCodeGen(ast.Ast left, ast.Ast right) {
@@ -93,7 +108,30 @@ public class CodegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Assign assign) {
-        // TODO
+        if (assign.lValue instanceof ast.Subscript) {
+            Subscript subscript = (Subscript) assign.lValue;
+            subscript.lValue.accept(this);
+            this.TextSection += "\tPUSH     {R8}\n";
+            subscript.expr.accept(this);
+            this.TextSection += "\tPUSH     {R8}\n";
+            assign.expr.accept(this);
+            this.TextSection += "\tPOP     {R1}\n";
+            this.TextSection += "\tPOP     {R0}\n";
+            this.TextSection += "\tSTR      R8,[R0,R1,LSL #2]\n";
+
+        } else {
+            Id id = (Id) assign.lValue;
+            String ScopeId = this.searchScope(id.scopeId, id.name + "_VAR");
+            int deplacement = TDS.get(ScopeId).getSymbol(id.name + "_VAR").getDisplacement();
+            assign.expr.accept(this);
+            if (id.scopeId.equals(ScopeId)) {
+                this.TextSection += "\tSTR    R8,[R11,#" + deplacement + "*-4]\n";
+            } else {
+                int imbricationLvl = this.TDS.get(ScopeId).getImbricationLevel();
+                this.TextSection += "\tLDR    R12,[R10,#" + imbricationLvl + "*4]\n";
+                this.TextSection += "\tSTR    R8,[R12,#" + deplacement + "*-4]\n";
+            }
+        }
         return null;
     }
 
@@ -224,7 +262,10 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(mult.left, mult.right);
         this.TextSection += infixValueCode;
-        this.TextSection += "\tMUL     R8,R8,R9\n";
+        this.TextSection += "\tPUSH     {R0}\n";
+        this.TextSection += "\tMUL      R0,R8,R9\n";
+        this.TextSection += "\tMOV      R8,R0\n";
+        this.TextSection += "\tPOP      {R0}\n";
         return null;
     }
 
@@ -262,10 +303,10 @@ public class CodegenVisitor implements AstVisitor<String> {
                 "\tBEQ      _ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + "\n";
         this.TextSection += "_IF_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
         ifThenElse.thenExpr.accept(this);
-        this.TextSection +=
-                "_ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
         this.TextSection += "\tB        _END_IF_" + ifThenElse.lineNumber + "_"
                 + ifThenElse.columnNumber + "\n";
+        this.TextSection +=
+                "_ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
         ifThenElse.elseExpr.accept(this);
         this.TextSection += "\tB        _END_IF_" + ifThenElse.lineNumber + "_"
                 + ifThenElse.columnNumber + "\n";
@@ -309,14 +350,24 @@ public class CodegenVisitor implements AstVisitor<String> {
     public String visit(ast.LetExp letExp) {
         this.TextSection += "\tPUSH        {R11}\n";
         this.TextSection += "\tMOV         R11,R13\n";
-        // TODO : empiler le chainage statique et MAJ le DISPLAY
-        this.TextSection += "\n@ empile les registres de travail \n\tPUSH       {R0-R7}\n";
+
+        int imbricationLvl = this.TDS.get(letExp.ScopeID).getImbricationLevel();
+
+        this.TextSection += "\tLDR         R12,[R10,#" + imbricationLvl + "*4]\n";
+        this.TextSection += "\tPUSH        {R12}\n";
+        this.TextSection += "\tSTR         R11,[R10,#" + imbricationLvl + "*4]\n";
 
         letExp.letDecls.accept(this);
+
+        this.TextSection += "\n@ empile les registres de travail \n\tPUSH       {R0-R7}\n";
+
         letExp.letScope.accept(this);
 
         this.TextSection += "\n@ dépile les registres de travail \n\tPOP        {R0-R7}\n";
-        // TODO : dépiler le chainage statique et MAJ le DISPLAY
+
+        this.TextSection += "\tPOP      {R12}\n";
+        this.TextSection += "\tSTR         R12,[R10,#" + imbricationLvl + "]\n";
+
         this.TextSection += "\tMOV         R13,R11\n";
         this.TextSection += "\tPOP         {R11}\n";
 
@@ -346,12 +397,14 @@ public class CodegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.VarDecType varDecType) {
-        // TODO
+        varDecType.varValue.accept(this);
+        this.TextSection += "\tPUSH     {R8}\n";
         return null;
     }
 
     public String visit(ast.VarDecNoType varDecNoType) {
-        // TODO
+        varDecNoType.varValue.accept(this);
+        this.TextSection += "\tPUSH     {R8}\n";
         return null;
     }
 
@@ -368,13 +421,18 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tPUSH        {R11,LR}\n";
         this.TextSection += "\tMOV         R11,R13\n";
 
-        // TODO : empiler le chainage statique et MAJ le DISPLAY
+        int imbricationLvl = this.TDS.get(funDec.ScopeID).getImbricationLevel();
+
+        this.TextSection += "\tLDR         R12,[R10,#" + imbricationLvl + "*4]\n";
+        this.TextSection += "\tPUSH        {R12}\n";
+        this.TextSection += "\tSTR         R11,[R10,#" + imbricationLvl + "*4]\n";
 
         // this.TextSection += saveR8;
         funDec.body.accept(this);
         // this.TextSection += chargeR8;
 
-        // TODO : dépiler le chainage statique et MAJ le DISPLAY
+        this.TextSection += "\tPOP      {R12}\n";
+        this.TextSection += "\tSTR         R12,[R10,#" + imbricationLvl + "*4]\n";
 
         this.TextSection += "\tMOV         R13,R11\n";
         this.TextSection += "\tPOP         {R11,PC}\n";
@@ -383,17 +441,23 @@ public class CodegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Id id) {
-        // TODO
+        String ScopeId = this.searchScope(id.scopeId, id.name + "_VAR");
+        int deplacement = TDS.get(ScopeId).getSymbol(id.name + "_VAR").getDisplacement();
+        if (id.scopeId.equals(ScopeId)) {
+            this.TextSection += "\tLDR    R8,[R11,#" + deplacement + "*-4]\n";
+        } else {
+            int imbricationLvl = this.TDS.get(ScopeId).getImbricationLevel();
+            this.TextSection += "\tLDR    R12,[R10,#" + imbricationLvl + "*4]\n";
+            this.TextSection += "\tLDR    R8,[R12,#" + deplacement + "*-4]\n";
+        }
         return null;
     }
 
     public String visit(ast.TypeId typeId) {
-        // TODO
         return null;
     }
 
     public String visit(ast.ArrType arrType) {
-        // TODO
         return null;
     }
 
@@ -494,7 +558,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tMOV          R0,R8\n";
         for (int i = 0; i < fields.size(); i++) {
             fields.get(i).expr.accept(this);
-            this.TextSection += "\tSTR          R8,[R0,#" + (i + 1) + "]\n";
+            this.TextSection += "\tSTR          R8,[R0,#" + (i + 1) + "*4]\n";
         }
         this.TextSection += "\tMOV          R8,#" + fields.size() + "\n";
         this.TextSection += "\tSTR          R8,[R0]\n";
