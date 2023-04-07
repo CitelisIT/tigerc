@@ -569,7 +569,7 @@ public class SymTabCreator implements AstVisitor<String> {
             int scopeDisplacement = this.getScopeDisplacement();
             addScopeDisplacement(1);
             forIdSymbol =
-                    new VarSymbol("int_TYPE", "int_TYPE", forExp.forId.name, scopeDisplacement + 1);
+                    new VarSymbol("int_TYPE", "int_TYPE", forExp.forId.name, scopeDisplacement + 2);
             this.addSymbol(forExp.forId.name + "_VAR", forIdSymbol);
         }
         this.loopVariables.add(forIdSymbol);
@@ -819,7 +819,7 @@ public class SymTabCreator implements AstVisitor<String> {
             addScopeDisplacement(1);
             this.addSymbol(varDecType.varId.name + "_VAR",
                     new VarSymbol(varDecType.varTypeId.name + "_TYPE", varDecRootType,
-                            varDecType.varId.name, scopeDisplacement + 1));
+                            varDecType.varId.name, scopeDisplacement + 2));
             String varType = varDecType.varValue.accept(this);
             if (!varType.equals(varDecRootType)) {
                 SemanticError varTypeMismatch = new SemanticError(varDecType.lineNumber,
@@ -853,7 +853,7 @@ public class SymTabCreator implements AstVisitor<String> {
         int scopeDisplacement = getScopeDisplacement();
         addScopeDisplacement(1);
         this.addSymbol(varDecNoType.varId.name + "_VAR",
-                new VarSymbol(varType, rootType, varDecNoType.varId.name, scopeDisplacement + 1));
+                new VarSymbol(varType, rootType, varDecNoType.varId.name, scopeDisplacement + 2));
         // No type for declartations
         return null;
     }
@@ -900,7 +900,7 @@ public class SymTabCreator implements AstVisitor<String> {
                 int scopeDisplacement = getScopeDisplacement();
                 addScopeDisplacement(-1);
                 this.addSymbol(arg.id.name + "_VAR", new VarSymbol(arg.typeId.name + "_TYPE",
-                        argRootType, arg.id.name, -amountOfArgs));
+                        argRootType, arg.id.name, -(amountOfArgs + 1)));
                 amountOfArgs--;
             }
         }
@@ -936,6 +936,7 @@ public class SymTabCreator implements AstVisitor<String> {
             this.semanticErrors.add(undeclaredVar);
             return null;
         }
+        id.scopeId = this.currentScopeId;
         return symbol.getRootType();
     }
 
