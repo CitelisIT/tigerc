@@ -109,15 +109,22 @@ public class CodegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.Assign assign) {
         if (assign.lValue instanceof ast.Subscript) {
+            this.TextSection += "\tPUSH     {R0,R1,R2}\n";
             Subscript subscript = (Subscript) assign.lValue;
             subscript.lValue.accept(this);
             this.TextSection += "\tPUSH     {R8}\n";
             subscript.expr.accept(this);
             this.TextSection += "\tPUSH     {R8}\n";
             assign.expr.accept(this);
-            this.TextSection += "\tPOP     {R1}\n";
-            this.TextSection += "\tPOP     {R0}\n";
-            this.TextSection += "\tSTR      R8,[R0,R1,LSL #2]\n";
+
+            this.TextSection += "\tMOV     R2,R8\n";// R2 = valeur
+            this.TextSection += "\tPOP     {R1}\n"; // R1 = index
+            this.TextSection += "\tPOP     {R0}\n"; // R0 = adress
+            this.TextSection += "\tLDR      R8,[R0],#4\n";
+            this.TextSection += "\tCMP      R1,R8\n";
+            this.TextSection += "\tBge        _ERROR_index_out_of_range\n";
+            this.TextSection += "\tSTR      R2,[R0,R1,LSL #2]\n";
+            this.TextSection += "\tPOP     {R0,R1,R2}\n";
 
         } else {
             Id id = (Id) assign.lValue;
@@ -318,12 +325,12 @@ public class CodegenVisitor implements AstVisitor<String> {
     public String visit(ast.WhileExp whileExp) {
         this.currentWhileLoop += 1;
         int id = this.currentWhileLoop;
-        this.TextSection += "_LOOP_" + this.currentWhileLoop + ":\n";
+        this.TextSection += "_LOOP_" + id + ":\n";
         whileExp.condition.accept(this);
         this.TextSection += "\tCMP      R8,#0\n";
-        this.TextSection += "\tBEQ      _END_LOOP_" + this.currentWhileLoop + "\n";
+        this.TextSection += "\tBEQ      _END_LOOP_" + id + "\n";
         whileExp.doExpr.accept(this);
-        this.TextSection += "\tB        LOOP_" + this.currentWhileLoop + "\n";
+        this.TextSection += "\tB        _LOOP_" + id + "\n";
         this.TextSection += "_END_LOOP_" + id + ":\n";
         return null;
     }
@@ -366,7 +373,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n@ dépile les registres de travail \n\tPOP        {R0-R7}\n";
 
         this.TextSection += "\tPOP      {R12}\n";
-        this.TextSection += "\tSTR         R12,[R10,#" + imbricationLvl + "]\n";
+        this.TextSection += "\tSTR         R12,[R10,#" + imbricationLvl + "*4]\n";
 
         this.TextSection += "\tMOV         R13,R11\n";
         this.TextSection += "\tPOP         {R11}\n";
@@ -469,14 +476,14 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tPUSH        {R8}\n";
 
         subscript.expr.accept(this);
-        this.TextSection += "\tPOP        {R0}\n";
+        this.TextSection += "\tPOP        {R0}        @ adresse du array dans R0\n";
 
-        this.TextSection += "\tMOV        R1,R8\n";
+        this.TextSection += "\tMOV        R1,R8         @ indice dans R1\n";
         this.TextSection += "\tCMP        R1,#0\n";
         this.TextSection += "\tBlt        _ERROR_index_out_of_range\n";
 
         // Recuperarion de la taille du array dans R8
-        this.TextSection += "\tLDR        R8,[R0],#4\n";
+        this.TextSection += "\tLDR        R8,[R0],#4        @ taiile du array dans R8\n";
 
         // Comparaison de l'indice dans R1 avec la taille dans R8
         this.TextSection += "\tCMP        R1,R8\n";
@@ -498,21 +505,25 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tMOV       R0,R8\n";
         arrCreate.index.accept(this);
         this.TextSection += "\tADD       R1,R8,#1\n";
+        this.TextSection += "\tLSL       R1,R1,#2\n";
         this.TextSection += "\tPUSH       {R1}\n";
         this.TextSection += "\tBL        malloc\n\n";
         this.TextSection += "\tADD       R13,R13,#4\n";
+        this.TextSection += "\tLSR       R1,R1,#2\n";
         this.TextSection += "\tSUB       R1,R1,#1\n";
-        this.TextSection += "\tSTR       R1,[R8]\n";
+        this.TextSection += "\tSTR       R1,[R8],#4\n";
         this.TextSection += "\tMOV       R2,#0\n\n";
 
         // REMPLISSAGE avec R0 :
         this.TextSection +=
                 "\t_FILL_ARR_LOOP_" + arrCreate.lineNumber + "_" + arrCreate.columnNumber + ":\n";
-        this.TextSection += "\tADD       R2,#1\n";
         this.TextSection += "\tSTR       R0,[R8,R2,LSL #2]\n";
+        this.TextSection += "\tADD       R2,R2,#1\n";
         this.TextSection += "\tCMP       R2,R1\n";
         this.TextSection += "\tBNE       _FILL_ARR_LOOP_" + arrCreate.lineNumber + "_"
                 + arrCreate.columnNumber + "\n\n";
+
+        this.TextSection += "\tSUB       R8,R8,#4\n";
         this.TextSection += "\tPOP       {R0,R1,R2}\n";
         return null;
     }
@@ -551,7 +562,7 @@ public class CodegenVisitor implements AstVisitor<String> {
     public String visit(ast.RecCreate recCreate) {
         this.TextSection += "\tPUSH       {R0,R1,R2}\n";
         ArrayList<ast.FieldCreate> fields = recCreate.fields.fields;
-        this.TextSection += "\tMOV          R0,#" + (fields.size() + 1) + "\n";
+        this.TextSection += "\tMOV          R0,#" + (fields.size() + 1) * 4 + "\n";
         this.TextSection += "\tPUSH         {R0}\n";
         this.TextSection += "\tBL           malloc\n";
         this.TextSection += "\tADD       R13,R13,#4\n";
