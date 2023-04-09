@@ -31,6 +31,8 @@ public class CodegenVisitor implements AstVisitor<String> {
     public LinkedList<ast.Ast> funDecQueue = new LinkedList<ast.Ast>();
 
     public int currentWhileLoop = 0;
+    public int AND_count = 0;
+    public int OR_count = 0;
 
     public CodegenVisitor(Map<String, Scope> symtab) {
         this.TDS = symtab;
@@ -58,7 +60,6 @@ public class CodegenVisitor implements AstVisitor<String> {
     }
 
     public String searchScope(String currentScopeId, String symbolname) {
-        System.out.println(TDS);
         Scope Scope = this.TDS.get(currentScopeId);
         Symbol symbol = Scope.getSymbol(symbolname);
         if (symbol == null) {
@@ -143,21 +144,24 @@ public class CodegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.Or or) {
+        this.OR_count += 1;
+        int id = this.OR_count;
         or.left.accept(this);
         this.TextSection += "\tCMP      R8,#0\n";
-        this.TextSection += "\tBNE      _OR_SKIP_" + or.lineNumber + "_" + or.columnNumber + "\n";
+        this.TextSection += "\tBNE      _OR_SKIP_" + id + "\n";
         or.right.accept(this);
-        this.TextSection += "_OR_SKIP_" + or.lineNumber + "_" + or.columnNumber + ":\n";
+        this.TextSection += "_OR_SKIP_" + id + ":\n";
         return null;
     }
 
     public String visit(ast.And and) {
+        this.AND_count += 1;
+        int id = this.AND_count;
         and.left.accept(this);
         this.TextSection += "\tCMP      R8,#0\n";
-        this.TextSection +=
-                "\tBEQ      _AND_SKIP_" + and.lineNumber + "_" + and.columnNumber + "\n";
+        this.TextSection += "\tBEQ      _AND_SKIP_" + id + "\n";
         and.right.accept(this);
-        this.TextSection += "_AND_SKIP_" + and.lineNumber + "_" + and.columnNumber + ":\n";
+        this.TextSection += "_AND_SKIP_" + id + ":\n";
         return null;
     }
 
@@ -165,7 +169,15 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(eq.left, eq.right);
         this.TextSection += infixValueCode;
-        this.TextSection += "\tCMP     R8,R9\n";
+
+        if (eq.type.equals("string_TYPE")) {
+            this.TextSection += "\tPUSH     {R8,R9}\n";
+            this.TextSection += "\tBL       strcmp\n";
+            this.TextSection += "\tADD       R13,R13,#8\n";
+            this.TextSection += "\tCMP     R8,#0\n";
+        } else {
+            this.TextSection += "\tCMP     R8,R9\n";
+        } ;
         this.TextSection += "\tMOVeq   R8,#1\n";
         this.TextSection += "\tMOVne   R8,#0\n";
         return null;
@@ -175,7 +187,14 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(notEq.left, notEq.right);
         this.TextSection += infixValueCode;
-        this.TextSection += "\tCMP     R8,R9\n";
+        if (notEq.type.equals("string_TYPE")) {
+            this.TextSection += "\tPUSH     {R8,R9}\n";
+            this.TextSection += "\tBL       strcmp\n";
+            this.TextSection += "\tADD       R13,R13,#8\n";
+            this.TextSection += "\tCMP     R8,#0\n";
+        } else {
+            this.TextSection += "\tCMP     R8,R9\n";
+        }
         this.TextSection += "\tMOVeq   R8,#0\n";
         this.TextSection += "\tMOVne   R8,#1\n";
         return null;
@@ -185,7 +204,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(infEq.left, infEq.right);
         this.TextSection += infixValueCode;
-        if (infEq.type == "string_TYPE") {
+        if (infEq.type.equals("string_TYPE")) {
             this.TextSection += "\tPUSH     {R8,R9}\n";
             this.TextSection += "\tBL       strcmp\n";
             this.TextSection += "\tADD       R13,R13,#8\n";
@@ -202,7 +221,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(inf.left, inf.right);
         this.TextSection += infixValueCode;
-        if (inf.type == "string_TYPE") {
+        if (inf.type.equals("string_TYPE")) {
             this.TextSection += "\tPUSH     {R8,R9}\n";
             this.TextSection += "\tBL       strcmp\n";
             this.TextSection += "\tADD       R13,R13,#8\n";
@@ -219,7 +238,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(supEq.left, supEq.right);
         this.TextSection += infixValueCode;
-        if (supEq.type == "string_TYPE") {
+        if (supEq.type.equals("string_TYPE")) {
             this.TextSection += "\tPUSH     {R8,R9}\n";
             this.TextSection += "\tBL       strcmp\n";
             this.TextSection += "\tADD       R13,R13,#8\n";
@@ -236,7 +255,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\n";
         String infixValueCode = infixValueCodeGen(sup.left, sup.right);
         this.TextSection += infixValueCode;
-        if (sup.type == "string_TYPE") {
+        if (sup.type.equals("string_TYPE")) {
             this.TextSection += "\tPUSH     {R8,R9}\n";
             this.TextSection += "\tBL       strcmp\n";
             this.TextSection += "\tADD       R13,R13,#8\n";
@@ -314,7 +333,9 @@ public class CodegenVisitor implements AstVisitor<String> {
                 + ifThenElse.columnNumber + "\n";
         this.TextSection +=
                 "_ELSE_" + ifThenElse.lineNumber + "_" + ifThenElse.columnNumber + ":\n";
-        ifThenElse.elseExpr.accept(this);
+        if (ifThenElse.elseExpr != null) {
+            ifThenElse.elseExpr.accept(this);
+        }
         this.TextSection += "\tB        _END_IF_" + ifThenElse.lineNumber + "_"
                 + ifThenElse.columnNumber + "\n";
         this.TextSection +=
