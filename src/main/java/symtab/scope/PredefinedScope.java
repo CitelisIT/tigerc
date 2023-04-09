@@ -68,6 +68,10 @@ public class PredefinedScope implements Scope {
                                 new ArrayList<String>(List.of("int_TYPE")), "not"));
                 this.addSymbol("exit_VAR", new FuncSymbol("void_TYPE", "void_TYPE",
                                 new ArrayList<String>(List.of("int_TYPE")), "exit"));
+                this.addSymbol("getrandom_VAR",
+                                new FuncSymbol("int_TYPE", "int_TYPE", new ArrayList<String>(
+                                                Arrays.asList("int_TYPE", "int_TYPE")),
+                                                "getrandom"));
         }
 
 }
