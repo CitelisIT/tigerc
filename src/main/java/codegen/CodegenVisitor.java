@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Stack;
 import ast.Ast;
 import ast.AstVisitor;
 import ast.FieldCreate;
@@ -29,6 +30,7 @@ public class CodegenVisitor implements AstVisitor<String> {
     public String TextSection;
     public Map<String, Scope> TDS;
     public LinkedList<ast.Ast> funDecQueue = new LinkedList<ast.Ast>();
+    public Stack<Integer> break_stack = new Stack<Integer>();
 
     public int currentWhileLoop = 0;
     public int AND_count = 0;
@@ -124,6 +126,8 @@ public class CodegenVisitor implements AstVisitor<String> {
             this.TextSection += "\tLDR      R8,[R0],#4\n";
             this.TextSection += "\tCMP      R1,R8\n";
             this.TextSection += "\tBge        _ERROR_index_out_of_range\n";
+            this.TextSection += "\tCMP      R1,#0\n";
+            this.TextSection += "\tBlt        _ERROR_index_out_of_range\n";
             this.TextSection += "\tSTR      R2,[R0,R1,LSL #2]\n";
             this.TextSection += "\tPOP     {R0,R1,R2}\n";
 
@@ -346,6 +350,7 @@ public class CodegenVisitor implements AstVisitor<String> {
     public String visit(ast.WhileExp whileExp) {
         this.currentWhileLoop += 1;
         int id = this.currentWhileLoop;
+        this.break_stack.push(id);
         this.TextSection += "_LOOP_" + id + ":\n";
         whileExp.condition.accept(this);
         this.TextSection += "\tCMP      R8,#0\n";
@@ -353,6 +358,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         whileExp.doExpr.accept(this);
         this.TextSection += "\tB        _LOOP_" + id + "\n";
         this.TextSection += "_END_LOOP_" + id + ":\n";
+        this.break_stack.pop();
         return null;
     }
 
@@ -567,8 +573,7 @@ public class CodegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.BreakLiteral breakLiteral) {
-        this.TextSection += "\tB      _END_LOOP_" + this.currentWhileLoop + "\n";
-        this.currentWhileLoop -= 1;
+        this.TextSection += "\tB      _END_LOOP_" + this.break_stack.peek() + "\n";
         return null;
     }
 
