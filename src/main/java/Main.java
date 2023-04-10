@@ -6,6 +6,7 @@ import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.RecognitionException;
 import ast.Ast;
 import codegen.CodegenVisitor;
+import desugaring.Desugarer;
 import errors.ErrorReportingMode;
 import errors.TigerChecker;
 import graphviz.GraphVizVisitor;
@@ -91,7 +92,12 @@ public class Main {
                         symtab = programChecker.getSymTab();
                         CodegenVisitor codegenVisitor = new CodegenVisitor(symtab);
                         ast = programChecker.getAst();
-                        ast.accept(codegenVisitor);
+                        Desugarer desugarer = new Desugarer(symtab);
+                        Ast desugaredAst = ast.accept(desugarer);
+                        GraphVizVisitor g = new GraphVizVisitor();
+                        desugaredAst.accept(g);
+                        g.dumpGraph("ast.dot");
+                        desugaredAst.accept(codegenVisitor);
                         codegenVisitor.dumpOutput(outFile);
                         break;
                 }
