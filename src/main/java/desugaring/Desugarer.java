@@ -51,7 +51,7 @@ public class Desugarer implements AstVisitor<Ast> {
         int columnNumber = eq.getColumnNumber();
         Ast left = eq.left;
         Ast right = eq.right;
-        return new Eq(left.accept(this), right.accept(this), lineNumber, columnNumber);
+        return new Eq(left.accept(this), right.accept(this), lineNumber, columnNumber, eq.type);
     }
 
     public Ast visit(NotEq notEq) {
@@ -59,7 +59,7 @@ public class Desugarer implements AstVisitor<Ast> {
         int columnNumber = notEq.getColumnNumber();
         Ast left = notEq.left;
         Ast right = notEq.right;
-        return new NotEq(left.accept(this), right.accept(this), lineNumber, columnNumber);
+        return new NotEq(left.accept(this), right.accept(this), lineNumber, columnNumber, notEq.type);
     }
 
     public Ast visit(InfEq infEq) {
@@ -67,7 +67,7 @@ public class Desugarer implements AstVisitor<Ast> {
         int columnNumber = infEq.getColumnNumber();
         Ast left = infEq.left;
         Ast right = infEq.right;
-        return new InfEq(left.accept(this), right.accept(this), lineNumber, columnNumber);
+        return new InfEq(left.accept(this), right.accept(this), lineNumber, columnNumber, infEq.type);
     }
 
     public Ast visit(Inf inf) {
@@ -75,7 +75,7 @@ public class Desugarer implements AstVisitor<Ast> {
         int columnNumber = inf.getColumnNumber();
         Ast left = inf.left;
         Ast right = inf.right;
-        return new Inf(left.accept(this), right.accept(this), lineNumber, columnNumber);
+        return new Inf(left.accept(this), right.accept(this), lineNumber, columnNumber, inf.type);
     }
 
     public Ast visit(SupEq supEq) {
@@ -83,7 +83,7 @@ public class Desugarer implements AstVisitor<Ast> {
         int columnNumber = supEq.getColumnNumber();
         Ast left = supEq.left;
         Ast right = supEq.right;
-        return new SupEq(left.accept(this), right.accept(this), lineNumber, columnNumber);
+        return new SupEq(left.accept(this), right.accept(this), lineNumber, columnNumber, supEq.type);
     }
 
     public Ast visit(Sup sup) {
@@ -91,7 +91,7 @@ public class Desugarer implements AstVisitor<Ast> {
         int columnNumber = sup.getColumnNumber();
         Ast left = sup.left;
         Ast right = sup.right;
-        return new Sup(left.accept(this), right.accept(this), lineNumber, columnNumber);
+        return new Sup(left.accept(this), right.accept(this), lineNumber, columnNumber, sup.type);
     }
 
     public Ast visit(Add add) {
@@ -147,8 +147,12 @@ public class Desugarer implements AstVisitor<Ast> {
         Ast condition = ifThenElse.condition;
         Ast thenExpr = ifThenElse.thenExpr;
         Ast elseExpr = ifThenElse.elseExpr;
-        return new IfThenElse(condition.accept(this), thenExpr.accept(this), elseExpr.accept(this), lineNumber,
-                columnNumber);
+        if (elseExpr != null)
+            return new IfThenElse(condition.accept(this), thenExpr.accept(this), elseExpr.accept(this), lineNumber,
+                    columnNumber);
+        else
+            return new IfThenElse(condition.accept(this), thenExpr.accept(this), null, lineNumber,
+                    columnNumber);
     }
 
     public Ast visit(WhileExp whileExp) {
@@ -172,13 +176,13 @@ public class Desugarer implements AstVisitor<Ast> {
                 columnNumber);
         Ast newBody = new SeqExp(new ArrayList<Ast>(Arrays.asList(doExpr.accept(this), increment)), lineNumber,
                 columnNumber);
-        Ast newCond = new Inf(forId, endValue.accept(this), lineNumber, columnNumber);
+        Ast newCond = new Inf(forId, endValue.accept(this), lineNumber, columnNumber, "int_TYPE");
         LetScope newLoop = new LetScope(
                 new ArrayList<Ast>(Arrays.asList(new WhileExp(newCond, newBody, lineNumber, columnNumber))), lineNumber,
                 columnNumber);
         Ast varDec = new VarDecNoType(forId, startValue.accept(this), lineNumber, columnNumber);
         LetDecls letDecl = new LetDecls(new ArrayList<Ast>(Arrays.asList(varDec)), lineNumber, columnNumber);
-        return new LetExp(letDecl, newLoop, lineNumber, columnNumber);
+        return new LetExp(letDecl, newLoop, lineNumber, columnNumber, forExp.ScopeID);
     }
 
     public Ast visit(LetDecls letDecls) {
@@ -193,7 +197,7 @@ public class Desugarer implements AstVisitor<Ast> {
         int lineNumber = letScope.getLineNumber();
         int columnNumber = letScope.getColumnNumber();
         ArrayList<Ast> exprs = letScope.exprs;
-        return new LetDecls(new ArrayList<Ast>(exprs.stream().map(elt -> elt.accept(this)).toList()), lineNumber,
+        return new LetScope(new ArrayList<Ast>(exprs.stream().map(elt -> elt.accept(this)).toList()), lineNumber,
                 columnNumber);
     }
 
@@ -202,14 +206,15 @@ public class Desugarer implements AstVisitor<Ast> {
         int columnNumber = letExp.getColumnNumber();
         LetDecls letDecls = letExp.letDecls;
         LetScope letScope = letExp.letScope;
-        return new LetExp((LetDecls) letDecls.accept(this), (LetScope) letScope.accept(this), lineNumber, columnNumber);
+        return new LetExp((LetDecls) letDecls.accept(this), (LetScope) letScope.accept(this), lineNumber, columnNumber,
+                letExp.ScopeID);
     }
 
     public Ast visit(CallExpArgs callExpArgs) {
         int lineNumber = callExpArgs.getLineNumber();
         int columnNumber = callExpArgs.getColumnNumber();
         ArrayList<Ast> args = callExpArgs.args;
-        return new LetDecls(new ArrayList<Ast>(args.stream().map(elt -> elt.accept(this)).toList()), lineNumber,
+        return new CallExpArgs(new ArrayList<Ast>(args.stream().map(elt -> elt.accept(this)).toList()), lineNumber,
                 columnNumber);
     }
 
@@ -278,7 +283,7 @@ public class Desugarer implements AstVisitor<Ast> {
         FunArgs args = funDec.args;
         TypeId returnTypeId = funDec.returnTypeId;
         Ast body = funDec.body;
-        return new FunDec(id, (FunArgs) args.accept(this), returnTypeId, body.accept(this), lineNumber, columnNumber);
+        return new FunDec(id, (FunArgs) args.accept(this), returnTypeId, body.accept(this), lineNumber, columnNumber, funDec.ScopeID);
     }
 
     public Ast visit(Id id) {
