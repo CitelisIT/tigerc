@@ -804,7 +804,9 @@ public class SymTabCreator implements AstVisitor<String> {
                     new VarSymbol(varType, varType, varDecType.varId.name, scopeDisplacement + 1));
         } else {
             String varDecRootType = varDecTypeSymbol.getRootType();
-            Symbol varDecNameSymbol = this.lookup(varDecType.varId.name, "VAR");
+            // Symbol varDecNameSymbol = this.lookup(varDecType.varId.name, "VAR");
+            Symbol varDecNameSymbol =
+                    this.symtab.get(this.currentScopeId).getSymbol(varDecType.varId.name + "_VAR");
             if (varDecNameSymbol != null) {
                 String alreadyDeclaredType = varDecNameSymbol.getType();
                 String alreadyDeclaredRootType = varDecNameSymbol.getRootType();
@@ -839,7 +841,9 @@ public class SymTabCreator implements AstVisitor<String> {
     public String visit(VarDecNoType varDecNoType) {
         String varType = varDecNoType.varValue.accept(this);
         String rootType = this.resolveTypeAlias(varType);
-        Symbol varDecNameSymbol = this.lookup(varDecNoType.varId.name, "VAR");
+        // Symbol varDecNameSymbol = this.lookup(varDecNoType.varId.name, "VAR");
+        Symbol varDecNameSymbol =
+                this.symtab.get(this.currentScopeId).getSymbol(varDecNoType.varId.name + "_VAR");
         if (varDecNameSymbol != null) {
             String alreadyDeclaredVarType = varDecNameSymbol.getType();
             String alreadyDeclaredRootType = this.resolveTypeAlias(alreadyDeclaredVarType);
@@ -868,7 +872,9 @@ public class SymTabCreator implements AstVisitor<String> {
     }
 
     public String visit(FunDec funDec) {
-        if (this.lookup(funDec.id.name, "VAR") != null) {
+        // if (this.lookup(funDec.id.name, "VAR") != null) {
+        if (this.symtab.get(this.currentScopeId).getSymbol(funDec.id.name + "_VAR") != null
+                || this.symtab.get("predefined").getSymbol(funDec.id.name + "_VAR") != null) {
             SemanticError funRedeclaration = new SemanticError(funDec.lineNumber,
                     funDec.columnNumber,
                     "Function redeclaration : the " + funDec.id.name + " function already exist");

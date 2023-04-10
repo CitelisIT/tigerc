@@ -419,7 +419,13 @@ public class CodegenVisitor implements AstVisitor<String> {
 
     public String visit(ast.CallExp callExp) {
         callExp.args.accept(this);
-        this.TextSection += "\tBL     " + callExp.id.name + "\n";
+        String name = callExp.id.name;
+        String currentScopeId = callExp.id.scopeId;
+        String DeclarationScope = this.searchScope(currentScopeId, name + "_VAR");
+        if (!DeclarationScope.equals("predefined")) {
+            name = name + "_" + DeclarationScope;
+        }
+        this.TextSection += "\tBL     " + name + "\n";
         int nbArgs = callExp.args.args.size();
         this.TextSection += "\tADD      R13,R13,#" + 4 * nbArgs + "\n";
         return null;
@@ -450,8 +456,8 @@ public class CodegenVisitor implements AstVisitor<String> {
     public String visit(ast.FunDec funDec) {
         // String saveR8 = funDec.returnTypeId.name == "void" ? "\tPUSH {R8}\n" : "";
         // String chargeR8 = funDec.returnTypeId.name == "void" ? "\tPOP {R8}\n" : "";
-
-        this.TextSection += "" + funDec.id.name + ":\n";
+        String parentScope = this.TDS.get(funDec.ScopeID).getParentScope();
+        this.TextSection += "" + funDec.id.name + "_" + parentScope + ":\n";
         this.TextSection += "\tPUSH        {R11,LR}\n";
         this.TextSection += "\tMOV         R11,R13\n";
 
