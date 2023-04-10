@@ -19,6 +19,14 @@ public class LetExp implements Ast {
         this.columnNumber = columnNumber;
     }
 
+    public LetExp(LetDecls letDecls, LetScope letScope, int lineNumber, int columnNumber, String ScopeID) {
+        this.letDecls = letDecls;
+        this.letScope = letScope;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
+        this.ScopeID = ScopeID;
+    }
+
     public int getLineNumber() {
         return this.lineNumber;
     }

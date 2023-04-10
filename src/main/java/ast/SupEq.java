@@ -19,6 +19,14 @@ public class SupEq implements Ast {
         this.columnNumber = columnNumber;
     }
 
+    public SupEq(Ast left, Ast right, int lineNumber, int columnNumber, String type) {
+        this.left = left;
+        this.right = right;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
+        this.type = type;
+    }
+
     public int getLineNumber() {
         return this.lineNumber;
     }

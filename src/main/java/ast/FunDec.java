@@ -24,6 +24,17 @@ public class FunDec implements Ast {
         this.columnNumber = columnNumber;
     }
 
+    public FunDec(Id id, FunArgs args, TypeId returnTypeId, Ast body, int lineNumber,
+            int columnNumber, String ScopeID) {
+        this.id = id;
+        this.args = args;
+        this.returnTypeId = returnTypeId;
+        this.body = body;
+        this.lineNumber = lineNumber;
+        this.columnNumber = columnNumber;
+        this.ScopeID = ScopeID;
+    }
+
     public int getLineNumber() {
         return this.lineNumber;
     }
