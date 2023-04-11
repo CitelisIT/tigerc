@@ -1,11 +1,10 @@
+.include "errors.s"
+
 .data
 	random_buffer:.space 32
 	printi_buffer:.space 1024
 	stdin_buffer:.space 1024
 	RETURNLINE: .asciz "\n" 
-	ERROR_MESSAGE_divide_by_0: .asciz "ERROR : divide by 0 \n" 
-	ERROR_MESSAGE_index_out_of_range: .asciz "ERROR : index out of range \n" 
-	ERROR_MESSAGE_getrandom_invalid_bound: .asciz "ERROR : getrandom : invalid bound, inf>sup \n" 
 
 .text
 
@@ -82,19 +81,6 @@ getrandom:
 	MOV	R13,R11	
 	POP	{r0,r1,r2,r3,r4,r11,PC} 				
 
-
-	
-ERROR_getrandom_invalid_bound:
-	
-	LDR	r0,=ERROR_MESSAGE_getrandom_invalid_bound
-	PUSH	{r0}
-	BL	printer
-	
-	@ exit with error : return value = 1
-
-	MOV	r0,#1	
-	PUSH	{r0}
-	BL	exit	
 
 
 
@@ -305,21 +291,6 @@ modulo:
 	MOV	R13,R11	
 	POP	{r0,r1,r2,r3,r11,PC} 	
 	
-ERROR_divide_by_zero:
-	
-	LDR	r0,=ERROR_MESSAGE_divide_by_0
-	PUSH	{r0}
-	BL	printer
-	
-	@ exit with error : return value = 1
-
-	MOV	r0,#1	
-	PUSH	{r0}
-	BL	exit	
-
-
-
-
 
 @OK
 flip:
@@ -512,33 +483,4 @@ malloc:
 	
 	MOV		R13,R11
 	POP		{r0,r1,r7,r11,PC} 
-
-
-	
-_ERROR_index_out_of_range:
-	
-	LDR	r0,=ERROR_MESSAGE_index_out_of_range
-	PUSH	{r0}
-	BL	printer
-	
-	@ exit with error : return value = 1
-
-	MOV	r0,#1	
-	PUSH	{r0}
-	BL	exit	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
