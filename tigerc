@@ -47,11 +47,17 @@ fi
 if [[ "$TASK" == "--ast" ]]; then
     OUTFILE=$1
     shift
+    if [[ -z "$OUTFILE" ]]; then
+        error "You must specify an output file"
+    fi
 fi
 
 if [[ "$TASK" == "--compile" ]]; then
     OUTFILE=$1
     shift
+    if [[ -z "$OUTFILE" ]]; then
+        error "You must specify an output file"
+    fi
 fi
 
 # Parse optional options
