@@ -26,17 +26,18 @@ LOG_LEVEL="--quiet"
 
 error() {
     MESSAGE=$1
+    CODE=$2
     if [[ COLOR -eq 1 ]]; then
         echo -e "\x1b[1m\x1b[31m[ERROR]\x1b[0m $MESSAGE"
     else
         echo "[ERROR] $MESSAGE"
     fi
-    exit 1
+    exit $CODE
 }
 
 if [[ "$#" -lt 2 ]]; then
     echo "$USAGE"
-    exit 0
+    exit 1
 else
     TARGET=$1
     TASK=$2
@@ -48,7 +49,7 @@ if [[ "$TASK" == "--ast" ]]; then
     OUTFILE=$1
     shift
     if [[ -z "$OUTFILE" ]]; then
-        error "You must specify an output file"
+        error "You must specify an output file" 2
     fi
 fi
 
@@ -56,7 +57,7 @@ if [[ "$TASK" == "--compile" ]]; then
     OUTFILE=$1
     shift
     if [[ -z "$OUTFILE" ]]; then
-        error "You must specify an output file"
+        error "You must specify an output file" 2
     fi
 fi
 
@@ -65,26 +66,26 @@ while [[ "$#" -gt 0 ]]; do
     case $1 in
     -h | --help)
         echo "$USAGE"
-        exit 0
+        exit 1
         ;;
     --color) COLOR=1 ;;
     --no-color) COLOR=0 ;;
     --log-level=*) LOG_LEVEL="--${1#*=}" ;;
-    --log-level) error "Option '--log-level' must have a value" ;;
-    *) error "Unknown option '$1'" ;;
+    --log-level) error "Option '--log-level' must have a value" 2 ;;
+    *) error "Unknown option '$1'" 2 ;;
     esac
     shift
 done
 
 # Input file validation
 if [[ ! -f $TARGET ]]; then
-    error "The file $TARGET does not exist."
+    error "The file $TARGET does not exist." 1
 fi
 
 # Log level validation
 case $LOG_LEVEL in
 --quiet | --warn | --info | --debug) ;;
-*) error "Invalid log level ${LOG_LEVEL:2}" ;;
+*) error "Invalid log level ${LOG_LEVEL:2}" 2 ;;
 esac
 
 case $TASK in
@@ -94,5 +95,5 @@ case $TASK in
 --check-semantics) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL semantics -PinFile=$TARGET -Pcolor=$COLOR ;;
 --symtab) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL symtab -PinFile=$TARGET -Pcolor=$COLOR ;;
 --compile) ./gradlew "${GRADLE_OPTS[@]}" $LOG_LEVEL codegen -PinFile=$TARGET -PoutFile=$OUTFILE -Pcolor=$COLOR ;;
-*) error "Invalid task $TASK" ;;
+*) error "Invalid task $TASK" 2;;
 esac
