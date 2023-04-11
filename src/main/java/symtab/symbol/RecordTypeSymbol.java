@@ -44,4 +44,13 @@ public class RecordTypeSymbol extends TypeSymbol {
         return this.fields.get(name);
     }
 
+    public int getFieldIndex(String name) {
+        int i = 0;
+        for (String fieldName: this.fields.keySet()) {
+            if (fieldName.equals(name)) return i;
+            else i += 1;
+        }
+        return -1;
+    }
+
 }
