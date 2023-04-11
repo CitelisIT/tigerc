@@ -1,0 +1,25 @@
+let
+    var N:int := 128
+    var a :string := (print("fill caracter : ");getchar())
+    type intarray = array of int
+    var L1:=intarray [N] of 0
+    var L2:=intarray [N] of 0
+    function valide(i: int):int = ((i>= 0) & i<N)
+    function MAj_L(L1:intarray,L2:intarray,n:int) = (
+        let
+            var nb_voisins:=0
+        in
+            for i := 0 to N-1 do (
+                nb_voisins:=(valide(i-1)&L1[i-1]) + L1[i] + (valide(i+1)&L1[i+1]);
+                L2[i]:= nb_voisins<3 & nb_voisins>0;
+                print(if L1[i] then a else " ")
+            );
+            print("\n")  
+        end;
+        if n then MAj_L(L2,L1,n-1)
+    )
+in
+    L1[N/2]:=1;
+    print("\33c");
+    MAj_L(L1,L2,63)
+end
