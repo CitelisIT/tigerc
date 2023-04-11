@@ -6,6 +6,7 @@ import java.util.Map;
 
 import ast.*;
 import symtab.scope.Scope;
+import symtab.symbol.RecordTypeSymbol;
 
 public class Desugarer implements AstVisitor<Ast> {
 
@@ -315,7 +316,9 @@ public class Desugarer implements AstVisitor<Ast> {
         int columnNumber = fieldExp.getColumnNumber();
         Ast lValue = fieldExp.lValue;
         Id id = fieldExp.id;
-        return new Subscript(lValue.accept(this), id, lineNumber, columnNumber);
+        RecordTypeSymbol recordType = fieldExp.recordType;
+        int fieldIndex = recordType.getFieldIndex(id.name);
+        return new Subscript(lValue.accept(this), new IntLiteral(fieldIndex, lineNumber, columnNumber), lineNumber, columnNumber);
     }
 
     public Ast visit(ArrCreate arrCreate) {

@@ -3,6 +3,7 @@ package symtab;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -744,7 +745,7 @@ public class SymTabCreator implements AstVisitor<String> {
         if (typeValue instanceof RecType) {
 
             RecType recTypeValue = (RecType) typeValue;
-            Map<String, String> fields = new HashMap<String, String>();
+            Map<String, String> fields = new LinkedHashMap<String, String>();
             boolean flag = false;
 
             for (FieldDec field : recTypeValue.fields) {
@@ -1015,6 +1016,7 @@ public class SymTabCreator implements AstVisitor<String> {
             this.semanticErrors.add(typeMismatch);
             return null;
         }
+        fieldExp.recordType = castTypeSymbol;
         return castTypeSymbol.getFields().get(fieldExp.id.name);
     }
 

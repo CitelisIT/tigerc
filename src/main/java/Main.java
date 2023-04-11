@@ -94,9 +94,6 @@ public class Main {
                         ast = programChecker.getAst();
                         Desugarer desugarer = new Desugarer(symtab);
                         Ast desugaredAst = ast.accept(desugarer);
-                        GraphVizVisitor g = new GraphVizVisitor();
-                        desugaredAst.accept(g);
-                        g.dumpGraph("ast.dot");
                         desugaredAst.accept(codegenVisitor);
                         codegenVisitor.dumpOutput(outFile);
                         break;
