@@ -21,6 +21,25 @@ exit:
 	mov	r7,#1
 	swi	#0
 
+chr:
+	PUSH 		{r0,r11,LR} 		
+	MOV		R11,R13
+
+	MOV			R0,#2
+	PUSH		{R0}
+	BL			malloc
+
+	LDR		R0,[r11,#4*3]
+	CMP		R0,#0
+	Blt		ERROR_wrong_acii_code
+	CMP		R0,#127
+	Bgt		ERROR_wrong_acii_code
+
+	STRb		R0,[R8]
+
+	MOV		R13,R11
+	POP		{r0,r11,PC} 
+
 
 @OK
 not:	
@@ -31,6 +50,7 @@ not:
 	
 	CMP		R0,#0
 	MOVEQ		R8,#1
+	MOVNE		R8,#0
 
 	MOV		R13,R11
 	POP		{r0,r11,PC} 
@@ -44,6 +64,7 @@ getrandom:
 
 	LDR	R3,[r11,#4*8]	@ R3 : arg1=inf 	
 	LDR	R4,[r11,#4*7]	@ R4 : arg2=sup
+	ADD	R4,R4,#1
 
 	CMP	R3,R4
 	BGT	ERROR_getrandom_invalid_bound
@@ -83,7 +104,7 @@ getrandom:
 
 
 
-
+@OK
 getchar:
 	PUSH 		{r0,r1,r2,r11,LR} 		
 	MOV		R11,R13
@@ -94,10 +115,14 @@ getchar:
 	mov		r2,#1024
 	mov		r7,#3
 
-	SWI		#0	
-	
+	SWI		#0
+
+	MOV			R0,#2
+	PUSH		{R0}
+	BL			malloc
+
 	LDRb		r0,[r1]
-	STRb		r0,[r11,#4*5]
+	STRb		r0,[r8]
 
 	MOV		R13,R11
 	POP		{r0,r1,r2,r11,PC} 

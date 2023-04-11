@@ -60,6 +60,10 @@ public class PredefinedScope implements Scope {
                                                 new ArrayList<String>(Arrays.asList("string_TYPE",
                                                                 "int_TYPE", "int_TYPE")),
                                                 "substring"));
+                this.addSymbol("strcmp_VAR",
+                                new FuncSymbol("int_TYPE", "int_TYPE", new ArrayList<String>(
+                                                Arrays.asList("string_TYPE", "string_TYPE")),
+                                                "strcmp"));
                 this.addSymbol("concat_VAR",
                                 new FuncSymbol("string_TYPE", "string_TYPE", new ArrayList<String>(
                                                 Arrays.asList("string_TYPE", "string_TYPE")),
