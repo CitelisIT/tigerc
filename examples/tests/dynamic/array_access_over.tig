@@ -1,0 +1,7 @@
+let 
+    var N := 10
+    type intArray = array of int
+    var newArray := intArray [ N ] of 0
+in 
+    newArray [ 11 ] := 1 /* Error: index out of bounds */ 
+end 

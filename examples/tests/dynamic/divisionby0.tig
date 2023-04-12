@@ -1,0 +1,6 @@
+let 
+    var N := 0
+    var M := 43
+in 
+    M / N 
+end 

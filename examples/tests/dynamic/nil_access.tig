@@ -1,0 +1,5 @@
+let 
+    var N := nil
+in
+    N := 42
+end
