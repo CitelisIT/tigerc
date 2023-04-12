@@ -1,4 +1,4 @@
-.include "errors.s"
+.include "_ERRORs.s"
 
 .data
 	random_buffer:.space 32
@@ -31,9 +31,9 @@ chr:
 
 	LDR		R0,[r11,#4*3]
 	CMP		R0,#0
-	Blt		ERROR_wrong_acii_code
+	Blt		_ERROR_wrong_acii_code
 	CMP		R0,#127
-	Bgt		ERROR_wrong_acii_code
+	Bgt		_ERROR_wrong_acii_code
 
 	STRb		R0,[R8]
 
@@ -67,7 +67,7 @@ getrandom:
 	ADD	R4,R4,#1
 
 	CMP	R3,R4
-	BGT	ERROR_getrandom_invalid_bound
+	BGT	_ERROR_getrandom_invalid_bound
 
 	
 	SUB	R4,R4,R3	@ R4 : sup - inf
@@ -101,7 +101,6 @@ getrandom:
 	
 	MOV	R13,R11	
 	POP	{r0,r1,r2,r3,r4,r11,PC} 				
-
 
 
 @OK
@@ -234,7 +233,7 @@ divide:
 	@ - -> 1
 	
 	CMP	r1,#0
-	Beq	ERROR_divide_by_zero
+	Beq	_ERROR_divide_by_zero
 	MOVlt	R3,#1
 	SUBlt	R1,R2,R1
 
@@ -285,7 +284,7 @@ modulo:
 	@ - -> 1
 	
 	CMP	r1,#0
-	Beq	ERROR_divide_by_zero
+	Beq	_ERROR_divide_by_zero
 	MOVlt	R3,#1
 	SUBlt	R1,R2,R1
 
