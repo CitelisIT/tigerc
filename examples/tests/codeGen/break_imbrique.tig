@@ -1,0 +1,26 @@
+let
+	function break_testing()=(
+		for i:=0 to 10 do(
+			for j:=0 to 5 do(
+				for k:=0 to 3 do(
+					if k=0 then (
+						print("On veut break quand k=2")
+					);
+					if k=2 then (
+						print("le triplet (i,j,k)= (");
+						printi(i);
+						print(",");
+						printi(j);
+						print(",");
+						printi(k);
+						print(")");
+						break
+					)
+				)
+			)
+		)
+
+	)
+in
+	break_testing()
+end
