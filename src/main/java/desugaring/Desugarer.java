@@ -177,7 +177,7 @@ public class Desugarer implements AstVisitor<Ast> {
                 columnNumber);
         Ast newBody = new SeqExp(new ArrayList<Ast>(Arrays.asList(doExpr.accept(this), increment)), lineNumber,
                 columnNumber);
-        Ast newCond = new Inf(forId, endValue.accept(this), lineNumber, columnNumber, "int_TYPE");
+        Ast newCond = new InfEq(forId, endValue.accept(this), lineNumber, columnNumber, "int_TYPE");
         LetScope newLoop = new LetScope(
                 new ArrayList<Ast>(Arrays.asList(new WhileExp(newCond, newBody, lineNumber, columnNumber))), lineNumber,
                 columnNumber);
