@@ -115,6 +115,8 @@ public class CodegenVisitor implements AstVisitor<String> {
             this.TextSection += "\tPUSH     {R0,R1,R2}\n";
             Subscript subscript = (Subscript) assign.lValue;
             subscript.lValue.accept(this);
+            this.TextSection += "\tCMP      R8,#0\n";
+            this.TextSection += "\tBeq        _ERROR_nill_access\n";
             this.TextSection += "\tPUSH     {R8}\n";
             subscript.expr.accept(this);
             this.TextSection += "\tPUSH     {R8}\n";
@@ -392,12 +394,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         this.TextSection += "\tSTR         R11,[R10,#" + imbricationLvl + "*4]\n";
 
         letExp.letDecls.accept(this);
-
-        this.TextSection += "\n@ empile les registres de travail \n\tPUSH       {R0-R7}\n";
-
         letExp.letScope.accept(this);
-
-        this.TextSection += "\n@ dépile les registres de travail \n\tPOP        {R0-R7}\n";
 
         this.TextSection += "\tPOP      {R12}\n";
         this.TextSection += "\tSTR         R12,[R10,#" + imbricationLvl + "*4]\n";
@@ -506,6 +503,8 @@ public class CodegenVisitor implements AstVisitor<String> {
 
         // Recupere l'adresse de la lvalue dans R8
         subscript.lValue.accept(this);
+        this.TextSection += "\tCMP      R8,#0\n";
+        this.TextSection += "\tBeq        _ERROR_nill_access\n";
         this.TextSection += "\tPUSH        {R8}\n";
 
         subscript.expr.accept(this);
@@ -575,6 +574,7 @@ public class CodegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.NilLiteral nilLiteral) {
+        this.TextSection += "\tMOV          R8,#0\n";
         return null;
     }
 
