@@ -116,7 +116,7 @@ public class CodegenVisitor implements AstVisitor<String> {
             Subscript subscript = (Subscript) assign.lValue;
             subscript.lValue.accept(this);
             this.TextSection += "\tCMP      R8,#0\n";
-            this.TextSection += "\tBeq        _ERROR_nill_access\n";
+            this.TextSection += "\tBeq        _ERROR_nil_access\n";
             this.TextSection += "\tPUSH     {R8}\n";
             subscript.expr.accept(this);
             this.TextSection += "\tPUSH     {R8}\n";
