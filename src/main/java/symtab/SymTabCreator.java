@@ -680,12 +680,13 @@ public class SymTabCreator implements AstVisitor<String> {
                             arg.getColumnNumber(), "Argument type mismatch");
                     this.semanticErrors.add(argTypeMismatch);
                     hasTypeMismatch = true;
-                }
-                if (!argType.equals(funcArgsTypes.get(i))) {
-                    SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
-                            callExp.getColumnNumber(), "Argument type mismatch");
-                    this.semanticErrors.add(argTypeMismatch);
-                    hasTypeMismatch = true;
+                } else {
+                    if (!argType.equals(funcArgsTypes.get(i))) {
+                        SemanticError argTypeMismatch = new SemanticError(arg.getLineNumber(),
+                                callExp.getColumnNumber(), "Argument type mismatch");
+                        this.semanticErrors.add(argTypeMismatch);
+                        hasTypeMismatch = true;
+                    }
                 }
             }
         }
