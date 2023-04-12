@@ -1,0 +1,23 @@
+let var a:int:=0
+in
+	print("Grace à chr(), on sait que le char de code ASCII 83 est : ");
+	print(chr(83));
+	print("\n");
+	print("Grace à ord(), on sait que le code ASCII de @ est : ");
+	printi(ord("@"));
+	print("\n");
+	print("La taille du string ViveARM32 est : ");
+	printi(size("ViveARM32"));
+	print("\n");
+	print("Avec getrandom(1,10) on recupere un chiffre aléatoire entre 1 et 10 : ");
+	printi(getrandom(1,10));
+	print("\n");
+	print("On peut comparer deux strings avec strcmp(), par exemple 32bit et 64bit : ");
+	printi(strcmp("32bit","64bit"));
+	print("\n");
+	print("On peut schtroumpfer un entier en 0 ou 0 en 1 avec not() : ");
+	printi(not(1));
+	print("\n");
+	print("On peut quitter le programme avec un code d'erreur");
+	exit(69)
+end

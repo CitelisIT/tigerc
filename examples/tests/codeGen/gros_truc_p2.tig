@@ -1,0 +1,39 @@
+let
+	function min(x:int,y:int):int = (if x<=y then x else y)
+	
+	function modulo(x:int,m:int):int = (
+		let 
+			var quotient : int := x/m
+			var mult : int := x/quotient
+		in
+		x - quotient*mult
+		end
+	)
+
+	function pgcd(a:int, b:int):int = (
+		let
+			var minab := min(a,b)
+			var resultat:=0
+		in
+		for i:=1 to minab do
+			if modulo(a,i)=0 & modulo(b,i)=0 then resultat:=i;
+			resultat
+		end
+	)
+
+	function pgcd_recurs(a:int, b:int):int = (
+		if b=0 then a
+		else (
+			pgcd_recurs(b,modulo(a,b))
+		)
+	)
+in
+	print("\n");
+	print("74 mod 3 = ");
+	printi(modulo(74,3));
+	print("\n");
+	print("PGCD de 582 et 31 (recursif et non-recursif): ");
+	printi(pgcd_recurs(582,31));
+	print("   ");
+	printi(pgcd(582,31))
+end

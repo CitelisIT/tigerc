@@ -1,0 +1,48 @@
+let
+	var un_string_vide:string := ""
+	var un_int_sans_type := 3
+	type intArray = array of int
+	type intMatrice = array of intArray
+	type record_1 = {abscisse : intArray, ordonnee : intArray}
+	type hashmap = {cle : int, nom : string}
+	var tableau := intArray[4] of 0
+	var tableau_diviseurs := intArray[4] of 0
+
+	function arithm(a:int, b:int, c:int ,d:int) : int = a+b*c/d
+	function min(x:int,y:int):int = (if x<=y then x else y)
+
+	function nb_divis(a:intArray,b:int):intArray=(
+		let var tabOfMults := intArray[4] of 0
+		in
+		for i:=0 to 4 do(
+			let var x:=0
+			in
+				while a[i]>0 do(
+					a[i]:=a[i]/b;
+					x:=x+1
+				);
+				tabOfMults[i]:=x
+			end
+		);
+		tabOfMults
+		end
+	)
+
+in
+	print("50+14*19/3 = ");
+	printi(arithm(50,14,19,3));
+	print("\n");
+	print("min entre 50 et 3 = ");
+	printi(min(50,3));
+	print("\n");
+	print("Combien de fois peut-on diviser chaque nombre du tableau [462,357,921,491] par 7 ? ");
+	tableau[0]:=462;
+	tableau[1]:=357;
+	tableau[2]:=921;
+	tableau[3]:=491;
+	tableau_diviseurs:=nb_divis(tableau,7);
+	for i:=0 to 4 do (
+		printi(tableau_diviseurs[i]);
+		print(" ")
+	)
+end
