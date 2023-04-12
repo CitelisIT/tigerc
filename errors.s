@@ -8,7 +8,7 @@
 .text
 
 
-ERROR_getrandom_invalid_bound:
+_ERROR_getrandom_invalid_bound:
 	
 	LDR	r0,=ERROR_MESSAGE_getrandom_invalid_bound
 	PUSH	{r0}
@@ -20,7 +20,7 @@ ERROR_getrandom_invalid_bound:
 	PUSH	{r0}
 	BL	exit 
 
-ERROR_index_out_of_range:
+_ERROR_index_out_of_range:
 	
 	LDR	r0,=ERROR_MESSAGE_index_out_of_range
 	PUSH	{r0}
@@ -32,7 +32,7 @@ ERROR_index_out_of_range:
 	PUSH	{r0}
 	BL	exit	
  
-ERROR_divide_by_zero:
+_ERROR_divide_by_zero:
 	
 	LDR	r0,=ERROR_MESSAGE_divide_by_0
 	PUSH	{r0}
@@ -44,7 +44,7 @@ ERROR_divide_by_zero:
 	PUSH	{r0}
 	BL	exit
 
-ERROR_wrong_acii_code:
+_ERROR_wrong_acii_code:
 	
 	LDR	r0,=ERROR_MESSAGE_wrong_ascii_code
 	PUSH	{r0}
