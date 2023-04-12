@@ -20,6 +20,7 @@ import ast.Subscript;
 import ast.TypeDec;
 import ast.TypeDecs;
 import ast.VarDecNoType;
+import ast.VarDecType;
 import symtab.scope.Scope;
 import symtab.symbol.Symbol;
 
@@ -384,6 +385,7 @@ public class CodegenVisitor implements AstVisitor<String> {
     }
 
     public String visit(ast.LetExp letExp) {
+        int nbvar = 0;
         this.TextSection += "\tPUSH        {R11}\n";
         this.TextSection += "\tMOV         R11,R13\n";
 
@@ -396,6 +398,13 @@ public class CodegenVisitor implements AstVisitor<String> {
         letExp.letDecls.accept(this);
         letExp.letScope.accept(this);
 
+        for (ast.Ast dec : letExp.letDecls.decls) {
+            if (dec instanceof VarDecNoType || dec instanceof VarDecType) {
+                nbvar++;
+            }
+        }
+
+        this.TextSection += "\tADD      R13,R13,#" + (nbvar * 4) + "\n";
         this.TextSection += "\tPOP      {R12}\n";
         this.TextSection += "\tSTR         R12,[R10,#" + imbricationLvl + "*4]\n";
 
@@ -504,7 +513,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         // Recupere l'adresse de la lvalue dans R8
         subscript.lValue.accept(this);
         this.TextSection += "\tCMP      R8,#0\n";
-        this.TextSection += "\tBeq        _ERROR_nill_access\n";
+        this.TextSection += "\tBeq        _ERROR_nil_access\n";
         this.TextSection += "\tPUSH        {R8}\n";
 
         subscript.expr.accept(this);
