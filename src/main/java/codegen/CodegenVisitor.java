@@ -306,7 +306,7 @@ public class CodegenVisitor implements AstVisitor<String> {
         String infixValueCode = infixValueCodeGen(div.left, div.right);
         this.TextSection += infixValueCode;
         this.TextSection += "\tCMP      R9,#0\n";
-        this.TextSection += "\tBEQ      ERROR_divide_by_zero\n";
+        this.TextSection += "\tBEQ      _ERROR_divide_by_zero\n";
         this.TextSection += "\tSDIV     R8,R8,R9\n";
         return null;
     }
