@@ -1,0 +1,36 @@
+let
+    var Nb_circle := 17
+    var xmax := 142
+    var ymax := 236
+    var sizemax:= 30
+    type vect = {x: int,y:int}
+    type circle = {size: int,pos:vect}
+    var color := "@#$SA0O&?o/~;:,'."
+    type cicleArray = array of circle
+    function min(x: int,y:int):int = (if x<y then x else y )
+    function isin2(i:int,j:int,s:circle ):int = (((i-s.pos.x)*(i-s.pos.x)+(j-s.pos.y)*(j-s.pos.y))<s.size*s.size -1)
+    function printDisplayChar(i:int,j:int,L:cicleArray):string = (
+        let
+            var a := " "
+        in
+            for k := 0 to Nb_circle-1 do (
+                if isin2(i,j,L[k]) then ((a:=substring(color,min(size(color)-1,k), 1));break)
+            );
+            a 
+        end
+
+    )
+    var c:= circle {size=0,pos=vect {x=0,y=0}} 
+    var L := cicleArray [Nb_circle] of c
+in
+    for i := 0 to Nb_circle-1 do (
+        L[i]:=circle {size=getrandom(3,sizemax),pos=vect {x=getrandom(0,xmax),y=getrandom(0,ymax)}}
+    );
+    print("\33c");
+    for i := 0 to xmax do (
+        for j := 0 to ymax do (
+            print(printDisplayChar(i,j,L));print(" ")
+        )
+        ;print("\n")
+    )
+end

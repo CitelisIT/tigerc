@@ -1,0 +1,36 @@
+let
+    var Nb_circle := 30
+    var xmax := 70
+    var ymax := 117
+    var sizemax:= 20
+    type vect = {x: int,y:int}
+    type circle = {size: int,pos:vect,a:string,color:string}
+    type colorArray = array of string
+    type cicleArray = array of circle
+    function isin2(i:int,j:int,s:circle ):int = (((i-s.pos.x)*(i-s.pos.x)+(j-s.pos.y)*(j-s.pos.y))<s.size*s.size -1)
+    function getDisplayChar(i:int,j:int,L:cicleArray):string = (
+        let
+            var a:=" "
+        in
+            for k := 0 to Nb_circle-1 do (if isin2(i,j,L[k]) then (print(L[k].color);a:=L[k].a;break));a  
+        end
+    )
+    var COLOR := colorArray [7] of "\33[31m"
+    var c:= circle {size=0,pos=vect {x=0,y=0},a=""} 
+    var L := cicleArray [Nb_circle] of c
+in
+    COLOR[1]:="\33[32m";
+    COLOR[2]:="\33[33m";
+    COLOR[5]:="\33[36m";
+    COLOR[6]:="\33[37m";
+    for i := 0 to Nb_circle-1 do (
+        L[i]:=circle {size=getrandom(3,sizemax),pos=vect {x=getrandom(0,xmax),y=getrandom(0,ymax)},a=chr(getrandom(50,127)),color=COLOR[getrandom(0,6)]}
+    );
+    print("\33c");
+    for i := 0 to xmax do (
+        for j := 0 to ymax do (
+            print(getDisplayChar(i,j,L));print(" \33[0m")
+        )
+        ;print("\n")
+    )
+end

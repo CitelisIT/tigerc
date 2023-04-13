@@ -355,7 +355,57 @@ endflip:
 	POP		{r0,r1,r2,r3,r4,r11,PC} 
 
 
+@OK
+substring:
+	PUSH 		{r0,r1,r2,r3,r4,r11,LR} 		
+	MOV		R11,R13
 
+	LDR		r0,[r11,#4*9]	@ string
+	LDR		r1,[r11,#4*8]	@ i
+	LDR		r2,[r11,#4*7]	@ n
+
+	CMP		R2,#0
+	Ble		_substring_empty
+	
+	PUSH	{R0}
+	BL		size
+	
+	MOV		R3,R8
+
+	SUBs	R8,R8,R1
+	Blt		_substring_empty
+
+	SUBs	R8,R8,R2
+	Blt		_substring_empty
+
+	B		_substring_full
+_substring_empty:
+	
+	MOV		R0,#2
+	PUSH	{R0}
+	BL		malloc
+	
+	B		_substring_end
+_substring_full:
+
+	ADD		R0,R0,R1
+	ADD		R3,R2,#1
+
+	PUSH	{R3}
+	BL		malloc
+
+	MOV		R3,R8
+_loop_substring:
+
+	LDRb	R4,[R0],#1	
+	STRb	R4,[R3],#1
+
+	SUBs	R2,#1
+	Bne		_loop_substring	
+_substring_end:
+
+	MOV		R13,R11
+	POP		{r0,r1,r2,r3,r4,r11,PC} 
 
 
 @OK
@@ -369,13 +419,13 @@ strcmp:
     	loopstrcmp:
 	    
 	    	
-	    	LDRb		R3,[r0],#1		
+	    LDRb		R3,[r0],#1		
 		LDRb		R4,[r1],#1	
 	   
-	    	MULs		R2,R3,R4	
-	    	Beq		endstrcmp	@ if R3 = 0 or R4 = 0
-		CMP		R3,R4
-	    	Beq		loopstrcmp	@ if R3 == R4
+	    MULs		R2,R3,R4	
+	    Beq			endstrcmp	@ if R3 = 0 or R4 = 0
+		CMP			R3,R4
+	    Beq			loopstrcmp	@ if R3 == R4
 	
 endstrcmp:	
 
