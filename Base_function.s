@@ -137,7 +137,29 @@ ord:
 	MOV		R13,R11
 	POP		{r0,r1,r2,r11,PC} 
 
+@OK
+sqrt:
+	PUSH 		{r0,r1,r2,r3,r11,LR} 		
+	MOV		R11,R13
+	
+	MOV		R0,#0
+	LDR		r1,[r11,#4*6]
+	MOV		R2,#1
+	LSL		R2,#30
 
+_sqrt_loop:
+	ADD		R3,R0,R2
+	LSR		R0,R0,#1
+	CMP		R1,R3
+	SUBge	R1,R1,R3
+	ADDge	R0,R0,R2
+	LSRs	R2,R2,#2
+	Bne		_sqrt_loop
+	
+	MOV	R8,R0
+
+	MOV		R13,R11
+	POP		{r0,r1,r2,r3,r11,PC} 
 
 
 

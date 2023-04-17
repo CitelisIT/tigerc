@@ -68,6 +68,8 @@ public class PredefinedScope implements Scope {
                                 new FuncSymbol("string_TYPE", "string_TYPE", new ArrayList<String>(
                                                 Arrays.asList("string_TYPE", "string_TYPE")),
                                                 "concat"));
+                this.addSymbol("sqrt_VAR", new FuncSymbol("int_TYPE", "int_TYPE",
+                                new ArrayList<String>(List.of("int_TYPE")), "sqrt"));
                 this.addSymbol("not_VAR", new FuncSymbol("int_TYPE", "int_TYPE",
                                 new ArrayList<String>(List.of("int_TYPE")), "not"));
                 this.addSymbol("exit_VAR", new FuncSymbol("void_TYPE", "void_TYPE",
